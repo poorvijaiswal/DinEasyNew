@@ -1,21 +1,21 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 
 const slides = [
   {
-    image: "https://via.placeholder.com/1200x600",
+    image: "https://wallpaperaccess.com/full/2275139.jpg",
     title: "Restaurant Management Made Easy",
     description: "Streamline your restaurant operations with our comprehensive management system",
   },
   {
-    image: "https://via.placeholder.com/1200x600",
+    image: "https://i.pinimg.com/originals/7c/b1/86/7cb18679659f791b1191bea97b74dfc0.jpg",
     title: "Real-time Analytics",
     description: "Get detailed insights into your restaurant's performance",
   },
   {
-    image: "https://via.placeholder.com/1200x600",
+    image: "https://img.freepik.com/free-photo/parmesan-pasta-recipe-with-piece-cheese-raw-pasta-other-ingredients_1220-583.jpg",
     title: "QR Code Ordering",
     description: "Contactless ordering system for a better dining experience",
   },
@@ -86,4 +86,3 @@ export default function HeroSlider() {
     </div>
   )
 }
-
