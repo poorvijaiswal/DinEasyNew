@@ -71,7 +71,7 @@ export default function Register() {
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
-      <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-3xl flex flex-col md:flex-row">
+      <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-4xl flex flex-col md:flex-row">
         
         {/* Left Section - Form */}
         <div className="w-full md:w-1/2 p-6">
