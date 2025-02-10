@@ -173,11 +173,11 @@ export default function Register() {
         </div>
 
         {/* Right Section - Illustration & Links */}
-        <div className="w-full md:w-1/2 flex flex-col items-center justify-center p-6">
+        <div className="w-full md:w-1/2 flex flex-col items-center justify-center p-2">
           <img
             src="https://i0.wp.com/99v.in/wp-content/uploads/2023/06/images-7.jpeg?fit=700,400&ssl=1"
             alt="Signup Illustration"
-            className="w-60 h-40 md:w-80 md:h-52"
+            className="w-[500px] h-[360px] rounded-2xl"
           />
           <p className="mt-4 text-gray-600 text-center">
             Already a member?{" "}

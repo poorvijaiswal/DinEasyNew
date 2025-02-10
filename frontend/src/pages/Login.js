@@ -25,14 +25,14 @@ export default function Login() {
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="bg-white p-14 rounded-2xl shadow-lg max-w-4xl w-full flex mt-0 mx-6 mb-10">
         {/* Left Section - Image */}
-        <div className="w-1/2 flex flex-col items-center justify-center p-6">
+        <div className="w-1/2 flex flex-col items-center justify-center p-9">
           <img
             src="https://img.freepik.com/premium-vector/restaurant-staff-team-director-chef-waiter-manager-sommelier_369750-595.jpg"
             alt="Staff Illustration"
             className="w-66 rounded-2xl h-auto mb-4"
           />
           <p className="text-gray-600">
-            <a href="/signup" className="text-blue-500 hover:underline">
+            <a href="/Register" className="text-blue-500 hover:underline">
               Create an account
             </a>
           </p>
