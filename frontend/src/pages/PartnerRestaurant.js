@@ -29,7 +29,7 @@ const restaurants = [
 
 const RestaurantCard = ({ restaurant }) => {
   return (
-    <div className="bg-white shadow-lg rounded-lg overflow-hidden max-w-xs h-96 transform transition-transform duration-300 hover:scale-105 hover:shadow-xl">
+    <div className="bg-white shadow-lg rounded-lg overflow-hidden max-w-lg h-96 transform transition-transform duration-300 hover:scale-105 hover:shadow-xl">
       <img
         src={restaurant.image}
         alt={restaurant.name}
