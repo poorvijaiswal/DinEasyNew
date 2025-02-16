@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import axios from "axios";
 import { FaFacebookF, FaTwitter, FaGoogle } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -15,6 +16,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   
   const verificationRef = useRef(null);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { id, value, type, checked } = e.target;
@@ -35,11 +37,18 @@ export default function Login() {
       if (response.data.requiresVerification) {
         setShowVerification(true);
         setTimeout(() => verificationRef.current?.focus(), 100); // Auto-focus verification input
+        navigate('/verify-email', { state: { email: formData.email } });
       } else {
         setMessage("Login successful");
+        navigate('/dashboard/owner');
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Login failed");
+      if (err.response?.status === 403 && err.response?.data?.message === 'Please verify your email. A new verification code has been sent to your email.') {
+        setMessage(err.response.data.message);
+        navigate('/verify-email', { state: { email: formData.email } });
+      } else {
+        setError(err.response?.data?.message || "Login failed");
+      }
     } finally {
       setLoading(false);
     }
@@ -66,7 +75,7 @@ export default function Login() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+    <div className="max-h-screen flex justify-center items-center min-h-screen bg-gray-100">
       <div className="bg-white p-14 rounded-2xl shadow-lg max-w-4xl w-full flex mt-0 mx-6 mb-10">
         <div className="w-1/2 flex flex-col items-center justify-center p-9">
           <img
@@ -82,7 +91,7 @@ export default function Login() {
         </div>
 
         <div className="w-1/2 p-6">
-          <h2 className="text-3xl font-bold mb-4">Staff Login</h2>
+          <h2 className="text-3xl font-bold mb-4">Owner Login</h2>
           {message && <p className="text-green-600 text-center">{message}</p>}
           {error && <p className="text-red-600 text-center">{error}</p>}
 

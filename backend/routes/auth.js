@@ -20,7 +20,11 @@ const transporter = nodemailer.createTransport({
 
 // Register Owner with Email Verification
 router.post('/register', async (req, res) => {
-    const { owner_name, email, password, phone, start_date, end_date } = req.body;
+    const { owner_name, email, password, phone } = req.body;
+
+    if (!owner_name || !email || !password || !phone) {
+        return res.status(400).json({ message: 'All fields are required!' });
+    }
 
     // Check if email already exists
     db.query('SELECT * FROM Membership WHERE email = ?', [email], async (err, results) => {
@@ -32,21 +36,21 @@ router.post('/register', async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // Generate verification code
-        const verificationCode = crypto.randomBytes(3).toString('hex').toUpperCase(); // Added
+        const verificationCode = crypto.randomBytes(3).toString('hex').toUpperCase();
 
         // Insert into Membership table
         db.query(
-            'INSERT INTO Membership (owner_name, email, password, phone, start_date, end_date, verified, verification_code) VALUES (?, ?, ?, ?, ?, ?, 0, ?)', // Modified
-            [owner_name, email, hashedPassword, phone, start_date, end_date, verificationCode], // Modified
+            'INSERT INTO Membership (owner_name, email, password, phone, verified, verification_code) VALUES (?, ?, ?, ?, 0, ?)',
+            [owner_name, email, hashedPassword, phone, verificationCode],
             (err, result) => {
                 if (err) return res.status(500).json({ message: 'Database error', error: err });
 
                 // Send verification email
-                const mailOptions = { // Modified
+                const mailOptions = {
                     from: process.env.EMAIL_USER,
                     to: email,
                     subject: 'Verify Your Email',
-                    html: `<p>Your verification code is: <strong>${verificationCode}</strong></p>` // Modified
+                    html: `<p>Your verification code is: <strong>${verificationCode}</strong></p>`
                 };
 
                 transporter.sendMail(mailOptions, (error, info) => {
@@ -77,6 +81,31 @@ router.post('/verify', (req, res) => { // Added
             res.status(200).json({ message: 'Email verified successfully' });
         });
     });
+});
+
+// Membership Selection
+router.post('/select-membership', (req, res) => {
+    const { email, membershipType } = req.body;
+
+    // Update membership type in the database
+    db.query('UPDATE Membership SET membership_type = ? WHERE email = ?', [membershipType, email], (err, result) => {
+        if (err) return res.status(500).json({ message: 'Database error', error: err });
+        res.status(200).json({ message: 'Membership selected successfully' });
+    });
+});
+
+// Payment Processing
+router.post('/payment', (req, res) => {
+    const { email, paymentDetails } = req.body;
+
+    // Process payment (this is a placeholder, integrate with a real payment gateway)
+    const paymentSuccess = true;
+
+    if (paymentSuccess) {
+        res.status(200).json({ message: 'Payment successful' });
+    } else {
+        res.status(400).json({ message: 'Payment failed' });
+    }
 });
 
 // Owner Login

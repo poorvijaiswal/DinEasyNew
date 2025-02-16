@@ -6,11 +6,25 @@ const API = axios.create({
 });
 
 // Example: Register function for a restaurant owner
-export const registerOwner = (ownerData) => API.post('/auth/register', ownerData);
+export const registerOwner = (ownerData) => {
+  // console.log('ownerData:', ownerData); // Log ownerData to the console
+  return API.post('/auth/register', ownerData);
+};
 
-// Example: Login function for a restaurant owner
-export const loginOwner = (credentials) => API.post('/auth/login', credentials);
+// Verify Email function
+export const verifyEmail = (data) => {
+  return API.post('/auth/verify', data);
+};
 
+// Restaurant Registration
+export const registerRestaurant = (data) => API.post('/restaurant/register', data);
+
+// Login for Owner
+export const loginOwner = (data) => API.post('/auth/login', data);
+
+// Login for Staff
+export const loginStaff = (data) => API.post('/auth/staff-login', data);
 // Add more functions for other endpoints as needed
+
 
 export default API;

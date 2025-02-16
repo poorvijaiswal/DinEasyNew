@@ -24,13 +24,19 @@ app.get("/", (req, res) => {
 
 // import Routes
 const authRoutes = require("./routes/auth");
-app.use("/auth", authRoutes);
+app.use("/api/auth", authRoutes);
 
 const restaurantRoutes = require('./routes/restaurant');
 app.use('/restaurant', restaurantRoutes);
 
 const menuRoutes = require('./routes/menu');
 app.use('/menu', menuRoutes);
+
+const membershipRoutes = require('./routes/membership');
+const paymentRoutes = require('./routes/payment');
+
+app.use('/api/membership', membershipRoutes);
+app.use('/api/payment', paymentRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

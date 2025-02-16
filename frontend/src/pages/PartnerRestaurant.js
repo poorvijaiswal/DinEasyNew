@@ -51,7 +51,7 @@ const Restaurants = () => {
     <section className="py-12 min-h-screen bg-cover bg-center relative bg-gray-100" id="restaurants"  style={{
       backgroundImage: "url('https://img.freepik.com/free-photo/empty-wood-table-top-abstract-blurred-restaurant-cafe-background-can-be-used-display-montage-your-products_7191-916.jpg?size=626&ext=jpg')",
     }}>
-      <div className="container mx-auto px-6">
+      <div className="container mx-auto px-6 mt-16">
         <h2 className="text-3xl font-bold text-center mb-8">
           Our Partner Restaurants in Indore
         </h2>

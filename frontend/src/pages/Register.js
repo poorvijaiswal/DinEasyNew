@@ -1,16 +1,19 @@
+
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { registerOwner } from "../services/api";
 
 export default function Register() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     owner_name: "",
     email: "",
-    password: "",
+    password: "", 
     confirmPassword: "",
     phone: "",
-    start_date: "",
-    end_date: "",
-    termsAccepted: false,
+    // start_date: "",
+    // end_date: "",
+    // termsAccepted: false,
   });
 
   const [error, setError] = useState("");
@@ -38,16 +41,17 @@ export default function Register() {
 
     setLoading(true);
 
+    const ownerData = {
+      owner_name: formData.owner_name,
+      email: formData.email,
+      password: formData.password,
+      phone: formData.phone,
+    };
+    
     try {
-      const response = await fetch("http://localhost:5000/api/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+      const response = await registerOwner(ownerData);
 
-      const data = await response.json();
-      
-      if (response.ok) {
+      if (response.status === 201) {
         setMessage("Registration successful!");
         setFormData({
           owner_name: "",
@@ -55,22 +59,21 @@ export default function Register() {
           password: "",
           confirmPassword: "",
           phone: "",
-          start_date: "",
-          end_date: "",
-          termsAccepted: false,
+          // termsAccepted: false,
         });
+        navigate('/verify-email', { state: { email: formData.email } });
       } else {
-        setError(data.message || "Registration failed. Try again.");
+        setError(response.data.message || "Registration failed. Try again.");
       }
     } catch (error) {
-      setError("Error connecting to server. Please try again.");
+      setError(error.response?.data?.message||"Error connecting to server. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
+    <div className="max-h-screen flex justify-center items-center min-h-screen bg-gray-100 p-4">
       <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-4xl flex flex-col md:flex-row">
         
         {/* Left Section - Form */}
@@ -128,7 +131,7 @@ export default function Register() {
               value={formData.phone}
               required
             />
-            <label>Start Date:</label>
+            {/* <label>Start Date:</label>
             <input
               type="date"
               id="start_date"
@@ -136,8 +139,8 @@ export default function Register() {
               onChange={handleChange}
               value={formData.start_date}
               required
-            />
-            <label>End Date:</label>
+            /> */}
+            {/* <label>End Date:</label>
             <input
               type="date"
               id="end_date"
@@ -145,7 +148,7 @@ export default function Register() {
               onChange={handleChange}
               value={formData.end_date}
               required
-            />
+            /> */}
             <div className="flex items-center">
               <input
                 type="checkbox"
