@@ -10,7 +10,7 @@ const slides = [
     description: "Streamline your restaurant operations with our comprehensive management system",
   },
   {
-    image: "https://png.pngtree.com/thumb_back/fw800/background/20240607/pngtree-colorful-spices-and-herbs-over-rustic-wooden-background-photo-with-copy-image_15742974.jpg",
+    image: "https://png.pngtree.com/thumb_back/fw800/background/20240607/pngtree-colorful-spices-and-herbs-over-rustic-wooden-background-photo-with-copy-image_15742974.jpg",r
     title: "Real-time Analytics",
     description: "Get detailed insights into your restaurant's performance",
   },
