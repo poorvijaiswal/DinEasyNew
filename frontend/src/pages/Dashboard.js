@@ -1,84 +1,66 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { FaBars, FaQrcode, FaUserCog, FaSignOutAlt, FaChartBar, FaUtensils } from 'react-icons/fa';
-import { MdDashboard } from 'react-icons/md';
+import React, { useState } from "react";
+import { FaBars, FaSignOutAlt, FaChartBar, FaClipboardList, FaUserCog, FaQrcode, FaHome, FaUser } from "react-icons/fa";
 
 export default function Dashboard() {
-  const [role, setRole] = useState('');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  useEffect(() => {
-    const roleCookie = getCookie('position');
-    setRole(roleCookie);
-  }, []);
-
-  const getCookie = (cname) => {
-    let name = cname + "=";
-    let decodedCookie = decodeURIComponent(document.cookie);
-    let ca = decodedCookie.split(';');
-    for (let i = 0; i < ca.length; i++) {
-      let c = ca[i].trim();
-      if (c.indexOf(name) === 0) {
-        return c.substring(name.length, c.length);
-      }
-    }
-    return "";
-  };
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
-      <div className={`fixed inset-y-0 left-0 w-64 bg-blue-900 text-white transition-transform transform ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0 md:relative md:flex md:flex-col md:w-64`}>
-        <div className="flex items-center justify-between px-4 py-3 border-b border-blue-700">
-          <h2 className="text-xl font-bold">Dineazy</h2>
-          <button className="md:hidden text-white" onClick={toggleSidebar}>
-            ✖
-          </button>
+      <div className={`bg-blue-900 text-white w-64 transition-all duration-300 ${isSidebarOpen ? "block" : "hidden"} md:block`}>
+        <div className="p-4 flex items-center justify-between">
+          <h2 className="text-xl font-semibold">Dineazy</h2>
+          <button className="text-white md:hidden" onClick={() => setIsSidebarOpen(false)}>✖</button>
         </div>
-        <nav className="flex-1 px-2 py-4">
-          <Link to="/dashboard" className="flex items-center px-4 py-2 hover:bg-blue-700 rounded">
-            <MdDashboard className="mr-3" /> Dashboard
-          </Link>
-          {role !== 'Staff' && (
-            <Link to="/sales" className="flex items-center px-4 py-2 hover:bg-blue-700 rounded">
-              <FaChartBar className="mr-3" /> Total Sales
-            </Link>
-          )}
-          {role !== 'Staff' && (
-            <Link to="/createmenu" className="flex items-center px-4 py-2 hover:bg-blue-700 rounded">
-              <FaUtensils className="mr-3" /> Create Menu
-            </Link>
-          )}
-          {role !== 'Staff' && (
-            <Link to="/view" className="flex items-center px-4 py-2 hover:bg-blue-700 rounded">
-              <FaUserCog className="mr-3" /> Manage Staff
-            </Link>
-          )}
-          <Link to="/generateqr" className="flex items-center px-4 py-2 hover:bg-blue-700 rounded">
-            <FaQrcode className="mr-3" /> Generate QR
-          </Link>
+        <nav className="mt-4">
+          <a href="/dashboard" className="flex items-center px-4 py-2 hover:bg-blue-700">
+            <FaHome className="mr-2" /> Dashboard
+          </a>
+          <a href="/sales" className="flex items-center px-4 py-2 hover:bg-blue-700">
+            <FaChartBar className="mr-2" /> Total Sales
+          </a>
+          <a href="/createmenu" className="flex items-center px-4 py-2 hover:bg-blue-700">
+            <FaClipboardList className="mr-2" /> Create Menu
+          </a>
+          <a href="/manage-staff" className="flex items-center px-4 py-2 hover:bg-blue-700">
+            <FaUserCog className="mr-2" /> Manage Staff
+          </a>
+          <a href="/generateqr" className="flex items-center px-4 py-2 hover:bg-blue-700">
+            <FaQrcode className="mr-2" /> Generate QR
+          </a>
+          <a href="/logout" className="flex items-center px-4 py-2 hover:bg-red-600 mt-4">
+            <FaSignOutAlt className="mr-2" /> Sign Out
+          </a>
         </nav>
-        <div className="p-4 border-t border-blue-700">
-          <Link to="/logout" className="flex items-center px-4 py-2 hover:bg-blue-700 rounded">
-            <FaSignOutAlt className="mr-3" /> Sign Out
-          </Link>
-        </div>
       </div>
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
-        <header className="bg-white shadow-md p-4 flex items-center justify-between">
-          <button className="md:hidden text-blue-900 text-2xl" onClick={toggleSidebar}>
+        {/* Navbar */}
+        <header className="bg-white shadow-md p-4 flex justify-between items-center">
+          <button className="text-gray-700 text-2xl md:hidden" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
             <FaBars />
           </button>
           <h1 className="text-xl font-bold">Dashboard</h1>
+          {/* Profile Dropdown */}
+          <div className="relative">
+            <button className="flex items-center space-x-2" onClick={() => setIsProfileOpen(!isProfileOpen)}>
+              <FaUser className="text-gray-600 text-2xl" />
+            </button>
+            {isProfileOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg">
+                <a href="/profile" className="block px-4 py-2 hover:bg-gray-200">Change Profile</a>
+                <a href="/logout" className="block px-4 py-2 hover:bg-red-500 hover:text-white">Logout</a>
+              </div>
+            )}
+          </div>
         </header>
-        <main className="flex-1 p-4">
-          <h2>Main Components Here</h2>
+
+        {/* Main Content */}
+        <main className="flex-1 p-6">
+          <h2 className="text-2xl font-semibold">Welcome to the Dashboard</h2>
+          <p className="mt-2 text-gray-600">Manage your restaurant operations here.</p>
         </main>
       </div>
     </div>
