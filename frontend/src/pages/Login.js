@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import axios from "axios";
-import { FaFacebookF, FaTwitter, FaGoogle } from "react-icons/fa";
+import { FaEnvelope, FaLock } from "react-icons/fa";
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -10,6 +10,8 @@ export default function Login() {
   });
   const [verificationCode, setVerificationCode] = useState("");
   const [showVerification, setShowVerification] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -34,7 +36,7 @@ export default function Login() {
       const response = await axios.post("http://localhost:5000/api/auth/login", formData);
       if (response.data.requiresVerification) {
         setShowVerification(true);
-        setTimeout(() => verificationRef.current?.focus(), 100); // Auto-focus verification input
+        setTimeout(() => verificationRef.current?.focus(), 100);
       } else {
         setMessage("Login successful");
       }
@@ -45,39 +47,30 @@ export default function Login() {
     }
   };
 
-  const handleVerify = async (e) => {
+  const handleForgotPassword = async (e) => {
     e.preventDefault();
     setMessage("");
     setError("");
     setLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:5000/api/auth/verify", {
-        email: formData.email,
-        verificationCode,
-      });
-      setMessage(response.data.message);
-      setShowVerification(false);
+      const response = await axios.post("http://localhost:5000/api/auth/forgot-password", { email: resetEmail });
+      setMessage(response.data.message || "Password reset link sent to your email.");
+      setShowForgotPassword(false);
     } catch (err) {
-      setError(err.response?.data?.message || "Verification failed");
+      setError(err.response?.data?.message || "Failed to send reset link.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+    <div className="flex justify-center items-center min-h-screen bg-cover bg-center" style={{ backgroundImage: "url('https://img.freepik.com/free-photo/wooden-planks-with-blurred-restaurant-background_1253-56.jpg?size=626&ext=jpg')" }}>
       <div className="bg-white p-14 rounded-2xl shadow-lg max-w-4xl w-full flex mt-0 mx-6 mb-10">
         <div className="w-1/2 flex flex-col items-center justify-center p-9">
-          <img
-            src="https://img.freepik.com/premium-vector/restaurant-staff-team-director-chef-waiter-manager-sommelier_369750-595.jpg"
-            alt="Staff Illustration"
-            className="w-66 rounded-2xl h-auto mb-4"
-          />
+          <img src="https://img.freepik.com/premium-vector/restaurant-staff-team-director-chef-waiter-manager-sommelier_369750-595.jpg" alt="Staff Illustration" className="w-66 rounded-2xl h-auto mb-4" />
           <p className="text-gray-600">
-            <a href="/Register" className="text-blue-500 hover:underline">
-              Create an account
-            </a>
+            <a href="/Register" className="text-blue-500 hover:underline">Create an account</a>
           </p>
         </div>
 
@@ -86,91 +79,55 @@ export default function Login() {
           {message && <p className="text-green-600 text-center">{message}</p>}
           {error && <p className="text-red-600 text-center">{error}</p>}
 
-          {!showVerification ? (
-            <form onSubmit={handleLogin} className="flex flex-col gap-4">
+          {showForgotPassword ? (
+            <form onSubmit={handleForgotPassword} className="flex flex-col gap-4">
               <input
                 type="email"
-                id="email"
-                placeholder="Your Email"
+                placeholder="Enter your email"
                 className="border p-3 rounded-lg w-full"
-                onChange={handleChange}
+                value={resetEmail}
+                onChange={(e) => setResetEmail(e.target.value)}
                 required
               />
-              <input
-                type="password"
-                id="password"
-                placeholder="Password"
-                className="border p-3 rounded-lg w-full"
-                onChange={handleChange}
-                required
-              />
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="rememberMe"
-                  className="mr-2"
-                  onChange={handleChange}
-                />
-                <label htmlFor="rememberMe" className="text-gray-600">
-                  Remember me
-                </label>
+              <button type="submit" className="bg-blue-500 text-white py-3 rounded-lg w-full hover:bg-blue-600 transition" disabled={loading}>
+                {loading ? "Sending..." : "Send Reset Link"}
+              </button>
+              <button type="button" onClick={() => setShowForgotPassword(false)} className="text-gray-500 text-center hover:underline">
+                Back to Login
+              </button>
+            </form>
+          ) : !showVerification ? (
+            <form onSubmit={handleLogin} className="flex flex-col gap-4">
+              <div className="flex items-center border p-3 rounded-lg w-full">
+                <FaEnvelope className="text-gray-500 mr-3" />
+                <input type="email" id="email" placeholder="Your Email" className="w-full outline-none" onChange={handleChange} required />
               </div>
-              <button
-                type="submit"
-                className="bg-red-500 text-white py-3 rounded-lg w-full hover:bg-red-600 transition"
-                disabled={loading}
-              >
+              <div className="flex items-center border p-3 rounded-lg w-full">
+                <FaLock className="text-gray-500 mr-3" />
+                <input type="password" id="password" placeholder="Password" className="w-full outline-none" onChange={handleChange} required />
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <input type="checkbox" id="rememberMe" className="mr-2" onChange={handleChange} />
+                  <label htmlFor="rememberMe" className="text-gray-600">Remember me</label>
+                </div>
+                <button type="button" className="text-blue-500 hover:underline" onClick={() => setShowForgotPassword(true)}>
+                  Forgot Password?
+                </button>
+              </div>
+              <button type="submit" className="bg-red-500 text-white py-3 rounded-lg w-full hover:bg-red-600 transition" disabled={loading}>
                 {loading ? "Logging in..." : "Log In"}
               </button>
             </form>
           ) : (
-            <form onSubmit={handleVerify} className="flex flex-col gap-4">
-              <input
-                type="text"
-                placeholder="Enter Verification Code"
-                className="border p-3 rounded-lg w-full"
-                value={verificationCode}
-                onChange={(e) => setVerificationCode(e.target.value)}
-                ref={verificationRef}
-                required
-              />
-              <button
-                type="submit"
-                className="bg-blue-500 text-white py-3 rounded-lg w-full hover:bg-blue-600 transition"
-                disabled={loading}
-              >
+            <form className="flex flex-col gap-4">
+              <input type="text" placeholder="Enter Verification Code" className="border p-3 rounded-lg w-full" value={verificationCode} onChange={(e) => setVerificationCode(e.target.value)} ref={verificationRef} required />
+              <button type="submit" className="bg-blue-500 text-white py-3 rounded-lg w-full hover:bg-blue-600 transition" disabled={loading}>
                 {loading ? "Verifying..." : "Verify"}
               </button>
             </form>
           )}
-
-          <p className="text-gray-600 text-center mt-4">Or login with</p>
-          <div className="flex justify-center gap-3 mt-2">
-            <a
-              href="https://www.facebook.com/login"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 text-xl cursor-pointer"
-            >
-              <FaFacebookF />
-            </a>
-            <a
-              href="https://twitter.com/login"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-400 text-xl cursor-pointer"
-            >
-              <FaTwitter />
-            </a>
-            <a
-              href="https://accounts.google.com/signin"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-red-500 text-xl cursor-pointer"
-            >
-              <FaGoogle />
-            </a>
-          </div>
+          
         </div>
       </div>
     </div>
