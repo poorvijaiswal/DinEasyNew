@@ -1,179 +1,134 @@
-const express = require('express');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const db = require('../config/db');
-const nodemailer = require('nodemailer');
-const dotenv = require('dotenv');
-const crypto = require('crypto'); // Added for generating verification code
+const express = require("express");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
+const { body, validationResult } = require("express-validator");
+const User = require("../models/User"); // Assuming you have a User model in your database
 
-dotenv.config();
 const router = express.Router();
 
-// Nodemailer setup for email verification
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
+// Login Endpoint
+router.post(
+  "/login",
+  body("email").isEmail().withMessage("Enter a valid email"),
+  body("password").isLength({ min: 6 }).withMessage("Password must be at least 6 characters"),
+  async (req, res) => {
+    // Validate input
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
     }
-});
 
-// Register Owner with Email Verification
-router.post('/register', async (req, res) => {
-    const { owner_name, email, password, phone, start_date, end_date } = req.body;
-
-    // Check if email already exists
-    db.query('SELECT * FROM Membership WHERE email = ?', [email], async (err, results) => {
-        if (results.length > 0) {
-            return res.status(400).json({ message: 'Email already exists!' });
-        }
-
-        // Hash password
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        // Generate verification code
-        const verificationCode = crypto.randomBytes(3).toString('hex').toUpperCase(); // Added
-
-        // Insert into Membership table
-        db.query(
-            'INSERT INTO Membership (owner_name, email, password, phone, start_date, end_date, verified, verification_code) VALUES (?, ?, ?, ?, ?, ?, 0, ?)', // Modified
-            [owner_name, email, hashedPassword, phone, start_date, end_date, verificationCode], // Modified
-            (err, result) => {
-                if (err) return res.status(500).json({ message: 'Database error', error: err });
-
-                // Send verification email
-                const mailOptions = { // Modified
-                    from: process.env.EMAIL_USER,
-                    to: email,
-                    subject: 'Verify Your Email',
-                    html: `<p>Your verification code is: <strong>${verificationCode}</strong></p>` // Modified
-                };
-
-                transporter.sendMail(mailOptions, (error, info) => {
-                    if (error) {
-                        console.error('Error sending verification email:', error);
-                        return res.status(500).json({ message: 'Error sending verification email', error });
-                    }
-                    console.log('Verification email sent:', info.response);
-                    res.status(201).json({ message: 'Owner registered! Check email for verification.' });
-                });
-            }
-        );
-    });
-});
-
-// Verify Email with Code
-router.post('/verify', (req, res) => { // Added
-    const { email, verificationCode } = req.body;
-
-    // Check verification code
-    db.query('SELECT * FROM Membership WHERE email = ? AND verification_code = ?', [email, verificationCode], (err, results) => {
-        if (err) return res.status(500).json({ message: 'Database error', error: err });
-        if (results.length === 0) return res.status(400).json({ message: 'Invalid verification code' });
-
-        // Update user's verified status in the database
-        db.query('UPDATE Membership SET verified = 1 WHERE email = ?', [email], (err, result) => {
-            if (err) return res.status(500).json({ message: 'Database error', error: err });
-            res.status(200).json({ message: 'Email verified successfully' });
-        });
-    });
-});
-
-// Owner Login
-router.post('/login', (req, res) => {
     const { email, password } = req.body;
+    try {
+      const user = await User.findOne({ email });
 
-    db.query('SELECT * FROM Membership WHERE email = ?', [email], async (err, results) => {
-        if (results.length === 0) return res.status(400).json({ message: 'Invalid email!' });
+      if (!user) {
+        return res.status(400).json({ message: "Invalid credentials" });
+      }
 
-        const owner = results[0];
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return res.status(400).json({ message: "Invalid credentials" });
+      }
 
-        // CHECK IF USER IS VERIFIED BEFORE ALLOWING LOGIN
-        if (owner.verified === 0) {
-            // Generate a new verification code
-            const newVerificationCode = crypto.randomBytes(3).toString('hex').toUpperCase();
+      // Generate JWT token
+      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+        expiresIn: "1h",
+      });
 
-            // Update the verification code in the database
-            db.query('UPDATE Membership SET verification_code = ? WHERE email = ?', [newVerificationCode, email], (err, result) => {
-                if (err) return res.status(500).json({ message: 'Database error', error: err });
+      res.json({ message: "Login successful", token });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Server error" });
+    }
+  }
+);
 
-                // Send the new verification email
-                const mailOptions = {
-                    from: process.env.EMAIL_USER,
-                    to: email,
-                    subject: 'Verify Your Email',
-                    html: `<p>Your new verification code is: <strong>${newVerificationCode}</strong></p>`
-                };
+// Forgot Password Endpoint
+router.post(
+  "/forgot-password",
+  body("email").isEmail().withMessage("Enter a valid email"),
+  async (req, res) => {
+    // Validate input
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
 
-                transporter.sendMail(mailOptions, (error, info) => {
-                    if (error) {
-                        console.error('Error sending verification email:', error);
-                        return res.status(500).json({ message: 'Error sending verification email', error });
-                    }
-                    console.log('Verification email sent:', info.response);
-                    return res.status(403).json({ message: 'Please verify your email. A new verification code has been sent to your email.' });
-                });
-            });
-        } else {
-            if (!(await bcrypt.compare(password, owner.password))) {
-                return res.status(400).json({ message: 'Incorrect password!' });
-            }
+    const { email } = req.body;
+    try {
+      const user = await User.findOne({ email });
+      if (!user) {
+        return res.status(400).json({ message: "Email not found" });
+      }
 
-            // Generate token
-            const token = jwt.sign({ id: owner.membership_id, role: 'owner' }, process.env.JWT_SECRET, { expiresIn: '1d' });
+      // Generate a password reset token
+      const resetToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+        expiresIn: "1h",
+      });
 
-            res.json({ message: 'Login successful', token });
-        }
-    });
-});
+      // Send email with the password reset link
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASSWORD,
+        },
+      });
 
-// Staff Login
-router.post('/staff-login', (req, res) => {
-    const { email, password } = req.body;
+      const resetUrl = `http://localhost:5000/api/auth/reset-password/${resetToken}`;
+      const mailOptions = {
+        to: email,
+        subject: "Password Reset Request",
+        text: `You requested a password reset. Please click on the link to reset your password: ${resetUrl}`,
+      };
 
-    db.query('SELECT * FROM Staff WHERE email = ?', [email], async (err, results) => {
-        if (results.length === 0) return res.status(400).json({ message: 'Invalid email!' });
+      await transporter.sendMail(mailOptions);
 
-        const staff = results[0];
+      res.json({ message: "Password reset link sent to your email" });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Server error" });
+    }
+  }
+);
 
-        // CHECK IF USER IS VERIFIED BEFORE ALLOWING LOGIN
-        if (staff.verified === 0) {
-            // Generate a new verification code
-            const newVerificationCode = crypto.randomBytes(3).toString('hex').toUpperCase();
+// Reset Password Endpoint
+router.post(
+  "/reset-password/:resetToken",
+  body("password")
+    .isLength({ min: 6 })
+    .withMessage("Password must be at least 6 characters"),
+  async (req, res) => {
+    const { resetToken } = req.params;
+    const { password } = req.body;
 
-            // Update the verification code in the database
-            db.query('UPDATE Staff SET verification_code = ? WHERE email = ?', [newVerificationCode, email], (err, result) => {
-                if (err) return res.status(500).json({ message: 'Database error', error: err });
+    // Validate input
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
 
-                // Send the new verification email
-                const mailOptions = {
-                    from: process.env.EMAIL_USER,
-                    to: email,
-                    subject: 'Verify Your Email',
-                    html: `<p>Your new verification code is: <strong>${newVerificationCode}</strong></p>`
-                };
+    try {
+      // Verify the reset token
+      const decoded = jwt.verify(resetToken, process.env.JWT_SECRET);
+      const user = await User.findById(decoded.userId);
+      if (!user) {
+        return res.status(400).json({ message: "User not found" });
+      }
 
-                transporter.sendMail(mailOptions, (error, info) => {
-                    if (error) {
-                        console.error('Error sending verification email:', error);
-                        return res.status(500).json({ message: 'Error sending verification email', error });
-                    }
-                    console.log('Verification email sent:', info.response);
-                    return res.status(403).json({ message: 'Please verify your email. A new verification code has been sent to your email.' });
-                });
-            });
-        } else {
-            if (!(await bcrypt.compare(password, staff.password))) {
-                return res.status(400).json({ message: 'Incorrect password!' });
-            }
+      // Hash new password and update user
+      const hashedPassword = await bcrypt.hash(password, 10);
+      user.password = hashedPassword;
+      await user.save();
 
-            // Generate token
-            const token = jwt.sign({ id: staff.staff_id, role: staff.role }, process.env.JWT_SECRET, { expiresIn: '1d' });
+      res.json({ message: "Password has been reset successfully" });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Server error" });
+    }
+  }
+);
 
-            res.json({ message: 'Login successful', token });
-        }
-    });
-});
-
-// Export the router
 module.exports = router;
