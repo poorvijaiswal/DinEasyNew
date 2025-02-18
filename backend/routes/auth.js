@@ -173,5 +173,52 @@ router.post('/reset-password/:resetToken', body('password').isLength({ min: 6 })
         res.status(500).json({ message: 'Server error' });
     }
 });
+// Staff Login
+router.post('/staff-login', (req, res) => {
+  const { email, password } = req.body;
+
+  db.query('SELECT * FROM Staff WHERE email = ?', [email], async (err, results) => {
+      if (results.length === 0) return res.status(400).json({ message: 'Invalid email!' });
+
+      const staff = results[0];
+
+      // CHECK IF USER IS VERIFIED BEFORE ALLOWING LOGIN
+      if (staff.verified === 0) {
+          // Generate a new verification code
+          const newVerificationCode = crypto.randomBytes(3).toString('hex').toUpperCase();
+
+          // Update the verification code in the database
+          db.query('UPDATE Staff SET verification_code = ? WHERE email = ?', [newVerificationCode, email], (err, result) => {
+              if (err) return res.status(500).json({ message: 'Database error', error: err });
+
+              // Send the new verification email
+              const mailOptions = {
+                  from: process.env.EMAIL_USER,
+                  to: email,
+                  subject: 'Verify Your Email',
+                  html: `<p>Your new verification code is: <strong>${newVerificationCode}</strong></p>`
+              };
+
+              transporter.sendMail(mailOptions, (error, info) => {
+                  if (error) {
+                      console.error('Error sending verification email:', error);
+                      return res.status(500).json({ message: 'Error sending verification email', error });
+                  }
+                  console.log('Verification email sent:', info.response);
+                  return res.status(403).json({ message: 'Please verify your email. A new verification code has been sent to your email.' });
+              });
+          });
+      } else {
+          if (!(await bcrypt.compare(password, staff.password))) {
+              return res.status(400).json({ message: 'Incorrect password!' });
+          }
+
+          // Generate token
+          const token = jwt.sign({ id: staff.staff_id, role: staff.role }, process.env.JWT_SECRET, { expiresIn: '1d' });
+
+          res.json({ message: 'Login successful', token });
+      }
+  });
+});
 
 module.exports = router;

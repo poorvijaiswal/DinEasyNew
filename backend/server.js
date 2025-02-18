@@ -26,6 +26,9 @@ app.get("/", (req, res) => {
 const authRoutes = require("./routes/auth");
 app.use("/auth", authRoutes);
 
+const authRoutes = require("./routes/");
+app.use("/user", authRoutes);
+
 const restaurantRoutes = require('./routes/restaurant');
 app.use('/restaurant', restaurantRoutes);
 
