@@ -26,11 +26,29 @@ export default function Login() {
     }));
   };
 
+  const validatePassword = (password) => {
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+    return passwordRegex.test(password);
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setMessage("");
     setError("");
     setLoading(true);
+
+    // Validate email and password
+    if (!formData.email || !formData.password) {
+      setError("Email and password are required.");
+      setLoading(false);
+      return;
+    }
+
+    if (!validatePassword(formData.password)) {
+      setError("Password must be at least 8 characters long, contain a number, a letter, and a special character.");
+      setLoading(false);
+      return;
+    }
 
     try {
       const response = await axios.post("http://localhost:5000/api/auth/login", formData);
@@ -66,9 +84,9 @@ export default function Login() {
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-cover bg-center" style={{ backgroundImage: "url('https://img.freepik.com/free-photo/wooden-planks-with-blurred-restaurant-background_1253-56.jpg?size=626&ext=jpg')" }}>
-      <div className="bg-white p-14 rounded-2xl shadow-lg max-w-4xl w-full flex mt-0 mx-6 mb-10">
-        <div className="w-1/2 flex flex-col items-center justify-center p-9">
-          <img src="https://img.freepik.com/premium-vector/restaurant-staff-team-director-chef-waiter-manager-sommelier_369750-595.jpg" alt="Staff Illustration" className="w-66 rounded-2xl h-auto mb-4" />
+      <div className="bg-white p-10 rounded-2xl shadow-lg max-w-4xl w-full flex mx-6 mb-10">
+        <div className="w-1/2 flex flex-col items-center justify-center p-6">
+          <img src="https://img.freepik.com/premium-vector/restaurant-staff-team-director-chef-waiter-manager-sommelier_369750-595.jpg" alt="Staff Illustration" className="w-64 rounded-2xl h-auto mb-4" />
           <p className="text-gray-600">
             <a href="/Register" className="text-blue-500 hover:underline">Create an account</a>
           </p>
@@ -77,7 +95,7 @@ export default function Login() {
         <div className="w-1/2 p-6">
           <h2 className="text-3xl font-bold mb-4">Staff Login</h2>
           {message && <p className="text-green-600 text-center">{message}</p>}
-          {error && <p className="text-red-600 text-center">{error}</p>}
+          
 
           {showForgotPassword ? (
             <form onSubmit={handleForgotPassword} className="flex flex-col gap-4">
@@ -100,24 +118,26 @@ export default function Login() {
             <form onSubmit={handleLogin} className="flex flex-col gap-4">
               <div className="flex items-center border p-3 rounded-lg w-full">
                 <FaEnvelope className="text-gray-500 mr-3" />
-                <input type="email" id="email" placeholder="Your Email" className="w-full outline-none" onChange={handleChange} required />
+                <input type="email" id="email" placeholder="Your Email" className="w-full outline-none" value={formData.email} onChange={handleChange} required />
               </div>
               <div className="flex items-center border p-3 rounded-lg w-full">
                 <FaLock className="text-gray-500 mr-3" />
-                <input type="password" id="password" placeholder="Password" className="w-full outline-none" onChange={handleChange} required />
+                <input type="password" id="password" placeholder="Password" className="w-full outline-none" value={formData.password} onChange={handleChange} required />
               </div>
+              {error && <p className="text-red-600 text-center text-xs">{error}</p>}
               <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <input type="checkbox" id="rememberMe" className="mr-2" onChange={handleChange} />
-                  <label htmlFor="rememberMe" className="text-gray-600">Remember me</label>
-                </div>
-                <button type="button" className="text-blue-500 hover:underline" onClick={() => setShowForgotPassword(true)}>
+                <label className="flex items-center text-gray-600 text-xs">
+                  <input type="checkbox" id="rememberMe" className="mr-2" checked={formData.rememberMe} onChange={handleChange} />
+                  Remember me
+                </label>
+                <button type="button" className="text-blue-500 hover:underline text-xs font-bold" onClick={() => setShowForgotPassword(true)}>
                   Forgot Password?
                 </button>
               </div>
               <button type="submit" className="bg-red-500 text-white py-3 rounded-lg w-full hover:bg-red-600 transition" disabled={loading}>
                 {loading ? "Logging in..." : "Log In"}
               </button>
+              
             </form>
           ) : (
             <form className="flex flex-col gap-4">
@@ -127,6 +147,7 @@ export default function Login() {
               </button>
             </form>
           )}
+
           
         </div>
       </div>
