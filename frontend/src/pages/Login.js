@@ -110,7 +110,7 @@ export default function Login() {
               <button type="submit" className="bg-blue-500 text-white py-3 rounded-lg w-full hover:bg-blue-600 transition" disabled={loading}>
                 {loading ? "Sending..." : "Send Reset Link"}
               </button>
-              <button type="button" onClick={() => setShowForgotPassword(false)} className="text-gray-500 text-center hover:underline">
+              <button type="button" onClick={() => setShowForgotPassword(false)} className="text-gray-500 text-center hover:underline text-xs">
                 Back to Login
               </button>
             </form>
