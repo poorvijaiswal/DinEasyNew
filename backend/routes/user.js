@@ -1,8 +1,16 @@
 const express = require("express");
 const multer = require("multer");
 const path = require("path");
-const User = require("./models/User"); // Assuming you have a User model
-const app = express();
+const mysql = require("mysql2");
+const router = express.Router();
+
+// MySQL database connection (using pool from server.js)
+const pool = mysql.createPool({
+  host: "localhost",
+  user: "root", // Replace with your MySQL username
+  password: "Tiger", // Replace with your MySQL password
+  database: "restaurantmanagementsys", // Replace with your MySQL database name
+});
 
 // Set up Multer storage for profile image uploads
 const storage = multer.diskStorage({
@@ -16,57 +24,53 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-// Middleware to handle JSON requests
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use("/uploads", express.static("uploads")); // Serve static files (profile images)
-
 // API to fetch user profile data
-app.get("/api/user/profile", async (req, res) => {
-  try {
-    // Assuming you have a method to fetch user data
-    const user = await User.findById(req.user.id); // You would have some authentication middleware to set `req.user`
-    res.json(user);
-  } catch (err) {
-    console.error("Error fetching user data", err);
-    res.status(500).json({ message: "Server error" });
+router.get("/profile", (req, res) => {
+  const userId = req.query.userId; // User ID passed in query params
+  
+  if (!userId) {
+    return res.status(400).json({ message: "User ID is required" });
   }
+
+  // Fetch user data from MySQL database
+  pool.query("SELECT * FROM users WHERE id = ?", [userId], (err, results) => {
+    if (err) {
+      console.error("Error fetching user data", err);
+      return res.status(500).json({ message: "Server error" });
+    }
+    if (results.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.json(results[0]); // Send user data as JSON response
+  });
 });
 
 // API to update profile image
-app.post("/api/user/update-profile", upload.single("profileImage"), async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id); // Fetch logged-in user
-    if (!user) {
-      return res.status(400).json({ message: "User not found" });
-    }
+router.post("/update-profile", upload.single("profileImage"), (req, res) => {
+  const userId = req.body.userId; // User ID passed in form data
 
-    // Update profile image path
-    const profileImagePath = `/uploads/${req.file.filename}`;
-    user.profileImage = profileImagePath;
-
-    await user.save();
-    res.json({ message: "Profile image updated successfully", profileImage: profileImagePath });
-  } catch (err) {
-    console.error("Error updating profile", err);
-    res.status(500).json({ message: "Server error" });
+  if (!userId) {
+    return res.status(400).json({ message: "User ID is required" });
   }
+
+  if (!req.file) {
+    return res.status(400).json({ message: "Please upload a profile image" });
+  }
+
+  const profileImagePath = `/uploads/${req.file.filename}`;
+
+  // Update the profile image path in the MySQL database
+  pool.query(
+    "UPDATE users SET profileImage = ? WHERE id = ?",
+    [profileImagePath, userId],
+    (err, results) => {
+      if (err) {
+        console.error("Error updating profile image", err);
+        return res.status(500).json({ message: "Server error" });
+      }
+      res.json({ message: "Profile image updated successfully", profileImage: profileImagePath });
+    }
+  );
 });
 
-// Sample user model (example, adjust as per your schema)
-const mongoose = require("mongoose");
-const userSchema = new mongoose.Schema({
-  name: String,
-  email: String,
-  profileImage: String,
-  // Other fields as necessary
-});
-const User = mongoose.model("User", userSchema);
-
-// Connect to MongoDB (replace with your MongoDB connection details)
-mongoose.connect("mongodb://localhost:27017/your-database", { useNewUrlParser: true, useUnifiedTopology: true });
-
-// Start the server
-app.listen(5000, () => {
-  console.log("Server is running on port 5000");
-});
+module.exports = router;
