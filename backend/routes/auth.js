@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const db = require('../config/db');
+const { getAuth } = require('firebase-admin/auth');
 const nodemailer = require('nodemailer');
 const dotenv = require('dotenv');
 const crypto = require('crypto'); // For generating the verification code
@@ -173,6 +174,7 @@ router.post('/reset-password/:resetToken', body('password').isLength({ min: 6 })
         res.status(500).json({ message: 'Server error' });
     }
 });
+
 // Staff Login
 router.post('/staff-login', (req, res) => {
   const { email, password } = req.body;
@@ -219,6 +221,37 @@ router.post('/staff-login', (req, res) => {
           res.json({ message: 'Login successful', token });
       }
   });
+});
+
+// Initialize Firebase Admin SDK
+const admin = require('firebase-admin');
+const serviceAccount = require('../config/serviceAccountKey.json'); // Replace with the path to your service account key file
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
+
+router.post('/google-login', async (req, res) => {
+  const { token } = req.body;
+
+  try {
+    const decodedToken = await getAuth().verifyIdToken(token);
+    const { email, name } = decodedToken;
+
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      user = new User({ email, name });
+      await user.save();
+    }
+
+    // Generate a token for the user (e.g., JWT)
+    const authToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+    res.json({ token: authToken });
+  } catch (error) {
+    res.status(400).json({ message: 'Google login failed' });
+  }
 });
 
 module.exports = router;

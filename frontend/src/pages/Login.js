@@ -1,6 +1,8 @@
 import React, { useState, useRef } from "react";
 import axios from "axios";
 import { FaEnvelope, FaLock } from "react-icons/fa";
+import { auth, googleProvider } from "../firebases/firebaseConfig";
+import { signInWithPopup } from "firebase/auth";
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -82,6 +84,17 @@ export default function Login() {
     }
   };
 
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const token = await result.user.getIdToken();
+      await axios.post("http://localhost:5000/api/auth/google-login", { token });
+      setMessage("Login successful");
+    } catch (err) {
+      setError(err.response?.data?.message || "Google login failed");
+    }
+  };
+
   return (
     <div className="flex justify-center items-center min-h-screen bg-cover bg-center" style={{ backgroundImage: "url('https://img.freepik.com/free-photo/wooden-planks-with-blurred-restaurant-background_1253-56.jpg?size=626&ext=jpg')" }}>
       <div className="bg-white p-10 rounded-2xl shadow-lg max-w-4xl w-full flex mx-6 mb-10">
@@ -96,7 +109,6 @@ export default function Login() {
           <h2 className="text-3xl font-bold mb-4">Login</h2>
           {message && <p className="text-green-600 text-center">{message}</p>}
           
-
           {showForgotPassword ? (
             <form onSubmit={handleForgotPassword} className="flex flex-col gap-4">
               <input
@@ -137,7 +149,11 @@ export default function Login() {
               <button type="submit" className="bg-red-500 text-white py-3 rounded-lg w-full hover:bg-red-600 transition" disabled={loading}>
                 {loading ? "Logging in..." : "Log In"}
               </button>
-              
+              <div className="flex justify-center mt-4">
+                <button onClick={handleGoogleLogin} className="bg-blue-500 text-white py-3 rounded-lg w-full hover:bg-blue-600 transition">
+                  Continue with Google
+                </button>
+              </div>
             </form>
           ) : (
             <form className="flex flex-col gap-4">
@@ -147,8 +163,6 @@ export default function Login() {
               </button>
             </form>
           )}
-
-          
         </div>
       </div>
     </div>
