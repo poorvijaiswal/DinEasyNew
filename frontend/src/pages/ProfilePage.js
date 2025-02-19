@@ -43,14 +43,14 @@ const ProfilePage = () => {
     formData.append("profileImage", newImage);
   
     try {
-      const response = await axios.post(`/user/upload/1`, formData, { // Replace "1" with actual user ID
+      const response = await axios.post("/api/user/update-profile", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
       alert("Profile updated successfully!");
-      setProfileImage(response.data.profileImage);
+      setProfileImage(response.data.profile_image);
     } catch (err) {
       console.error("Error updating profile", err);
       alert("There was an error updating the profile.");

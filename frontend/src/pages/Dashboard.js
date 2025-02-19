@@ -17,24 +17,27 @@ export default function Dashboard() {
         </div>
 
         <nav className="mt-4 space-y-2">
-          <a href="/dashboard" className="flex items-center px-4 py-2 hover:bg-blue-700 transition-all">
+          <Link to="/dashboard" className="flex items-center px-4 py-2 hover:bg-blue-700 transition-all">
             <FaHome className="mr-2" /> {isNavOpen && "Dashboard"}
-          </a>
-          <a href="/sales" className="flex items-center px-4 py-2 hover:bg-blue-700 transition-all">
+          </Link>
+          <Link to="/sales" className="flex items-center px-4 py-2 hover:bg-blue-700 transition-all">
             <FaChartBar className="mr-2" /> {isNavOpen && "Total Sales"}
-          </a>
-          <a href="/createmenu" className="flex items-center px-4 py-2 hover:bg-blue-700 transition-all">
+          </Link>
+          <Link to="/createmenu" className="flex items-center px-4 py-2 hover:bg-blue-700 transition-all">
             <FaClipboardList className="mr-2" /> {isNavOpen && "Create Menu"}
-          </a>
-          <a href="/manage-staff" className="flex items-center px-4 py-2 hover:bg-blue-700 transition-all">
+          </Link>
+          <Link to="/manage-staff" className="flex items-center px-4 py-2 hover:bg-blue-700 transition-all">
             <FaUserCog className="mr-2" /> {isNavOpen && "Manage Staff"}
-          </a>
-          <a href="/generateqr" className="flex items-center px-4 py-2 hover:bg-blue-700 transition-all">
+          </Link>
+          <Link to="/generate-qr" className="flex items-center px-4 py-2 hover:bg-blue-700 transition-all">
             <FaQrcode className="mr-2" /> {isNavOpen && "Generate QR"}
-          </a>
-          <a href="/logout" className="flex items-center px-4 py-2 hover:bg-red-600 transition-all mt-4">
+          </Link>
+          <Link to="/display-qr" className="flex items-center px-4 py-2 hover:bg-blue-700 transition-all">
+            <FaQrcode className="mr-2" /> {isNavOpen && "Display QR"}
+          </Link>
+          <Link to="/logout" className="flex items-center px-4 py-2 hover:bg-red-600 transition-all mt-4">
             <FaSignOutAlt className="mr-2" /> {isNavOpen && "Sign Out"}
-          </a>
+          </Link>
         </nav>
       </div>
 
