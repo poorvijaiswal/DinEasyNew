@@ -1,4 +1,7 @@
 const express = require("express");
+const path = require('path');
+const userRoutes = require('./routes/user');
+const authRoutes = require('./routes/auth');
 const cors = require("cors");
 const dotenv = require("dotenv");
 const db = require("./config/db.js"); // Import database connection
@@ -8,6 +11,7 @@ dotenv.config(); // Load environment variables
 const app = express();
 app.use(cors());
 app.use(express.json()); // Middleware to parse JSON request bodies
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Test database connection
 db.query("SELECT 1", (err) => {
@@ -26,8 +30,9 @@ app.get("/", (req, res) => {
 const authRoutes = require("./routes/auth");
 app.use("/auth", authRoutes);
 
-const authRoutes = require("./routes/");
+const userRoutes = require("./routes/user");
 app.use("/user", authRoutes);
+
 
 const restaurantRoutes = require('./routes/restaurant');
 app.use('/restaurant', restaurantRoutes);

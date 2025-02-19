@@ -6,8 +6,8 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Header from './components/Header';
 import About from './pages/About';
-import Profile from './pages/Profile';
 import PartnerRestaurant from './pages/PartnerRestaurant';
+import ProfilePage from './pages/ProfilePage';
 
 function App() {
   return (
@@ -21,7 +21,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path='/about' element={<About/>} />
-          <Route path='/profile' element={<Profile/>} />
+          <Route path='/profile' element={<ProfilePage/>} />
           <Route path="/partners" element={<PartnerRestaurant/>} />
           <Route path='' />
         </Routes>

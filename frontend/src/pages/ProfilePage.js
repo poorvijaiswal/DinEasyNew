@@ -11,16 +11,21 @@ const ProfilePage = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get("/api/user/profile");
+        const response = await axios.get(`/user/1`, { // Replace "1" with actual user ID
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
         setUserData(response.data);
-        setProfileImage(response.data.profileImage);
+        setProfileImage(response.data.profile_image || "default-profile-image.jpg");
       } catch (err) {
         console.error("Error fetching user data", err);
       }
     };
-
+  
     fetchUserData();
   }, []);
+  
 
   // Handle profile image change
   const handleImageChange = (e) => {
@@ -33,32 +38,33 @@ const ProfilePage = () => {
       alert("Please select an image first!");
       return;
     }
-
+  
     const formData = new FormData();
     formData.append("profileImage", newImage);
-
+  
     try {
-      const response = await axios.post("/api/user/update-profile", formData, {
+      const response = await axios.post(`/user/upload/1`, formData, { // Replace "1" with actual user ID
         headers: {
           "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
       alert("Profile updated successfully!");
-      setProfileImage(response.data.profileImage); // Update the profile image immediately
+      setProfileImage(response.data.profileImage);
     } catch (err) {
       console.error("Error updating profile", err);
       alert("There was an error updating the profile.");
     }
   };
-
+  
   return (
     <div className="profile-page">
       <div className="profile-header">
-        <h2>{userData.name}'s Profile</h2>
+        <h2>{userData.name}Profile</h2>
       </div>
       <div className="profile-image-section">
         <img
-          src={profileImage || "default-profile-image.jpg"}
+          src={profileImage}
           alt="Profile"
           className="profile-image"
         />
@@ -78,7 +84,6 @@ const ProfilePage = () => {
         <h3>Personal Details</h3>
         <p>Email: {userData.email}</p>
         <p>Phone: {userData.phone}</p>
-        {/* Add more personal details if required */}
       </div>
     </div>
   );
