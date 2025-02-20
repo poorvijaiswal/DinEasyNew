@@ -104,10 +104,11 @@ const QRCodeGenerator = () => {
           {/* Display QR Code */}
           {qrCode && (
             <div className="qr-code-container">
-              <h3>Scan the QR Code:</h3>
+               <p>QR Code for Table {tableNumber}</p>
               <QRCodeCanvas value={qrCode} size={size} />
             </div>
           )}
+         
         </div>
       </div>
     </div>
