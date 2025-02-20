@@ -7,7 +7,7 @@ const nodemailer = require('nodemailer');
 const dotenv = require('dotenv');
 const crypto = require('crypto'); // For generating the verification code
 const { body, validationResult } = require('express-validator');
-const User = require('../models/User'); // Assuming you have a User model in your database
+//const User = require('../models/User'); // Assuming you have a User model in your database
 
 dotenv.config();
 const router = express.Router();

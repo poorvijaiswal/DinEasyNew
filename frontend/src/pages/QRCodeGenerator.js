@@ -1,31 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { QRCodeCanvas } from "qrcode.react";
-import "./QRCodeGenerator.css"; // Import the CSS file
+import "./QRCodeGenerator.css";
 import { FaBars, FaSignOutAlt, FaChartBar, FaClipboardList, FaUserCog, FaQrcode, FaHome } from "react-icons/fa";
 
 const QRCodeGenerator = () => {
   const [isNavOpen, setIsNavOpen] = useState(true);
-  const [qrCode, setQRCode] = useState(null);
+  const [qrCode, setQRCode] = useState("");  // Ensure it's a string, not null
   const [tableNumber, setTableNumber] = useState("");
   const [size, setSize] = useState(300);
   const [message, setMessage] = useState("");
-
+   
   const generateQR = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/api/qr/generate", { tableNumber, size });
-      setQRCode(response.data.qrCode);
-      setMessage("QR Code successfully created!");
+      const response = await axios.post("http://localhost:5000/api/qr/generate", { tableNumber, size });
+      
+      console.log("QR Code Data:", response.data.qrCode); // Debugging step
+      
+      if (response.data.qrCode) {
+        setQRCode(response.data.qrCode);
+        setMessage("QR Code successfully created!");
+      } else {
+        setMessage("Failed to generate QR Code.");
+      }
     } catch (error) {
       console.error("Error generating QR code", error);
-      if (error.response && error.response.data.message) {
-        setMessage(error.response.data.message);
-      } else {
-        setMessage("");
-      }
+      setMessage("Error generating QR Code");
     }
   };
+  useEffect(() => {
+    console.log("Updated QR Code Data:", qrCode); // Log QR code whenever it updates
+  }, [qrCode]);
 
   return (
     <div className="qr-container">
@@ -94,8 +100,11 @@ const QRCodeGenerator = () => {
               Generate QR Code
             </button>
           </form>
+
+          {/* Display QR Code */}
           {qrCode && (
             <div className="qr-code-container">
+              <h3>Scan the QR Code:</h3>
               <QRCodeCanvas value={qrCode} size={size} />
             </div>
           )}

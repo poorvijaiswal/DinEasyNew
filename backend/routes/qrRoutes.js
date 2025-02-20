@@ -1,9 +1,8 @@
-const express = require("express");
-const { generateQRCode, getQRCodes } = require("../controllers/qrController");
+const express = require('express');
+const { generateQRCode } = require('../controllers/qrController');
 
 const router = express.Router();
 
-router.post("/generate", generateQRCode);
-router.get("/all", getQRCodes);
+router.post('/generate', generateQRCode);
 
 module.exports = router;
