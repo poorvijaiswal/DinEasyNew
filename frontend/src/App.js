@@ -10,8 +10,7 @@ import PartnerRestaurant from './pages/PartnerRestaurant';
 import ProfilePage from './pages/ProfilePage';
 import QRCodeDisplay from "./components/QRCodeDisplay";
 import QRCodeGenerator from "./pages/QRCodeGenerator";
-
-
+import CreateMenu from "./components/CreateMenu";
 function App() {
   return (
     <Router>
@@ -28,6 +27,7 @@ function App() {
           <Route path="/partners" element={<PartnerRestaurant/>} />
           <Route path="/generate-qr" element={<QRCodeGenerator/>} />
           <Route path="/display-qr" element={<QRCodeDisplay />} />
+          <Route path="/createmenu" element={<CreateMenu />} />
          
         
         </Routes>
