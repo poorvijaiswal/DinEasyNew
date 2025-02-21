@@ -3,6 +3,7 @@ const db = require('../config/db');
 
 const generateQRCode = async (req, res) => {
     const { tableNumber, size, restaurantId } = req.body;
+    
     const qrText = `http://localhost:3000/order?table=${tableNumber}`;
 
     try {
@@ -26,6 +27,7 @@ const generateQRCode = async (req, res) => {
                 res.json({ qrCode: qrCodeUrl });
             }
         );
+        
     } catch (error) {
         console.error('Error generating QR code:', error);
         res.status(500).json({ message: 'Error generating QR code', error });
