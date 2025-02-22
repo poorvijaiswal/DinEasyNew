@@ -3,10 +3,48 @@ const db = require('../config/db');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
+const multer = require('multer');
+const path = require('path');
 
 dotenv.config();
 
-// ✅ Middleware: Verify if user is an Owner or Staff
+// Multer setup for image upload
+const storage = multer.diskStorage({
+    destination: path.join(__dirname, '../uploads/'),
+    filename: (req, file, cb) => {
+      cb(null, Date.now() + path.extname(file.originalname));
+    },
+});
+const upload = multer({ storage });
+
+// ✅ GET ALL MENU ITEMS
+router.get('/menu', (req, res) => {
+    const query = 'SELECT * FROM menu';
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Database error:', err);
+            return res.status(500).json({ error: 'Database error' });
+        }
+        res.json(results);
+    });
+});
+
+// ✅ ADD MENU ITEM
+router.post('/menu', upload.single('image_url'), (req, res) => {
+    const { category_id, name, price, description } = req.body;
+    const image_url = req.file.filename;
+
+    const query = 'INSERT INTO menu (category_id, name, price, description, image_url) VALUES (?, ?, ?, ?, ?)';
+    db.query(query, [category_id, name, price, description, image_url], (err, result) => {
+      if (err) {
+        console.error('Database error:', err);
+        return res.status(500).json({ error: err });
+      }
+      res.json({ message: 'Menu item added successfully!' });
+    });
+});
+
+// Middleware: Verify Owner or Staff
 const verifyOwnerOrStaff = (req, res, next) => {
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) return res.status(403).json({ message: 'Unauthorized access' });
@@ -17,7 +55,7 @@ const verifyOwnerOrStaff = (req, res, next) => {
         const { id, role } = decoded; // Extract user ID and role
 
         if (role === 'owner') {
-            req.user = { id, role }; 
+            req.user = { id, role };
             return next(); // Owner is allowed
         }
 
@@ -32,26 +70,7 @@ const verifyOwnerOrStaff = (req, res, next) => {
     });
 };
 
-//  Add Menu Item (Owner/Staff)
-router.post('/add', verifyOwnerOrStaff, (req, res) => {
-    const { restaurant_id, category, name, price, image_url } = req.body;
-
-    // Staff can only modify their own restaurant’s menu
-    if (req.user.role !== 'owner' && req.user.restaurant_id !== restaurant_id) {
-        return res.status(403).json({ message: 'Access denied' });
-    }
-
-    db.query(
-        'INSERT INTO Menu (restaurant_id, category, name, price, image_url) VALUES (?, ?, ?, ?, ?)',
-        [restaurant_id, category, name, price, image_url],
-        (err, result) => {
-            if (err) return res.status(500).json({ message: 'Database error', error: err });
-            res.status(201).json({ message: 'Menu item added successfully!' });
-        }
-    );
-});
-
-// ✅ Update Menu Item (Owner/Staff)
+// ✅ UPDATE MENU ITEM
 router.put('/update/:menuId', verifyOwnerOrStaff, (req, res) => {
     const { menuId } = req.params;
     const { category, name, price, image_url } = req.body;
@@ -79,7 +98,7 @@ router.put('/update/:menuId', verifyOwnerOrStaff, (req, res) => {
     });
 });
 
-// ✅ Delete Menu Item (Owner/Staff)
+// ✅ DELETE MENU ITEM
 router.delete('/delete/:menuId', verifyOwnerOrStaff, (req, res) => {
     const { menuId } = req.params;
 
@@ -102,38 +121,5 @@ router.delete('/delete/:menuId', verifyOwnerOrStaff, (req, res) => {
     });
 });
 
-const multer = require("multer");
-const path = require("path");
-
-// Image Upload Configuration
-const storage = multer.diskStorage({
-  destination: "./uploads/",
-  filename: (req, file, cb) => {
-    cb(null, file.fieldname + "-" + Date.now() + path.extname(file.originalname));
-  },
-});
-const upload = multer({ storage });
-
-// Route to insert menu item
-router.post("/", upload.single("image"), (req, res) => {
-  const { category_id, name, price, description } = req.body;
-  const image_url = req.file ? req.file.filename : null;
-
-  if (!category_id || !name || !price || !description || !image_url) {
-    return res.status(400).json({ error: "All fields are required." });
-  }
-
-  const sql =
-    "INSERT INTO menu_items (category_id, name, price, description, image_url) VALUES (?, ?, ?, ?, ?)";
-  db.query(sql, [category_id, name, price, description, image_url], (err, result) => {
-    if (err) {
-      console.error("Database error:", err);
-      return res.status(500).json({ error: "Failed to add menu item." });
-    }
-    res.json({ message: "Menu item added successfully!", menuItemId: result.insertId });
-  });
-});
-
-
-// ✅ Export the Router
+// ✅ EXPORT THE ROUTER
 module.exports = router;
