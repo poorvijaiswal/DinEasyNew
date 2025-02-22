@@ -121,5 +121,42 @@ router.delete('/delete/:menuId', verifyOwnerOrStaff, (req, res) => {
     });
 });
 
+<<<<<<< HEAD
 // ✅ EXPORT THE ROUTER
+=======
+const multer = require("multer");
+const path = require("path");
+
+// Image Upload Configuration
+const storage = multer.diskStorage({
+  destination: "./uploads/",
+  filename: (req, file, cb) => {
+    cb(null, file.fieldname + "-" + Date.now() + path.extname(file.originalname));
+  },
+});
+const upload = multer({ storage });
+
+// Route to insert menu item
+router.post("/", upload.single("image"), (req, res) => {
+  const { category_id, name, price, description } = req.body;
+  const image_url = req.file ? req.file.filename : null;
+
+  if (!category_id || !name || !price || !description || !image_url) {
+    return res.status(400).json({ error: "All fields are required." });
+  }
+
+  const sql =
+    "INSERT INTO menu_items (category_id, name, price, description, image_url) VALUES (?, ?, ?, ?, ?)";
+  db.query(sql, [category_id, name, price, description, image_url], (err, result) => {
+    if (err) {
+      console.error("Database error:", err);
+      return res.status(500).json({ error: "Failed to add menu item." });
+    }
+    res.json({ message: "Menu item added successfully!", menuItemId: result.insertId });
+  });
+});
+
+
+// ✅ Export the Router
+>>>>>>> 5fe98ce3b15217dd6b33385e2dc0e8e1fe49b0ee
 module.exports = router;
