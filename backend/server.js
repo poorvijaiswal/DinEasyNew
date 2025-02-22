@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 const qrRoutes = require('./routes/qrRoutes');
 const userRoutes = require("./routes/user"); 
 const path = require("path");
+const menuRoutes = require("./routes/menu");
 const db = require("./config/db.js");// Import database connection
 
 // Load environment variables
@@ -34,14 +35,12 @@ app.get("/", (req, res) => {
     res.send("Hello World!");
 });
 
-
 // Import and use routes
 app.use("/api/user", userRoutes);
-app.use("/auth", require("./routes/auth"));
+app.use("/api/auth", require("./routes/auth"));
 app.use("/restaurant", require("./routes/restaurant"));
-app.use("/menu", require("./routes/menu"));
 app.use('/api/qr', qrRoutes);
-
+app.use("/api/menu", menuRoutes); // Ensure this line is correct
 
 // Start the server
 const PORT = process.env.PORT || 5000;

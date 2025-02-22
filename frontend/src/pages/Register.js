@@ -1,12 +1,15 @@
+
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaEnvelope, FaLock, FaPhone, FaUser } from 'react-icons/fa';
+import { registerOwner } from "../services/api";
 
 export default function Register() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     owner_name: "",
     email: "",
-    password: "",
+    password: "", 
     confirmPassword: "",
     phone: "",
   });
@@ -36,16 +39,17 @@ export default function Register() {
 
     setLoading(true);
 
+    const ownerData = {
+      owner_name: formData.owner_name,
+      email: formData.email,
+      password: formData.password,
+      phone: formData.phone,
+    };
+    
     try {
-      const response = await fetch("http://localhost:5000/api/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+      const response = await registerOwner(ownerData);
 
-      const data = await response.json();
-      
-      if (response.ok) {
+      if (response.status === 201) {
         setMessage("Registration successful!");
         setFormData({
           owner_name: "",
@@ -53,13 +57,13 @@ export default function Register() {
           password: "",
           confirmPassword: "",
           phone: "",
-         
         });
+        navigate('/verify-email', { state: { email: formData.email } });
       } else {
-        setError(data.message || "Registration failed. Try again.");
+        setError(response.data.message || "Registration failed. Try again.");
       }
     } catch (error) {
-      setError("Error connecting to server. Please try again.");
+      setError(error.response?.data?.message||"Error connecting to server. Please try again.");
     } finally {
       setLoading(false);
     }
