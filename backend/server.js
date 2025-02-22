@@ -27,7 +27,7 @@ const authRoutes = require("./routes/auth");
 app.use("/api/auth", authRoutes);
 
 const restaurantRoutes = require('./routes/restaurant');
-app.use('/restaurant', restaurantRoutes);
+app.use('/api/restaurant', restaurantRoutes);
 
 const menuRoutes = require('./routes/menu');
 app.use('/menu', menuRoutes);

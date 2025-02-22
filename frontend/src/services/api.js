@@ -26,5 +26,14 @@ export const loginOwner = (data) => API.post('/auth/login', data);
 export const loginStaff = (data) => API.post('/auth/staff-login', data);
 // Add more functions for other endpoints as needed
 
+// Create Razorpay Order
+// export const createRazorpayOrder = (amount) => API.post('/membership/create-razorpay-order', { amount });
 
+export const createRazorpayOrder = async (price, membershipId) => {
+  const response = await axios.post("http://localhost:5000/api/payment/create-razorpay-order", {
+    price,
+    membershipId
+  });
+  return response.data;
+};
 export default API;

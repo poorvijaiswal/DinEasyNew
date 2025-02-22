@@ -148,10 +148,24 @@ router.post('/login', (req, res) => {
                 return res.status(400).json({ message: 'Incorrect password!' });
             }
 
-            // Generate token
-            const token = jwt.sign({ id: owner.membership_id, role: 'owner' }, process.env.JWT_SECRET, { expiresIn: '1d' });
+             // Check if the membership is expired
+             const currentDate = new Date();
+             if (new Date(owner.end_date) < currentDate) {
+                 return res.json({ message: 'Membership expired, please renew your membership', membership_id: owner.membership_id, requiresMembershipRenewal: true });
+             }
 
-            res.json({ message: 'Login successful', token });
+            // Check if the restaurant is registered
+            db.query('SELECT * FROM Restaurant WHERE membership_id = ?', [owner.membership_id], (err, restaurantResults) => {
+                if (err) return res.status(500).json({ message: 'Database error', error: err });
+
+                const token = jwt.sign({ id: owner.membership_id, role: 'owner' }, process.env.JWT_SECRET, { expiresIn: '1d' });
+
+                if (restaurantResults.length === 0) {
+                    return res.json({ message: 'Login successful, please register your restaurant', token, requiresRestaurantRegistration: true });
+                } else {
+                    return res.json({ message: 'Login successful', token });
+                }
+            });
         }
     });
 });

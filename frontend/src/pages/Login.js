@@ -38,8 +38,20 @@ export default function Login() {
         setShowVerification(true);
         setTimeout(() => verificationRef.current?.focus(), 100); // Auto-focus verification input
         navigate('/verify-email', { state: { email: formData.email } });
+      } else if (response.data.requiresMembershipRenewal) {
+        setMessage("Membership expired, please renew your membership");
+        console.log(response.data.membership_id, "renwew membership") ;
+        localStorage.setItem("membership_id", response.data.membership_id); // Store membership_id in local storage
+        navigate('/select-membership');
+      } else if (response.data.requiresRestaurantRegistration) {
+        setMessage("Login successful, please register your restaurant");
+        localStorage.setItem("membership_id", response.data.membership_id); // Store membership_id in local storage
+        console.log(response.data.membership_id, "register restaurant") ;
+        navigate('/restaurant-register');
       } else {
         setMessage("Login successful");
+        localStorage.setItem("membership_id", response.data.membership_id); // Store membership_id in local storage
+        console.log(response.data.membership_id, "login successful") ;
         navigate('/dashboard/owner');
       }
     } catch (err) {
@@ -67,6 +79,7 @@ export default function Login() {
       });
       setMessage(response.data.message);
       setShowVerification(false);
+      navigate('/select-membership'); // Redirect to select-membership page after verification
     } catch (err) {
       setError(err.response?.data?.message || "Verification failed");
     } finally {
