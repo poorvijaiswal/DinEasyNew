@@ -1,6 +1,9 @@
 
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+
+import { FaEnvelope, FaLock, FaPhone, FaUser } from 'react-icons/fa';
+
 import { registerOwner } from "../services/api";
 
 export default function Register() {
@@ -11,9 +14,6 @@ export default function Register() {
     password: "", 
     confirmPassword: "",
     phone: "",
-    // start_date: "",
-    // end_date: "",
-    // termsAccepted: false,
   });
 
   const [error, setError] = useState("");
@@ -59,7 +59,6 @@ export default function Register() {
           password: "",
           confirmPassword: "",
           phone: "",
-          // termsAccepted: false,
         });
         navigate('/verify-email', { state: { email: formData.email } });
       } else {
@@ -73,9 +72,10 @@ export default function Register() {
   };
 
   return (
-    <div className="max-h-screen flex justify-center items-center min-h-screen bg-gray-100 p-4">
-      <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-4xl flex flex-col md:flex-row">
-        
+
+    <div className="flex justify-center items-center min-h-screen bg-cover bg-center bg-gray-100 p-4" style={{ backgroundImage: "url('https://img.freepik.com/free-photo/wooden-planks-with-blurred-restaurant-background_1253-56.jpg?size=626&ext=jpg')" }}> 
+      <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-4xl flex flex-col md:flex-row"> 
+
         {/* Left Section - Form */}
         <div className="w-full md:w-1/2 p-6">
           <h2 className="text-3xl font-bold mb-6 text-center md:text-left">
@@ -131,40 +131,20 @@ export default function Register() {
               value={formData.phone}
               required
             />
-            {/* <label>Start Date:</label>
-            <input
-              type="date"
-              id="start_date"
-              className="border p-3 rounded-lg w-full"
-              onChange={handleChange}
-              value={formData.start_date}
-              required
-            /> */}
-            {/* <label>End Date:</label>
-            <input
-              type="date"
-              id="end_date"
-              className="border p-3 rounded-lg w-full"
-              onChange={handleChange}
-              value={formData.end_date}
-              required
-            /> */}
+       
             <div className="flex items-center">
+
               <input
-                type="checkbox"
-                id="termsAccepted"
-                className="mr-2"
+                type="tel"
+                id="phone"
+                placeholder="Phone Number"
+                className="border-none outline-none w-full"
                 onChange={handleChange}
-                checked={formData.termsAccepted}
+                value={formData.phone}
                 required
               />
-              <label htmlFor="termsAccepted" className="text-gray-600">
-                I agree to the{" "}
-                <Link to="/terms" className="text-blue-600 hover:underline">
-                  Terms of Service
-                </Link>
-              </label>
             </div>
+           
             <button
               type="submit"
               className="bg-red-500 text-white py-3 rounded-lg w-full hover:bg-red-600 transition"

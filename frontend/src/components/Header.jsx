@@ -8,7 +8,8 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   return (
-    <nav className="bg-white shadow-sm fixed top-0 w-full z-10">
+
+    <nav className="bg-indigo-100 shadow-sm fixed top-0 w-full z-10">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
@@ -18,7 +19,7 @@ export default function Header() {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-8 ">
             <Link to="/" className="text-gray-700 hover:text-blue-600">
               Home
             </Link>
@@ -31,7 +32,7 @@ export default function Header() {
             {/* <Link to="/contact" className="text-gray-700 hover:text-blue-600">
               Contact
             </Link> */}
-            <Link to="/login" className="px-4 py-2 text-gray-700 border border-gray-300 rounded hover:bg-gray-100">
+            <Link to="/login" className="px-4 py-2 text-white border  bg-blue-600 border-gray-700 rounded hover:bg-blue-800">
               Login
             </Link>
             <Link to="/register" className="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700">

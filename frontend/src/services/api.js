@@ -26,6 +26,7 @@ export const loginOwner = (data) => API.post('/auth/login', data);
 export const loginStaff = (data) => API.post('/auth/staff-login', data);
 // Add more functions for other endpoints as needed
 
+
 // Create Razorpay Order
 // export const createRazorpayOrder = (amount) => API.post('/membership/create-razorpay-order', { amount });
 
@@ -37,3 +38,4 @@ export const createRazorpayOrder = async (price, membershipId) => {
   return response.data;
 };
 export default API;
+
