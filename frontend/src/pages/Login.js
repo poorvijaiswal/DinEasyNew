@@ -4,8 +4,6 @@ import axios from "axios";
 import { FaEnvelope, FaLock } from "react-icons/fa";
 // import { auth, googleProvider } from "../firebases/firebaseConfig";
 // import { signInWithPopup } from "firebase/auth";
-
-import { FaFacebookF, FaTwitter, FaGoogle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 
@@ -34,10 +32,10 @@ export default function Login() {
     }));
   };
 
-  const validatePassword = (password) => {
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
-    return passwordRegex.test(password);
-  };
+  // const validatePassword = (password) => {
+  //   const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+  //   return passwordRegex.test(password);
+  // };
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -52,11 +50,11 @@ export default function Login() {
       return;
     }
 
-    if (!validatePassword(formData.password)) {
-      setError("Password must be at least 8 characters long, contain a number, a letter, and a special character.");
-      setLoading(false);
-      return;
-    }
+    // if (!validatePassword(formData.password)) {
+    //   setError("Password must be at least 8 characters long, contain a number, a letter, and a special character.");
+    //   setLoading(false);
+    //   return;
+    // }
 
     try {
       const response = await axios.post("http://localhost:5000/api/auth/login", formData);
@@ -122,17 +120,6 @@ export default function Login() {
     }
   };
 
-  const handleGoogleLogin = async () => {
-    try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const token = await result.user.getIdToken();
-      await axios.post("http://localhost:5000/api/auth/google-login", { token });
-      setMessage("Login successful");
-    } catch (err) {
-      setError(err.response?.data?.message || "Google login failed");
-    }
-  };
-
   return (
 
     <div className="flex justify-center items-center min-h-screen bg-cover bg-center" style={{ backgroundImage: "url('https://img.freepik.com/free-photo/wooden-planks-with-blurred-restaurant-background_1253-56.jpg?size=626&ext=jpg')" }}>
@@ -188,7 +175,7 @@ export default function Login() {
                 {loading ? "Logging in..." : "Log In"}
               </button>
               <div className="flex justify-center mt-4">
-                <button onClick={handleGoogleLogin} className="bg-blue-500 text-white py-3 rounded-lg w-full hover:bg-blue-600 transition">
+                <button className="bg-blue-500 text-white py-3 rounded-lg w-full hover:bg-blue-600 transition">
                   Continue with Google
                 </button>
               </div>

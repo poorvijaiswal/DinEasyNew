@@ -1,9 +1,6 @@
 
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
-import { FaEnvelope, FaLock, FaPhone, FaUser } from 'react-icons/fa';
-
 import { registerOwner } from "../services/api";
 
 export default function Register() {
@@ -131,19 +128,6 @@ export default function Register() {
               value={formData.phone}
               required
             />
-       
-            <div className="flex items-center">
-
-              <input
-                type="tel"
-                id="phone"
-                placeholder="Phone Number"
-                className="border-none outline-none w-full"
-                onChange={handleChange}
-                value={formData.phone}
-                required
-              />
-            </div>
            
             <button
               type="submit"
