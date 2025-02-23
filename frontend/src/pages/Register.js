@@ -1,7 +1,9 @@
 
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+
 import { FaEnvelope, FaLock, FaPhone, FaUser } from 'react-icons/fa';
+
 import { registerOwner } from "../services/api";
 
 export default function Register() {
@@ -70,8 +72,10 @@ export default function Register() {
   };
 
   return (
+
     <div className="flex justify-center items-center min-h-screen bg-cover bg-center bg-gray-100 p-4" style={{ backgroundImage: "url('https://img.freepik.com/free-photo/wooden-planks-with-blurred-restaurant-background_1253-56.jpg?size=626&ext=jpg')" }}> 
       <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-4xl flex flex-col md:flex-row"> 
+
         {/* Left Section - Form */}
         <div className="w-full md:w-1/2 p-6">
           <h2 className="text-3xl font-bold mb-6 text-center md:text-left">
@@ -82,65 +86,54 @@ export default function Register() {
           {message && <p className="text-green-500 text-sm mb-4">{message}</p>}
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            {/* Owner Name */}
-            <div className="flex items-center border p-3 rounded-lg w-full">
-              <FaUser className="mr-3 text-gray-500" />
-              <input
-                type="text"
-                id="owner_name"
-                placeholder="Owner Name"
-                className="border-none outline-none w-full"
-                onChange={handleChange}
-                value={formData.owner_name}
-                required
-              />
-            </div>
+            <input
+              type="text"
+              id="owner_name"
+              placeholder="Owner Name"
+              className="border p-3 rounded-lg w-full"
+              onChange={handleChange}
+              value={formData.owner_name}
+              required
+            />
+            <input
+              type="email"
+              id="email"
+              placeholder="Your Email"
+              className="border p-3 rounded-lg w-full"
+              onChange={handleChange}
+              value={formData.email}
+              required
+            />
+            <input
+              type="password"
+              id="password"
+              placeholder="Password"
+              className="border p-3 rounded-lg w-full"
+              onChange={handleChange}
+              value={formData.password}
+              required
+            />
+            <input
+              type="password"
+              id="confirmPassword"
+              placeholder="Repeat your password"
+              className="border p-3 rounded-lg w-full"
+              onChange={handleChange}
+              value={formData.confirmPassword}
+              required
+            />
+            <input
+              type="tel"
+              id="phone"
+              placeholder="Phone Number"
+              className="border p-3 rounded-lg w-full"
+              onChange={handleChange}
+              value={formData.phone}
+              required
+            />
+       
+            <div className="flex items-center">
 
-            {/* Email */}
-            <div className="flex items-center border p-3 rounded-lg w-full">
-              <FaEnvelope className="mr-3 text-gray-500" />
-              <input
-                type="email"
-                id="email"
-                placeholder="Your Email"
-                className="border-none outline-none w-full"
-                onChange={handleChange}
-                value={formData.email}
-                required
-              />
-            </div>
-
-            {/* Password */}
-            <div className="flex items-center border p-3 rounded-lg w-full">
-              <FaLock className="mr-3 text-gray-500" />
-              <input
-                type="password"
-                id="password"
-                placeholder="Password"
-                className="border-none outline-none w-full"
-                onChange={handleChange}
-                value={formData.password}
-                required
-              />
-            </div>
-
-            {/* Confirm Password */}
-            <div className="flex items-center border p-3 rounded-lg w-full">
-              <FaLock className="mr-3 text-gray-500" />
-              <input
-                type="password"
-                id="confirmPassword"
-                placeholder="Repeat your password"
-                className="border-none outline-none w-full"
-                onChange={handleChange}
-                value={formData.confirmPassword}
-                required
-              />
-            </div>
-
-            {/* Phone */}
-            <div className="flex items-center border p-3 rounded-lg w-full">
-              <FaPhone className="mr-3 text-gray-500" />
               <input
                 type="tel"
                 id="phone"

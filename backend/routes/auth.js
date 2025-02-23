@@ -23,9 +23,11 @@ const transporter = nodemailer.createTransport({
 
 // Register User with Email Verification
 router.post('/register', async (req, res) => {
-    const { name, email, password, phone } = req.body;
 
-    if (!name || !email || !password || !phone) {
+    const { owner_name, email, password, phone } = req.body;
+
+    if (!owner_name || !email || !password || !phone) {
+
         return res.status(400).json({ message: 'All fields are required!' });
     }
 
@@ -44,7 +46,9 @@ router.post('/register', async (req, res) => {
         // Insert into Membership table
         db.query(
             'INSERT INTO Membership (owner_name, email, password, phone, verified, verification_code) VALUES (?, ?, ?, ?, 0, ?)',
-            [name, email, hashedPassword, phone, verificationCode],
+
+            [owner_name, email, hashedPassword, phone, verificationCode],
+
             (err, result) => {
                 if (err) return res.status(500).json({ message: 'Database error', error: err });
 
@@ -84,12 +88,42 @@ router.post('/verify', (req, res) => {
     });
 });
 
-// Login Endpoint
-router.post('/login', body('email').isEmail().withMessage('Enter a valid email'), body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'), async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+// <<<<<<< Sneha
+// // Login Endpoint
+// router.post('/login', body('email').isEmail().withMessage('Enter a valid email'), body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'), async (req, res) => {
+//     const errors = validationResult(req);
+//     if (!errors.isEmpty()) {
+//         return res.status(400).json({ errors: errors.array() });
+//     }
+
+// =======
+// Membership Selection
+router.post('/select-membership', (req, res) => {
+    const { email, membershipType } = req.body;
+
+    // Update membership type in the database
+    db.query('UPDATE Membership SET membership_type = ? WHERE email = ?', [membershipType, email], (err, result) => {
+        if (err) return res.status(500).json({ message: 'Database error', error: err });
+        res.status(200).json({ message: 'Membership selected successfully' });
+    });
+});
+
+// Payment Processing
+router.post('/payment', (req, res) => {
+    const { email, paymentDetails } = req.body;
+
+    // Process payment (this is a placeholder, integrate with a real payment gateway)
+    const paymentSuccess = true;
+
+    if (paymentSuccess) {
+        res.status(200).json({ message: 'Payment successful' });
+    } else {
+        res.status(400).json({ message: 'Payment failed' });
     }
+});
+
+// Owner Login
+router.post('/login', (req, res) => {
 
     const { email, password } = req.body;
     try {
@@ -147,21 +181,41 @@ router.post('/forgot-password', body('email').isEmail().withMessage('Enter a val
     }
 });
 
-// Reset Password Endpoint
-router.post('/reset-password/:resetToken', body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'), async (req, res) => {
-    const { resetToken } = req.params;
-    const { password } = req.body;
+// <<<<<<< Sneha
+// // Reset Password Endpoint
+// router.post('/reset-password/:resetToken', body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'), async (req, res) => {
+//     const { resetToken } = req.params;
+//     const { password } = req.body;
 
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
+//     const errors = validationResult(req);
+//     if (!errors.isEmpty()) {
+//         return res.status(400).json({ errors: errors.array() });
+//     }
 
-    try {
-        const decoded = jwt.verify(resetToken, process.env.JWT_SECRET);
-        const user = await User.findById(decoded.userId);
-        if (!user) {
-            return res.status(400).json({ message: 'User not found' });
+//     try {
+//         const decoded = jwt.verify(resetToken, process.env.JWT_SECRET);
+//         const user = await User.findById(decoded.userId);
+//         if (!user) {
+//             return res.status(400).json({ message: 'User not found' });
+// =======
+//              // Check if the membership is expired
+//              const currentDate = new Date();
+//              if (new Date(owner.end_date) < currentDate) {
+//                  return res.json({ message: 'Membership expired, please renew your membership', membership_id: owner.membership_id, requiresMembershipRenewal: true });
+//              }
+
+//             // Check if the restaurant is registered
+//             db.query('SELECT * FROM Restaurant WHERE membership_id = ?', [owner.membership_id], (err, restaurantResults) => {
+//                 if (err) return res.status(500).json({ message: 'Database error', error: err });
+
+//                 const token = jwt.sign({ id: owner.membership_id, role: 'owner' }, process.env.JWT_SECRET, { expiresIn: '1d' });
+
+//                 if (restaurantResults.length === 0) {
+//                     return res.json({ message: 'Login successful, please register your restaurant', token, requiresRestaurantRegistration: true });
+//                 } else {
+//                     return res.json({ message: 'Login successful', token });
+//                 }
+//             });
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);

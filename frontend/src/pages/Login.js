@@ -1,8 +1,13 @@
 import React, { useState, useRef } from "react";
 import axios from "axios";
+
 import { FaEnvelope, FaLock } from "react-icons/fa";
-import { auth, googleProvider } from "../firebases/firebaseConfig";
-import { signInWithPopup } from "firebase/auth";
+// import { auth, googleProvider } from "../firebases/firebaseConfig";
+// import { signInWithPopup } from "firebase/auth";
+
+import { FaFacebookF, FaTwitter, FaGoogle } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -19,6 +24,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   
   const verificationRef = useRef(null);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { id, value, type, checked } = e.target;
@@ -56,12 +62,34 @@ export default function Login() {
       const response = await axios.post("http://localhost:5000/api/auth/login", formData);
       if (response.data.requiresVerification) {
         setShowVerification(true);
-        setTimeout(() => verificationRef.current?.focus(), 100);
+
+
+        setTimeout(() => verificationRef.current?.focus(), 100); // Auto-focus verification input
+        navigate('/verify-email', { state: { email: formData.email } });
+      } else if (response.data.requiresMembershipRenewal) {
+        setMessage("Membership expired, please renew your membership");
+        console.log(response.data.membership_id, "renwew membership") ;
+        localStorage.setItem("membership_id", response.data.membership_id); // Store membership_id in local storage
+        navigate('/select-membership');
+      } else if (response.data.requiresRestaurantRegistration) {
+        setMessage("Login successful, please register your restaurant");
+        localStorage.setItem("membership_id", response.data.membership_id); // Store membership_id in local storage
+        console.log(response.data.membership_id, "register restaurant") ;
+        navigate('/restaurant-register');
+
       } else {
         setMessage("Login successful");
+        localStorage.setItem("membership_id", response.data.membership_id); // Store membership_id in local storage
+        console.log(response.data.membership_id, "login successful") ;
+        navigate('/dashboard/owner');
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Login failed");
+      if (err.response?.status === 403 && err.response?.data?.message === 'Please verify your email. A new verification code has been sent to your email.') {
+        setMessage(err.response.data.message);
+        navigate('/verify-email', { state: { email: formData.email } });
+      } else {
+        setError(err.response?.data?.message || "Login failed");
+      }
     } finally {
       setLoading(false);
     }
@@ -74,9 +102,19 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:5000/api/auth/forgot-password", { email: resetEmail });
-      setMessage(response.data.message || "Password reset link sent to your email.");
-      setShowForgotPassword(false);
+
+//       const response = await axios.post("http://localhost:5000/api/auth/forgot-password", { email: resetEmail });
+//       setMessage(response.data.message || "Password reset link sent to your email.");
+//       setShowForgotPassword(false);
+
+      const response = await axios.post("http://localhost:5000/api/auth/verify", {
+        email: formData.email,
+        verificationCode,
+      });
+      setMessage(response.data.message);
+      setShowVerification(false);
+      navigate('/select-membership'); // Redirect to select-membership page after verification
+
     } catch (err) {
       setError(err.response?.data?.message || "Failed to send reset link.");
     } finally {
@@ -96,6 +134,7 @@ export default function Login() {
   };
 
   return (
+
     <div className="flex justify-center items-center min-h-screen bg-cover bg-center" style={{ backgroundImage: "url('https://img.freepik.com/free-photo/wooden-planks-with-blurred-restaurant-background_1253-56.jpg?size=626&ext=jpg')" }}>
       <div className="bg-white p-10 rounded-2xl shadow-lg max-w-4xl w-full flex mx-6 mb-10">
         <div className="w-1/2 flex flex-col items-center justify-center p-6">
@@ -106,9 +145,8 @@ export default function Login() {
         </div>
 
         <div className="w-1/2 p-6">
-          <h2 className="text-3xl font-bold mb-4">Login</h2>
-          {message && <p className="text-green-600 text-center">{message}</p>}
-          
+          <h2 className="text-3xl font-bold mb-4">Owner Login</h2>
+          {message && <p className="text-green-600 text-center">{message}</p>}          
           {showForgotPassword ? (
             <form onSubmit={handleForgotPassword} className="flex flex-col gap-4">
               <input

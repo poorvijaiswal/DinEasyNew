@@ -7,6 +7,7 @@ export default function Dashboard() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   return (
+
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
       <div className={`bg-blue-900 text-white h-full transition-all duration-300 ${isNavOpen ? "w-58" : "w-16"}`}>
@@ -86,3 +87,4 @@ export default function Dashboard() {
     </div>
   );
 }
+

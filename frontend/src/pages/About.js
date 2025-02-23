@@ -3,11 +3,11 @@ import React from "react";
 export default function About() {
   return (
     <div 
-      className="bg-cover bg-center bg-no-repeat py-16 px-6 md:px-16 lg:px-32"
+      className="bg-cover bg-center bg-no-repeat py-16 px-6 md:px-16 max-h-screen lg:px-32"
       style={{ backgroundImage: "url('https://t4.ftcdn.net/jpg/02/92/20/37/360_F_292203735_CSsyqyS6A4Z9Czd4Msf7qZEhoxjpzZl1.jpg')" }} // Replace with your image URL
     >
       {/* Overlay for better readability */}
-      <div className="bg-black bg-opacity-60 py-12 px-6 md:px-16 lg:px-32 rounded-lg">
+      <div className="mt-14 bg-black bg-opacity-60 py-12 px-6 md:px-16 lg:px-32 rounded-lg">
         <div className="max-w-5xl mx-auto text-center text-white">
           <h2 className="text-4xl font-bold mb-4">About Us</h2>
           <p className="text-lg">

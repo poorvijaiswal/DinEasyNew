@@ -8,7 +8,8 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   return (
-    <nav className="bg-indigo-100 shadow-sm">
+
+    <nav className="bg-indigo-100 shadow-sm fixed top-0 w-full z-10">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
