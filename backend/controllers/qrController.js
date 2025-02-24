@@ -15,28 +15,58 @@ const generateQRCode = async (req, res) => {
 
         // Store QR code in MySQL database
         console.log('restaurantId:', restaurantId);
+        
+        // Check if a QR code already exists for the same restaurant and table number
         db.query(
-            'INSERT INTO TableQR (table_number, qr_code, restaurant_id) VALUES (?, ?, ?)',
-            [tableNumber, qrCodeUrl, restaurantId],
-            (err, result) => {
+            'SELECT * FROM TableQR WHERE restaurant_id = ? AND table_number = ?',
+            [restaurantId, tableNumber],
+            (err, results) => {
                 if (err) {
                     console.error('Database error:', err);
                     return res.status(500).json({ message: 'Database error', error: err });
                 }
 
-                console.log('QR code stored in database:', result);
-                res.json({ qrCode: qrCodeUrl });
+                if (results.length > 0) {
+                    return res.status(400).json({ message: 'QR code already exists for this table number' });
+                }
+
+                // Store QR code in MySQL database
+                db.query(
+                    'INSERT INTO TableQR (table_number, qr_code, restaurant_id) VALUES (?, ?, ?)',
+                    [tableNumber, qrCodeUrl, restaurantId],
+                    (err, result) => {
+                        if (err) {
+                            console.error('Database error:', err);
+                            return res.status(500).json({ message: 'Database error', error: err });
+                        }
+
+                        console.log('QR code stored in database:', result);
+                        res.json({ qrCode: qrCodeUrl });
+                    }
+                );
             }
         );
-        
     } catch (error) {
         console.error('Error generating QR code:', error);
         res.status(500).json({ message: 'Error generating QR code', error });
     }
 };
 
-const getAllQRCodes = (req, res) => {
-    db.query('SELECT * FROM TableQR', (err, results) => {
+// const getAllQRCodes = (req, res) => {
+//     db.query('SELECT * FROM TableQR', (err, results) => {
+//         if (err) {
+//             console.error('Database error:', err);
+//             return res.status(500).json({ message: 'Database error', error: err });
+//         }
+//         res.json(results);
+//     });
+// };
+
+// module.exports = { generateQRCode, getAllQRCodes };
+
+const getAllQRCodesByRestaurantId = (req, res) => {
+    const { restaurantId } = req.params;
+    db.query('SELECT * FROM TableQR WHERE restaurant_id = ?', [restaurantId], (err, results) => {
         if (err) {
             console.error('Database error:', err);
             return res.status(500).json({ message: 'Database error', error: err });
@@ -45,4 +75,4 @@ const getAllQRCodes = (req, res) => {
     });
 };
 
-module.exports = { generateQRCode, getAllQRCodes };
+module.exports = { generateQRCode, getAllQRCodesByRestaurantId };

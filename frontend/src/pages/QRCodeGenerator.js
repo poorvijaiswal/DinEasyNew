@@ -17,6 +17,9 @@ const QRCodeGenerator = () => {
     const fetchRestaurantId = async () => {
       try {
         const token = localStorage.getItem('token');
+        if (!token) {
+          throw new Error("No token found in local storage");
+        }
         const response = await axios.get("http://localhost:5000/api/auth/getRestaurantId", {
           headers: {
             Authorization: `Bearer ${token}` // Ensure no double quotes around the token
@@ -35,7 +38,15 @@ const QRCodeGenerator = () => {
   const generateQR = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:5000/api/qr/generate", { tableNumber, size, restaurantId  });
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error("No token found in local storage");
+      }
+      const response = await axios.post("http://localhost:5000/api/qr/generate", { tableNumber, size, restaurantId }, {
+        headers: {
+          Authorization: `Bearer ${token}` // Ensure no double quotes around the token
+        }
+      });
       
       console.log("QR Code Data:", response.data.qrCode); // Debugging step
       
@@ -50,6 +61,7 @@ const QRCodeGenerator = () => {
       setMessage("Error generating QR Code");
     }
   };
+  
   useEffect(() => {
     console.log("Updated QR Code Data:", qrCode); // Log QR code whenever it updates
   }, [qrCode]);

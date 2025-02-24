@@ -5,18 +5,53 @@ import "./QRCodeDisplay.css";
 const QRCodeDisplay = () => {
   const [qrCodes, setQRCodes] = useState([]);
 
+  const [restaurantId, setRestaurantId] = useState("");
+  const [message, setMessage] = useState("");
   useEffect(() => {
-    const fetchQRCodes = async () => {
+    // Fetch restaurant_id from the backend
+    const fetchRestaurantId = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/qr/getAll");
-        console.log("Fetched QR Codes:", response.data); // Debugging step
-        setQRCodes(response.data);
+        const token = localStorage.getItem('token');
+        if (!token) {
+          throw new Error("No token found in local storage");
+        }
+        const response = await axios.get("http://localhost:5000/api/auth/getRestaurantId", {
+          headers: {
+            Authorization: `Bearer ${token}` // Ensure no double quotes around the token
+          }
+        });
+        setRestaurantId(response.data.restaurant_id);
       } catch (error) {
-        console.error("Error fetching QR codes:", error);
+        console.error("Error fetching restaurant ID", error);
+        setMessage("Error fetching restaurant ID");
       }
     };
-    fetchQRCodes();
+
+    fetchRestaurantId();
   }, []);
+  
+
+  useEffect(() => {
+    if (restaurantId) {
+      // Fetch QR codes for the specific restaurant ID
+      const fetchQRCodes = async () => {
+        try {
+          const token = localStorage.getItem('token');
+          const response = await axios.get(`http://localhost:5000/api/qr/getAllQRCodes/${restaurantId}`, {
+            headers: {
+              Authorization: `Bearer ${token}` // Ensure no double quotes around the token
+            }
+          });
+          setQRCodes(response.data);
+        } catch (error) {
+          console.error("Error fetching QR codes", error);
+          setMessage("Error fetching QR codes");
+        }
+      };
+
+      fetchQRCodes();
+    }
+  }, [restaurantId]);
 
   return (
     <div className="qr-display">
