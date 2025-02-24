@@ -20,6 +20,7 @@ import MembershipSelection from './pages/MembershipSelection';
 import Payment from './pages/Payment';
 import StaffLogin from './pages/StaffLogin';
 import RestaurantRegister from './pages/RestaurantRegister';
+import PrivateRoute from './components/PrivateRoute';
 
 
 
@@ -36,14 +37,14 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          {/* <Route path="/dashboard" element={ <Dashboard />} /> */}
           <Route path='/about' element={<About/>} />
           <Route path='/profile' element={<ProfilePage/>} />
           <Route path="/partners" element={<PartnerRestaurant/>} />
 
-          <Route path="/generate-qr" element={<QRCodeGenerator/>} />
-          <Route path="/display-qr" element={<QRCodeDisplay />} />
-          <Route path="/createmenu" element={<CreateMenu />} />
+          {/* <Route path="/generate-qr" element={<QRCodeGenerator/>} /> */}
+          {/* <Route path="/display-qr" element={<QRCodeDisplay />} /> */}
+          {/* <Route path="/createmenu" element={<CreateMenu />} /> */}
          
         
 
@@ -53,9 +54,17 @@ function App() {
           
           <Route path="/restaurant-register" element={<RestaurantRegister />} />
           <Route path="/staff-login" element={<StaffLogin />} />
-          <Route path="/dashboard/owner" element={<OwnerDashboard />} />
-          <Route path="/dashboard/staff" element={<StaffDashboard />} />
+          {/* <Route path="/dashboard/owner" element={<OwnerDashboard />} /> */}
+          {/* <Route path="/dashboard/staff" element={<StaffDashboard />} /> */}
 
+            <Route element={<PrivateRoute />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/generate-qr" element={<QRCodeGenerator />} />
+              <Route path="/display-qr" element={<QRCodeDisplay />} />
+              <Route path="/createmenu" element={<CreateMenu />} />
+              <Route path="/dashboard/owner" element={<OwnerDashboard />} />
+              <Route path="/dashboard/staff" element={<StaffDashboard />} />
+            </Route>
         </Routes>
         </div>
       </div>

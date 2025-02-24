@@ -1,11 +1,17 @@
 "use client"
 
 import React, { useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { Menu } from "lucide-react"
 
 export default function Header() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const isAuthenticated = !!localStorage.getItem('token');
+  const navigate = useNavigate(); 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/');
+  };
 
   return (
 
@@ -32,12 +38,20 @@ export default function Header() {
             {/* <Link to="/contact" className="text-gray-700 hover:text-blue-600">
               Contact
             </Link> */}
-            <Link to="/login" className="px-4 py-2 text-white border  bg-blue-600 border-gray-700 rounded hover:bg-blue-800">
-              Login
-            </Link>
-            <Link to="/register" className="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700">
-              Register Now
-            </Link>
+            {isAuthenticated ? (
+              <button onClick={handleLogout} className="px-4 py-2 text-white border bg-blue-600 border-gray-700 rounded hover:bg-blue-800">
+                Logout
+              </button>
+            ) : (
+              <>
+                <Link to="/login" className="px-4 py-2 text-white border bg-blue-600 border-gray-700 rounded hover:bg-blue-800">
+                  Login
+                </Link>
+                <Link to="/register" className="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700">
+                  Register Now
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile menu button */}
