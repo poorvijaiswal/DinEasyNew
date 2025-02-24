@@ -58,6 +58,12 @@ export default function Login() {
 
     try {
       const response = await axios.post("http://localhost:5000/api/auth/login", formData);
+      const{ token, membership_id } = response.data;
+
+      localStorage.setItem("token", token); // Store token in local storage
+      localStorage.setItem("membership_id", membership_id); // Store membership_id in local storage
+
+      
       if (response.data.requiresVerification) {
         setShowVerification(true);
 

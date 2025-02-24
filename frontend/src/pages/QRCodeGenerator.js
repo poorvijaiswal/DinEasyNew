@@ -9,12 +9,33 @@ const QRCodeGenerator = () => {
   const [qrCode, setQRCode] = useState("");  // Ensure it's a string, not null
   const [tableNumber, setTableNumber] = useState("");
   const [size, setSize] = useState(300);
+  const [restaurantId, setRestaurantId] = useState(""); // Add restaurantId state
   const [message, setMessage] = useState("");
    
+  useEffect(() => {
+    // Fetch restaurant_id from the backend
+    const fetchRestaurantId = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get("http://localhost:5000/api/auth/getRestaurantId", {
+          headers: {
+            Authorization: `Bearer ${token}` // Ensure no double quotes around the token
+          }
+        });
+        setRestaurantId(response.data.restaurant_id);
+      } catch (error) {
+        console.error("Error fetching restaurant ID", error);
+        setMessage("Error fetching restaurant ID");
+      }
+    };
+
+    fetchRestaurantId();
+  }, []);
+
   const generateQR = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:5000/api/qr/generate", { tableNumber, size });
+      const response = await axios.post("http://localhost:5000/api/qr/generate", { tableNumber, size, restaurantId  });
       
       console.log("QR Code Data:", response.data.qrCode); // Debugging step
       

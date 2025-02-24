@@ -7,6 +7,7 @@ const userRoutes = require("./routes/user");
 const path = require("path");
 // const menuRoutes = require("./routes/menu");
 const db = require("./config/db.js");// Import database connection
+const verifyToken = require("./middleware/auth");
 
 // Load environment variables
 dotenv.config();
@@ -38,16 +39,14 @@ app.get("/", (req, res) => {
 
 // Import and use routes
 app.use("/api/user", userRoutes);
-// app.use("/api/auth", require("./routes/auth"));
-// app.use("/restaurant", require("./routes/restaurant"));
 app.use('/api/qr', qrRoutes);
-// app.use("/api/menu", menuRoutes); // Ensure this line is correct
-
-// Start the server
 
 // import Routes
 const authRoutes = require("./routes/auth");
 app.use("/api/auth", authRoutes);
+
+//protected route
+app.use('/api/qr', verifyToken, qrRoutes);
 
 const restaurantRoutes = require('./routes/restaurant');
 app.use('/api/restaurant', restaurantRoutes);

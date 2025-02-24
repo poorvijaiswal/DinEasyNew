@@ -1,19 +1,34 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+const dotenv = require('dotenv');
 
-const auth = async (req, res, next) => {
-  const token = req.header('Authorization').replace('Bearer ', '');
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded.userId);
-    if (!user) {
-      throw new Error();
+dotenv.config();
+
+const verifyToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    console.log('Authorization Header:', authHeader); // Debugging statement
+
+    if (!authHeader) {
+        console.log('No authorization header provided'); // Debugging statement
+        return res.status(403).json({ message: 'No token provided' });
     }
-    req.user = user;
-    next();
-  } catch (err) {
-    res.status(401).json({ message: 'Please authenticate.' });
-  }
+
+    const token = authHeader.split(' ')[1]; // Extract the token from the "Bearer <token>" format
+    console.log('Extracted Token:', token); // Debugging statement
+
+    if (!token) {
+        console.log('No token provided'); // Debugging statement
+        return res.status(403).json({ message: 'No token provided' });
+    }
+
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+        if (err) {
+            console.error('Token Verification Error:', err); // Debugging statement
+            return res.status(500).json({ message: 'Failed to authenticate token' });
+        }
+        console.log('Decoded Token:', decoded); // Debugging statement
+        req.user = decoded;
+        next();
+    });
 };
 
-module.exports = auth;
+module.exports = verifyToken;

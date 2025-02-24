@@ -3,7 +3,7 @@ const db = require('../config/db');
 
 const generateQRCode = async (req, res) => {
     const { tableNumber, size, restaurantId } = req.body;
-    
+    console.log(restaurantId);
     const qrText = `http://localhost:3000/order?table=${tableNumber}`;
 
     try {
@@ -14,6 +14,7 @@ const generateQRCode = async (req, res) => {
         console.log('Generated QR code URL:', qrCodeUrl);
 
         // Store QR code in MySQL database
+        console.log('restaurantId:', restaurantId);
         db.query(
             'INSERT INTO TableQR (table_number, qr_code, restaurant_id) VALUES (?, ?, ?)',
             [tableNumber, qrCodeUrl, restaurantId],

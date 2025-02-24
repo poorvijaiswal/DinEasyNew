@@ -6,6 +6,7 @@ const nodemailer = require('nodemailer');
 const dotenv = require('dotenv');
 const crypto = require('crypto'); // For generating the verification code
 const { body, validationResult } = require('express-validator');
+const verifyToken = require('../middleware/auth');
 //const User = require('../models/User'); // Assuming you have a User model in your database
 
 dotenv.config();
@@ -221,6 +222,21 @@ router.post('/staff-login', (req, res) => {
   });
 });
 
-
+// Get Restaurant ID
+router.get('/getRestaurantId', verifyToken, (req, res) => {
+    console.log('User from Token:', req.user); // Debugging statement
+    const membership_id = req.user.id; // Ensure req.user is set by the middleware
+  
+    db.query('SELECT restaurant_id FROM Restaurant WHERE membership_id = ?', [membership_id], (err, results) => {
+      if (err) {
+        console.error('Database error:', err); // Debugging statement
+        return res.status(500).json({ message: 'Database error', error: err });
+      }
+      if (results.length === 0) {
+        return res.status(404).json({ message: 'Restaurant ID not found' });
+      }
+      res.json({ restaurant_id: results[0].restaurant_id });
+    });
+  });
 
 module.exports = router;
