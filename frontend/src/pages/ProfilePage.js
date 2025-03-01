@@ -6,14 +6,12 @@ const ProfilePage = () => {
   const [userData, setUserData] = useState({});
   const [profileImage, setProfileImage] = useState("");
   const [newImage, setNewImage] = useState(null);
-  const userId = 1; // Replace with actual user ID
+  const userId = localStorage.getItem("userId") || 1;
 
-  // 🟢 Fetch user data
+  // Fetch user data
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        console.log("Auth Token:", localStorage.getItem("token")); // Debug token
-  
         const response = await axios.get(`http://localhost:5000/api/user/${userId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -21,21 +19,21 @@ const ProfilePage = () => {
         });
 
         setUserData(response.data);
-        setProfileImage(response.data.profile_image);
+        setProfileImage(`http://localhost:5000/uploads/${response.data.profile_image}`);
       } catch (err) {
         console.error("Error fetching user data", err);
       }
     };
-  
-    fetchUserData();
-  }, []);
 
-  // 🟢 Handle image selection
+    fetchUserData();
+  }, [userId]);
+
+  // Handle image selection
   const handleImageChange = (e) => {
     setNewImage(e.target.files[0]);
   };
 
-  // 🟢 Upload new profile image
+  // Upload new profile image
   const handleProfileUpdate = async () => {
     if (!newImage) {
       alert("Please select an image first!");
@@ -46,8 +44,6 @@ const ProfilePage = () => {
     formData.append("profileImage", newImage);
 
     try {
-      console.log("Uploading image...");
-
       const response = await axios.post(
         `http://localhost:5000/api/user/update-profile/${userId}`,
         formData,
@@ -70,7 +66,7 @@ const ProfilePage = () => {
   return (
     <div className="profile-page">
       <div className="profile-header">
-        <h2>{userData.username} Profile</h2>
+        <h2>{userData.owner_name} <b>Profile</b></h2>
       </div>
       <div className="profile-image-section">
         <img src={profileImage} alt="Profile" className="profile-image" />
@@ -82,6 +78,7 @@ const ProfilePage = () => {
       <div className="profile-details">
         <h3>Personal Details</h3>
         <p>Email: {userData.email}</p>
+        <p>Membership ID: {userData.membership_id}</p>
       </div>
     </div>
   );

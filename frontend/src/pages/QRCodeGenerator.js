@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 import { QRCodeCanvas } from "qrcode.react";
 import "./QRCodeGenerator.css";
 import { FaBars, FaSignOutAlt, FaChartBar, FaClipboardList, FaUserCog, FaQrcode, FaHome } from "react-icons/fa";
@@ -69,7 +70,7 @@ const QRCodeGenerator = () => {
   return (
     <div className="qr-container">
       {/* Sidebar */}
-      <div className={`sidebar ${isNavOpen ? "w-58" : "w-16"}`}>
+      <div className={`bg-blue-900 text-white h-full transition-all duration-300 ${isNavOpen ? "w-58" : "w-16"}`}>
         <div className="p-4 flex items-center justify-between">
           <button className="text-white text-2xl" onClick={() => setIsNavOpen(!isNavOpen)}>
             <FaBars />
@@ -77,27 +78,27 @@ const QRCodeGenerator = () => {
         </div>
 
         <nav className="mt-4 space-y-2">
-          <a href="/dashboard" className="nav_link">
-            <FaHome className="nav_icon" /> {isNavOpen && "Dashboard"}
-          </a>
-          <a href="/sales" className="nav_link">
-            <FaChartBar className="nav_icon" /> {isNavOpen && "Total Sales"}
-          </a>
-          <a href="/createmenu" className="nav_link">
-            <FaClipboardList className="nav_icon" /> {isNavOpen && "Create Menu"}
-          </a>
-          <a href="/manage-staff" className="nav_link">
-            <FaUserCog className="nav_icon" /> {isNavOpen && "Manage Staff"}
-          </a>
-          <a href="/generate-qr" className="nav_link">
-            <FaQrcode className="nav_icon" /> {isNavOpen && "Generate QR"}
-          </a>
-          <a href="/display-qr" className="nav_link">
-            <FaQrcode className="nav_icon" /> {isNavOpen && "Display QR"}
-          </a>
-          <a href="/logout" className="nav_link hover:bg-red-600 mt-4">
-            <FaSignOutAlt className="nav_icon" /> {isNavOpen && "Sign Out"}
-          </a>
+          <Link to="/dashboard" className="flex items-center px-4 py-2 hover:bg-blue-700 transition-all">
+            <FaHome className="mr-2" /> {isNavOpen && "Dashboard"}
+          </Link>
+          <Link to="/sales" className="flex items-center px-4 py-2 hover:bg-blue-700 transition-all">
+            <FaChartBar className="mr-2" /> {isNavOpen && "Total Sales"}
+          </Link>
+          <Link to="/createmenu" className="flex items-center px-4 py-2 hover:bg-blue-700 transition-all">
+            <FaClipboardList className="mr-2" /> {isNavOpen && "Create Menu"}
+          </Link>
+          <Link to="/manage-staff" className="flex items-center px-4 py-2 hover:bg-blue-700 transition-all">
+            <FaUserCog className="mr-2" /> {isNavOpen && "Manage Staff"}
+          </Link>
+          <Link to="/generate-qr" className="flex items-center px-4 py-2 hover:bg-blue-700 transition-all">
+            <FaQrcode className="mr-2" /> {isNavOpen && "Generate QR"}
+          </Link>
+          <Link to="/display-qr" className="flex items-center px-4 py-2 hover:bg-blue-700 transition-all">
+            <FaQrcode className="mr-2" /> {isNavOpen && "Display QR"}
+          </Link>
+          <Link to="/logout" className="flex items-center px-4 py-2 hover:bg-red-600 transition-all mt-4">
+            <FaSignOutAlt className="mr-2" /> {isNavOpen && "Sign Out"}
+          </Link>
         </nav>
       </div>
 
