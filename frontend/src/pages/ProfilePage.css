@@ -1,6 +1,6 @@
-/*.profile-page {
+.profile-page {
   max-width: 400px;
-  margin: 0px auto;
+  margin: 70px auto;
   padding: 50px;
   border: 1px solid #ddd;
   border-radius: 10px;
@@ -70,46 +70,6 @@
 .profile-details p {
   font-size: 14px;
   color: #666;
-}*/
-
-/* ProfilePage.css */
-
-.profile-container {
-  max-width: 600px;
-  margin: auto;
-  padding: 20px;
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.profile-container h1 {
-  font-size: 2rem;
-  margin-bottom: 20px;
-}
-
-.profile-details {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.profile-details img {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  margin-bottom: 20px;
-}
-
-.profile-details p {
-  font-size: 1.2rem;
-  margin-bottom: 10px;
-}
-
-.error {
-  color: red;
-  text-align: center;
-  margin-top: 20px;
 }
 
   

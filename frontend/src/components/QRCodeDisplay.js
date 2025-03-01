@@ -4,20 +4,20 @@ import "./QRCodeDisplay.css";
 
 const QRCodeDisplay = () => {
   const [qrCodes, setQRCodes] = useState([]);
-
   const [restaurantId, setRestaurantId] = useState("");
+  const [selectedQRCodes, setSelectedQRCodes] = useState([]); // ✅ Track selected QR codes
   const [message, setMessage] = useState("");
+
   useEffect(() => {
-    // Fetch restaurant_id from the backend
     const fetchRestaurantId = async () => {
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem("token");
         if (!token) {
           throw new Error("No token found in local storage");
         }
         const response = await axios.get("http://localhost:5000/api/auth/getRestaurantId", {
           headers: {
-            Authorization: `Bearer ${token}` // Ensure no double quotes around the token
+            Authorization: `Bearer ${token}`
           }
         });
         setRestaurantId(response.data.restaurant_id);
@@ -29,17 +29,15 @@ const QRCodeDisplay = () => {
 
     fetchRestaurantId();
   }, []);
-  
 
   useEffect(() => {
     if (restaurantId) {
-      // Fetch QR codes for the specific restaurant ID
       const fetchQRCodes = async () => {
         try {
-          const token = localStorage.getItem('token');
+          const token = localStorage.getItem("token");
           const response = await axios.get(`http://localhost:5000/api/qr/getAllQRCodes/${restaurantId}`, {
             headers: {
-              Authorization: `Bearer ${token}` // Ensure no double quotes around the token
+              Authorization: `Bearer ${token}`
             }
           });
           setQRCodes(response.data);
@@ -53,15 +51,73 @@ const QRCodeDisplay = () => {
     }
   }, [restaurantId]);
 
+  //Toggle QR Code Selection
+  const handleSelection = (qr) => {
+    setSelectedQRCodes((prevSelected) => {
+      if (prevSelected.includes(qr)) {
+        return prevSelected.filter(item => item !== qr);
+      } else {
+        return [...prevSelected, qr];
+      }
+    });
+  };
+
+  // Print Selected QR Codes
+  const handlePrint = () => {
+    if (selectedQRCodes.length === 0) {
+      alert("Please select at least one QR code to print.");
+      return;
+    }
+
+    const printWindow = window.open("", "_blank");
+    printWindow.document.write(`
+      <html>
+      <head>
+        <title>Print QR Codes</title>
+        <style>
+          .print-container { text-align: center; padding: 20px; }
+          .qr-card { display: inline-block; margin: 10px; text-align: center; }
+          .qr-card img { width: 150px; height: 150px; }
+        </style>
+      </head>
+      <body>
+        <div class="print-container">
+          <h2>Selected QR Codes</h2>
+          ${selectedQRCodes.map(qr => `
+            <div class="qr-card">
+              <img src="${qr.qr_code}" alt="QR Code for Table ${qr.table_number}" />
+              <p><b>Table ${qr.table_number}</b></p>
+            </div>
+          `).join("")}
+        </div>
+        <script>window.print(); window.onafterprint = () => window.close();</script>
+      </body>
+      </html>
+    `);
+    printWindow.document.close();
+  };
+
   return (
     <div className="qr-display">
       <h1>All Generated QR Codes</h1>
+
+      {qrCodes.length > 0 && (
+        <button className="print-button" onClick={handlePrint}>
+          Print Selected QR Codes
+        </button>
+      )}
+
       <div className="qr-list">
         {qrCodes.length === 0 ? (
           <p>No QR codes generated yet.</p>
         ) : (
           qrCodes.map((qr, index) => (
             <div key={index} className="qr-item">
+              <input
+                type="checkbox"
+                onChange={() => handleSelection(qr)}
+                checked={selectedQRCodes.includes(qr)}
+              />
               <img src={qr.qr_code} alt={`QR Code for Table ${qr.table_number}`} />
               <p><b>Table Number: {qr.table_number}</b></p>
             </div>
