@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+/*import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./ProfilePage.css";
 
@@ -79,6 +79,60 @@ const ProfilePage = () => {
         <h3>Personal Details</h3>
         <p>Email: {userData.email}</p>
         <p>Membership ID: {userData.membership_id}</p>
+      </div>
+    </div>
+  );
+};
+
+export default ProfilePage;*/
+
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import "./ProfilePage.css";
+
+const ProfilePage = () => {
+  const [userData, setUserData] = useState(null);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          throw new Error("No token found in local storage");
+        }
+        const userId = localStorage.getItem("userId"); // Assuming userId is stored in local storage
+        const response = await axios.get(`http://localhost:5000/api/user/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setUserData(response.data);
+      } catch (error) {
+        console.error("Error fetching user data", error);
+        setError("Error fetching user data");
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  if (error) {
+    return <div className="error">{error}</div>;
+  }
+
+  if (!userData) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <div className="profile-container">
+      <h1>Profile</h1>
+      <div className="profile-details">
+        <img src={`http://localhost:5000/uploads/${userData.profile_image}`} alt="Profile" />
+        <p><strong>Name:</strong> {userData.owner_name}</p>
+        <p><strong>Email:</strong> {userData.email}</p>
+        {/* Add more fields as needed */}
       </div>
     </div>
   );
