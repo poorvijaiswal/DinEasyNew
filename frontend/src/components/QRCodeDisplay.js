@@ -5,7 +5,7 @@ import "./QRCodeDisplay.css";
 const QRCodeDisplay = () => {
   const [qrCodes, setQRCodes] = useState([]);
   const [restaurantId, setRestaurantId] = useState("");
-  const [selectedQRCodes, setSelectedQRCodes] = useState([]); // ✅ Track selected QR codes
+  const [selectedQRCodes, setSelectedQRCodes] = useState([]); //Track selected QR codes
   const [message, setMessage] = useState("");
 
   useEffect(() => {
