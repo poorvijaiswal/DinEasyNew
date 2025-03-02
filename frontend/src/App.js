@@ -19,6 +19,7 @@ import Payment from './pages/Payment';
 import StaffLogin from './pages/StaffLogin';
 import RestaurantRegister from './pages/RestaurantRegister';
 import StaffManagement from './pages/StaffManagement';
+import StaffListPage from './components/StaffListPage';
 
 function App() {
   return (
@@ -48,7 +49,7 @@ function App() {
           <Route path="/dashboard/owner" element={<OwnerDashboard />} />
           <Route path="/dashboard/staff" element={<StaffDashboard />} />
           <Route path="/manage-staff" element={<StaffManagement />} />
-
+          <Route path="/staff-list" element={<StaffListPage />} />
         </Routes>
         </div>
       </div>
