@@ -60,30 +60,36 @@ export default function ResetPassword() {
   };
 
   return (
-    <div className="pt-16 reset-password-container">
-      <form onSubmit={handleResetPassword}>
-        <h2>Reset Password</h2>
-        {message && <p className="text-green-500">{message}</p>}
-        {error && <p className="text-red-500">{error}</p>}
-        <div className="form-group">
-          <label>New Password</label>
+    <div className="pt-16 flex justify-center items-center min-h-screen bg-gray-100">
+      <form onSubmit={handleResetPassword} className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+        <h2 className="text-2xl font-bold mb-6 text-center">Reset Password</h2>
+        {message && <p className="text-green-500 mb-4">{message}</p>}
+        {error && <p className="text-red-500 mb-4">{error}</p>}
+        <div className="form-group mb-4">
+          <label className="block text-gray-700 mb-2">New Password</label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
-        <div className="form-group">
-          <label>Confirm New Password</label>
+        <div className="form-group mb-4">
+          <label className="block text-gray-700 mb-2">Confirm New Password</label>
           <input
             type="password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
+            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
-        <button type="submit" disabled={loading}>
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-200"
+        >
           {loading ? "Resetting..." : "Reset Password"}
         </button>
       </form>

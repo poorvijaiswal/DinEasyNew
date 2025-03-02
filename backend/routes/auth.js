@@ -52,6 +52,8 @@ router.post('/register', async (req, res) => {
             (err, result) => {
                 if (err) return res.status(500).json({ message: 'Database error', error: err });
 
+                const defaultProfileImage = "default-profile.png";
+                
                 // Send verification email
                 const mailOptions = {
                     from: process.env.EMAIL_USER,

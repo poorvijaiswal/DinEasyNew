@@ -29,4 +29,21 @@ router.get('/', (req, res) => {
     });
 });
 
+
+// Get restaurant data by membership ID
+router.get('/:membershipId', (req, res) => {
+    const { membershipId } = req.params;
+  
+    db.query('SELECT * FROM Restaurant WHERE membership_id = ?', [membershipId], (err, results) => {
+      if (err) {
+        console.error('Database error:', err);
+        return res.status(500).json({ message: 'Database error', error: err });
+      }
+      if (results.length === 0) {
+        return res.status(404).json({ message: 'Restaurant not found' });
+      }
+  
+      res.json(results[0]);
+    });
+  });
 module.exports = router;

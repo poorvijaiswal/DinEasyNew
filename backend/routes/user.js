@@ -5,10 +5,10 @@ const db = require("../config/db"); // Ensure the correct database connection
 
 const router = express.Router();
 
-// ✅ Serve uploaded files
+//  Serve uploaded files
 router.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
-// ✅ Multer Setup for File Upload
+//  Multer Setup for File Upload
 const storage = multer.diskStorage({
   destination: path.join(__dirname, "../uploads/"),
   filename: (req, file, cb) => {
@@ -17,18 +17,46 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// ✅ Update Profile Route
-router.post("/update-profile/:id", upload.single("profileImage"), (req, res) => {
-  const userId = req.params.id;
+// Create User Route (Example)
+router.post("/create-user", (req, res) => {
+  const { email, password, phone, owner_name, membership_type, start_date, end_date } = req.body;
+  const defaultProfileImage = "default-profile.png"; // Default profile image
+
+  const query = "INSERT INTO users (email, password, phone, owner_name, membership_type, start_date, end_date, profile_image) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+  db.query(query, [email, password, phone, owner_name, membership_type, start_date, end_date, defaultProfileImage], (err, result) => {
+    if (err) return res.status(500).json({ error: err });
+    res.json({ message: "User created successfully", userId: result.insertId });
+  });
+});
+
+//  Update Profile Route
+router.post("/update-profile/:membershipId", upload.single("profileImage"), (req, res) => {
+  const membershipId = req.params.id;
 
   if (!req.file) return res.status(400).json({ message: "No file uploaded" });
 
   const imagePath = req.file.filename; // Save filename in DB
-  const query = "UPDATE users SET profile_image = ? WHERE id = ?";
-  db.query(query, [imagePath, userId], (err, result) => {
+  const query = "UPDATE users SET profile_image = ? WHERE membership_id = ?";
+  db.query(query, [imagePath, membershipId], (err, result) => {
     if (err) return res.status(500).json({ error: err });
     res.json({ message: "Profile updated successfully", profile_image: imagePath });
   });
 });
 
+// Get user data by membership ID
+router.get('/:membershipId', (req, res) => {
+  const { membershipId } = req.params;
+
+  db.query('SELECT * FROM membership WHERE membership_id = ?', [membershipId], (err, results) => {
+    if (err) {
+      console.error('Database error:', err);
+      return res.status(500).json({ message: 'Database error', error: err });
+    }
+    if (results.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json(results[0]);
+  });
+});
 module.exports = router;

@@ -41,7 +41,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           {/* <Route path="/dashboard" element={ <Dashboard />} /> */}
           <Route path='/about' element={<About/>} />
-          <Route path='/profile' element={<ProfilePage/>} />
+          
           <Route path="/partners" element={<PartnerRestaurant/>} />
 
           {/* <Route path="/generate-qr" element={<QRCodeGenerator/>} /> */}
@@ -64,6 +64,7 @@ function App() {
               <Route path="/generate-qr" element={<QRCodeGenerator />} />
               <Route path="/display-qr" element={<QRCodeDisplay />} />
               <Route path="/createmenu" element={<CreateMenu />} />
+              <Route path='/profile' element={<ProfilePage/>} />
               <Route path="/dashboard/owner" element={<OwnerDashboard />} />
               <Route path="/dashboard/staff" element={<StaffDashboard />} />
             </Route>
