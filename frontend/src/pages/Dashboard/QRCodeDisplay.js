@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./QRCodeDisplay.css"; 
+import DashboardLayout from "../../components/DashboardLayout";
 
 const QRCodeDisplay = () => {
   const [qrCodes, setQRCodes] = useState([]);
@@ -54,7 +55,8 @@ const QRCodeDisplay = () => {
   }, [restaurantId]);
 
   return (
-    <div className="qr-display">
+    <DashboardLayout>
+      <div className="qr-display">
       <h1>All Generated QR Codes</h1>
       <div className="qr-list">
         {qrCodes.length === 0 ? (
@@ -69,6 +71,7 @@ const QRCodeDisplay = () => {
         )}
       </div>
     </div>
+    </DashboardLayout>
   );
 };
 

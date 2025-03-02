@@ -3,6 +3,7 @@ import axios from "axios";
 import { QRCodeCanvas } from "qrcode.react";
 import "./QRCodeGenerator.css";
 import { FaBars, FaSignOutAlt, FaChartBar, FaClipboardList, FaUserCog, FaQrcode, FaHome } from "react-icons/fa";
+import DashboardLayout from "../../components/DashboardLayout";
 
 const QRCodeGenerator = () => {
   const [isNavOpen, setIsNavOpen] = useState(true);
@@ -67,40 +68,7 @@ const QRCodeGenerator = () => {
   }, [qrCode]);
 
   return (
-    <div className="qr-container">
-      {/* Sidebar */}
-      <div className={`sidebar ${isNavOpen ? "w-58" : "w-16"}`}>
-        <div className="p-4 flex items-center justify-between">
-          <button className="text-white text-2xl" onClick={() => setIsNavOpen(!isNavOpen)}>
-            <FaBars />
-          </button>
-        </div>
-
-        <nav className="mt-4 space-y-2">
-          <a href="/dashboard" className="nav_link">
-            <FaHome className="nav_icon" /> {isNavOpen && "Dashboard"}
-          </a>
-          <a href="/sales" className="nav_link">
-            <FaChartBar className="nav_icon" /> {isNavOpen && "Total Sales"}
-          </a>
-          <a href="/createmenu" className="nav_link">
-            <FaClipboardList className="nav_icon" /> {isNavOpen && "Create Menu"}
-          </a>
-          <a href="/manage-staff" className="nav_link">
-            <FaUserCog className="nav_icon" /> {isNavOpen && "Manage Staff"}
-          </a>
-          <a href="/generate-qr" className="nav_link">
-            <FaQrcode className="nav_icon" /> {isNavOpen && "Generate QR"}
-          </a>
-          <a href="/display-qr" className="nav_link">
-            <FaQrcode className="nav_icon" /> {isNavOpen && "Display QR"}
-          </a>
-          <a href="/logout" className="nav_link hover:bg-red-600 mt-4">
-            <FaSignOutAlt className="nav_icon" /> {isNavOpen && "Sign Out"}
-          </a>
-        </nav>
-      </div>
-
+    <DashboardLayout>
       {/* Main Content */}
       <div className="main-content">
         <div className="form-container">
@@ -144,7 +112,7 @@ const QRCodeGenerator = () => {
          
         </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 };
 

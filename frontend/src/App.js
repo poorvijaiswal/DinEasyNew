@@ -3,18 +3,17 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import Dashboard from './pages/Dashboard';
 import Header from './components/Header';
 import About from './pages/About';
 import PartnerRestaurant from './pages/PartnerRestaurant';
 
-import ProfilePage from './pages/ProfilePage';
-import QRCodeDisplay from "./components/QRCodeDisplay";
-import QRCodeGenerator from "./pages/QRCodeGenerator";
+import ProfilePage from './pages/Dashboard/ProfilePage';
+import QRCodeDisplay from "./pages/Dashboard/QRCodeDisplay";
+import QRCodeGenerator from "./pages/Dashboard/QRCodeGenerator";
 import CreateMenu from "./components/CreateMenu";
 
-import OwnerDashboard from './pages/OwnerDashboard';
-import StaffDashboard from './pages/StaffDashboard';
+import OwnerDashboard from './pages/Dashboard/OwnerDashboard';
+import StaffDashboard from './pages/Dashboard/StaffDashboard';
 import VerifyEmail from './pages/VerifyEmail';
 import MembershipSelection from './pages/MembershipSelection';
 import Payment from './pages/Payment';
@@ -62,7 +61,6 @@ function App() {
           {/* <Route path="/dashboard/staff" element={<StaffDashboard />} /> */}
 
             <Route element={<PrivateRoute />}>
-              <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/generate-qr" element={<QRCodeGenerator />} />
               <Route path="/display-qr" element={<QRCodeDisplay />} />
               <Route path="/createmenu" element={<CreateMenu />} />
