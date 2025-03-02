@@ -8,7 +8,7 @@ export default function Dashboard() {
 
   return (
 
-    <div className="flex h-screen bg-gray-100">
+    <div className="pt-16 flex h-screen bg-gray-100">
       {/* Sidebar */}
       <div className={`bg-blue-900 text-white h-full transition-all duration-300 ${isNavOpen ? "w-58" : "w-16"}`}>
         <div className="p-4 flex items-center justify-between">
@@ -43,7 +43,7 @@ export default function Dashboard() {
       </div>
 
       {/* Main Content */}
-      <div className={`flex-1 flex flex-col transition-all duration-300 ${isNavOpen ? "ml-50" : "ml-16"} p-6`}>
+      <div className={` flex-1 flex flex-col transition-all duration-300 ${isNavOpen ? "ml-50" : "ml-16"} p-6`}>
         {/* Navbar */}
         <header className="bg-white shadow-md p-4 flex justify-between items-center rounded-lg">
           <h1 className="text-xl font-bold">Dashboard</h1>
