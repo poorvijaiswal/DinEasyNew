@@ -43,7 +43,7 @@ const restaurantRoutes = require('./routes/restaurant');
 app.use('/api/restaurant', restaurantRoutes);
 
 const menuRoutes = require('./routes/menu');
-app.use('/menu', menuRoutes);
+app.use('/api', menuRoutes);
 
 const membershipRoutes = require('./routes/membership');
 app.use('/api/membership', membershipRoutes);

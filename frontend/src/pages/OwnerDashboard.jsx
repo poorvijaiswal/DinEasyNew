@@ -24,7 +24,7 @@ export default function Dashboard() {
           <Link to="/sales" className="flex items-center px-4 py-2 hover:bg-blue-700 transition-all">
             <FaChartBar className="mr-2" /> {isNavOpen && "Total Sales"}
           </Link>
-          <Link to="/createmenu" className="flex items-center px-4 py-2 hover:bg-blue-700 transition-all">
+          <Link to="/menu" className="flex items-center px-4 py-2 hover:bg-blue-700 transition-all">
             <FaClipboardList className="mr-2" /> {isNavOpen && "Create Menu"}
           </Link>
           <Link to="/manage-staff" className="flex items-center px-4 py-2 hover:bg-blue-700 transition-all">

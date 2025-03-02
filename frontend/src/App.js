@@ -9,8 +9,7 @@ import About from './pages/About';
 import PartnerRestaurant from './pages/PartnerRestaurant';
 import ProfilePage from './pages/ProfilePage';
 import QRCodeDisplay from "./components/QRCodeDisplay";
-import QRCodeGenerator from "./pages/QRCodeGenerator";
-import CreateMenu from "./components/CreateMenu";
+import QRCodeGenerator from "./pages/QRCodeGenerator"
 import OwnerDashboard from './pages/OwnerDashboard';
 import StaffDashboard from './pages/StaffDashboard';
 import VerifyEmail from './pages/VerifyEmail';
@@ -20,6 +19,7 @@ import StaffLogin from './pages/StaffLogin';
 import RestaurantRegister from './pages/RestaurantRegister';
 import StaffManagement from './pages/StaffManagement';
 import StaffListPage from './components/StaffListPage';
+import MenuPage from './pages/MenuPage';
 
 function App() {
   return (
@@ -40,7 +40,6 @@ function App() {
           <Route path="/partners" element={<PartnerRestaurant/>} />
           <Route path="/generate-qr" element={<QRCodeGenerator/>} />
           <Route path="/display-qr" element={<QRCodeDisplay />} />
-          <Route path="/createmenu" element={<CreateMenu />} />
           <Route path="/verify-email" element={<VerifyEmail />} />
           <Route path="/select-membership" element={<MembershipSelection />} />
           <Route path="/payment" element={<Payment />} />         
@@ -50,6 +49,7 @@ function App() {
           <Route path="/dashboard/staff" element={<StaffDashboard />} />
           <Route path="/manage-staff" element={<StaffManagement />} />
           <Route path="/staff-list" element={<StaffListPage />} />
+          <Route path="/menu" element={<MenuPage />} />
         </Routes>
         </div>
       </div>
