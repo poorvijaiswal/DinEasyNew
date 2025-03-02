@@ -18,6 +18,8 @@ const StaffManagement = () => {
         fetchStaff();
         fetchRestaurants();
     }, []);
+        
+    // Fetch staff members
 
     const fetchStaff = async () => {
         try {
@@ -27,7 +29,7 @@ const StaffManagement = () => {
             console.error("Error fetching staff:", error);
         }
     };
-
+    // Fetch restaurant details
     const fetchRestaurants = async () => {
         try {
             const response = await axios.get("http://localhost:5000/api/restaurant");
@@ -36,11 +38,11 @@ const StaffManagement = () => {
             console.error("Error fetching restaurants:", error);
         }
     };
-
+    // Handle input change
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
-
+    // Handle form submission (Add / Update Staff)
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -64,9 +66,23 @@ const StaffManagement = () => {
             setError("Error saving staff: " + err.message);
         }
     };
+    //  Delete staff member
+    const handleDelete = async (staff_id) => {
+      if (!window.confirm("Are you sure you want to delete this staff member?")) return;
+
+      try {
+          await axios.delete(`http://localhost:5000/api/staff/${staff_id}`);
+          setMessage("Staff deleted successfully!");
+          fetchStaff(); // Refresh list after deletion
+      } catch (error) {
+          setError("Error deleting staff: " + error.message);
+          console.error("Error deleting staff:", error);
+      }
+  };
+
 
     return (
-        <div className="max-w-4xl mx-auto mt-10 bg-white shadow-lg rounded-lg p-6">
+        <div className=" mx-auto mt-20 bg-slate-100 p-8 rounded-2xl shadow-lg w-full max-w-4xl">
             <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Staff Management</h2>
 
             {/* Display Messages */}
@@ -133,7 +149,7 @@ const StaffManagement = () => {
                                     <button onClick={() => setEditingStaff(staffMember)} className="bg-yellow-500 text-white px-3 py-1 rounded mr-2">
                                         Edit
                                     </button>
-                                    <button onClick={() => console.log("Delete action")} className="bg-red-500 text-white px-3 py-1 rounded">
+                                    <button onClick={() => handleDelete(staffMember.staff_id)} className="bg-red-500 text-white px-3 py-1 rounded">
                                         Delete
                                     </button>
                                 </td>
