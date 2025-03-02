@@ -32,10 +32,10 @@ export default function Login() {
     }));
   };
 
-  // const validatePassword = (password) => {
-  //   const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
-  //   return passwordRegex.test(password);
-  // };
+  const validatePassword = (password) => {
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+    return passwordRegex.test(password);
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -50,11 +50,11 @@ export default function Login() {
       return;
     }
 
-    // if (!validatePassword(formData.password)) {
-    //   setError("Password must be at least 8 characters long, contain a number, a letter, and a special character.");
-    //   setLoading(false);
-    //   return;
-    // }
+    if (!validatePassword(formData.password)) {
+      setError("Password must be at least 8 characters long, contain a number, a letter, and a special character.");
+      setLoading(false);
+      return;
+    }
 
     try {
       const response = await axios.post("http://localhost:5000/api/auth/login", formData);
@@ -106,19 +106,9 @@ export default function Login() {
     setLoading(true);
 
     try {
-
-//       const response = await axios.post("http://localhost:5000/api/auth/forgot-password", { email: resetEmail });
-//       setMessage(response.data.message || "Password reset link sent to your email.");
-//       setShowForgotPassword(false);
-
-      const response = await axios.post("http://localhost:5000/api/auth/verify", {
-        email: formData.email,
-        verificationCode,
-      });
-      setMessage(response.data.message);
-      setShowVerification(false);
-      navigate('/select-membership'); // Redirect to select-membership page after verification
-
+      const response = await axios.post("http://localhost:5000/api/auth/forgot-password", { email: resetEmail });
+      setMessage(response.data.message || "Password reset link sent to your email.");
+      setShowForgotPassword(false);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to send reset link.");
     } finally {

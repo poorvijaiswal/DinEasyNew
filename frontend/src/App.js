@@ -22,6 +22,9 @@ import StaffLogin from './pages/StaffLogin';
 import RestaurantRegister from './pages/RestaurantRegister';
 import PrivateRoute from './components/PrivateRoute';
 
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
+
 
 
 function App() {
@@ -45,7 +48,8 @@ function App() {
           {/* <Route path="/generate-qr" element={<QRCodeGenerator/>} /> */}
           {/* <Route path="/display-qr" element={<QRCodeDisplay />} /> */}
           {/* <Route path="/createmenu" element={<CreateMenu />} /> */}
-         
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
         
 
           <Route path="/verify-email" element={<VerifyEmail />} />

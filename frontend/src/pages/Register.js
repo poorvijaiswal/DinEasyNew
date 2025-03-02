@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { registerOwner } from "../services/api";
@@ -25,6 +24,11 @@ export default function Register() {
     }));
   };
 
+  const validatePassword = (password) => {
+    const regex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+    return regex.test(password);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -33,6 +37,11 @@ export default function Register() {
     // Password validation
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match!");
+      return;
+    }
+
+    if (!validatePassword(formData.password)) {
+      setError("Password must be at least 8 characters long, contain a number, a letter, and a special character.");
       return;
     }
 
@@ -62,14 +71,13 @@ export default function Register() {
         setError(response.data.message || "Registration failed. Try again.");
       }
     } catch (error) {
-      setError(error.response?.data?.message||"Error connecting to server. Please try again.");
+      setError(error.response?.data?.message || "Error connecting to server. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-
     <div className="flex justify-center items-center min-h-screen bg-cover bg-center bg-gray-100 p-4" style={{ backgroundImage: "url('https://img.freepik.com/free-photo/wooden-planks-with-blurred-restaurant-background_1253-56.jpg?size=626&ext=jpg')" }}> 
       <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-4xl flex flex-col md:flex-row"> 
 

@@ -8,7 +8,7 @@ const ProfilePage = () => {
   const [newImage, setNewImage] = useState(null);
   const userId = 1; // Replace with actual user ID
 
-  // 🟢 Fetch user data
+  // Fetch user data
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -30,12 +30,12 @@ const ProfilePage = () => {
     fetchUserData();
   }, []);
 
-  // 🟢 Handle image selection
+  //  Handle image selection
   const handleImageChange = (e) => {
     setNewImage(e.target.files[0]);
   };
 
-  // 🟢 Upload new profile image
+  //  Upload new profile image
   const handleProfileUpdate = async () => {
     if (!newImage) {
       alert("Please select an image first!");

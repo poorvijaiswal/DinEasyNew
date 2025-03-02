@@ -239,4 +239,76 @@ router.get('/getRestaurantId', verifyToken, (req, res) => {
     });
   });
 
+//   -----------------------------------------------------------------
+
+// Forgot Password
+router.post('/forgot-password', async (req, res) => {
+    const { email } = req.body;
+  
+    db.query('SELECT * FROM Membership WHERE email = ?', [email], (err, results) => {
+      if (err) {
+        console.error('Database error:', err);
+        return res.status(500).json({ message: 'Database error', error: err });
+      }
+      if (results.length === 0) {
+        return res.status(404).json({ message: 'Email not found' });
+      }
+  
+      const user = results[0];
+      const resetToken = crypto.randomBytes(32).toString('hex');
+      const resetTokenExpiry = Date.now() + 3600000; // 1 hour
+  
+      db.query('UPDATE Membership SET reset_token = ?, reset_token_expiry = ? WHERE email = ?', [resetToken, resetTokenExpiry, email], (err, results) => {
+        if (err) {
+          console.error('Database error:', err);
+          return res.status(500).json({ message: 'Database error', error: err });
+        }
+  
+        const resetUrl = `http://localhost:3000/reset-password/${resetToken}`;
+        const mailOptions = {
+          from: process.env.EMAIL_USER,
+          to: email,
+          subject: 'Password Reset',
+          html: `<p>You requested a password reset. Click <a href="${resetUrl}">here</a> to reset your password.</p>`
+        };
+  
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            console.error('Error sending email:', error);
+            return res.status(500).json({ message: 'Error sending email', error });
+          }
+          console.log('Email sent:', info.response);
+          res.json({ message: 'Password reset email sent' });
+        });
+      });
+    });
+  });
+  
+  // Reset Password
+  router.post('/reset-password/:token', async (req, res) => {
+    const { token } = req.params;
+    const { password } = req.body;
+  
+    db.query('SELECT * FROM Membership WHERE reset_token = ? AND reset_token_expiry > ?', [token, Date.now()], async (err, results) => {
+      if (err) {
+        console.error('Database error:', err);
+        return res.status(500).json({ message: 'Database error', error: err });
+      }
+      if (results.length === 0) {
+        return res.status(400).json({ message: 'Invalid or expired token' });
+      }
+  
+      const user = results[0];
+      const hashedPassword = await bcrypt.hash(password, 10);
+  
+      db.query('UPDATE Membership SET password = ?, reset_token = NULL, reset_token_expiry = NULL WHERE membership_id = ?', [hashedPassword, user.membership_id], (err, results) => {
+        if (err) {
+          console.error('Database error:', err);
+          return res.status(500).json({ message: 'Database error', error: err });
+        }
+        res.json({ message: 'Password reset successful' });
+      });
+    });
+  });
+
 module.exports = router;

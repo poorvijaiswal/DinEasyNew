@@ -5,7 +5,6 @@ const dotenv = require("dotenv");
 const qrRoutes = require('./routes/qrRoutes');
 const userRoutes = require("./routes/user"); 
 const path = require("path");
-// const menuRoutes = require("./routes/menu");
 const db = require("./config/db.js");// Import database connection
 const verifyToken = require("./middleware/auth");
 
@@ -17,6 +16,12 @@ const app = express();
 
 // Middleware
 app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:3000', // Allow requests from this origin
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true
+}));
+
 app.use(bodyParser.json());
 app.use(express.json()); // Parse JSON request bodies
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -44,6 +49,13 @@ app.use('/api/qr', qrRoutes);
 // import Routes
 const authRoutes = require("./routes/auth");
 app.use("/api/auth", authRoutes);
+app.use('/api', authRoutes);
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ message: 'Internal Server Error', error: err.message });
+  });
 
 //protected route
 app.use('/api/qr', verifyToken, qrRoutes);
