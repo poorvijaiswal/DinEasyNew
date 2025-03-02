@@ -54,6 +54,9 @@ app.use('/api/payment', paymentRoutes);
 const qrRoutes = require('./routes/qrRoutes');
 app.use('/api/qr', verifyToken, qrRoutes);
 
+const staffRoutes = require('./routes/staff');
+app.use('/api', staffRoutes);
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
