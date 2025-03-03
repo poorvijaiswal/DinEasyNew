@@ -50,6 +50,8 @@ function App() {
           <Route path="/manage-staff" element={<StaffManagement />} />
           <Route path="/staff-list" element={<StaffListPage />} />
           <Route path="/menu" element={<MenuPage />} />
+          
+
         </Routes>
         </div>
       </div>
