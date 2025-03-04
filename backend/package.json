@@ -3,14 +3,15 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
@@ -21,10 +22,9 @@
     "mysql2": "^3.12.0",
     "nodemailer": "^6.10.0",
     "nodemon": "^3.1.9",
-
     "qrcode": "^1.5.4",
-
-    "razorpay": "^2.9.5"
-
-  }
+    "razorpay": "^2.9.5",
+    "socket.io": "^4.8.1"
+  },
+  "description": ""
 }
