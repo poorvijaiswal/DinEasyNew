@@ -1,11 +1,11 @@
-const express = require("express");
+/*const express = require("express");
 const db = require("../config/db");
 const multer = require("multer");
 const path = require("path");
 
 const router = express.Router();
 
-// Multer Setup for Image Upload
+// Multer setup for image upload
 const storage = multer.diskStorage({
     destination: path.join(__dirname, "../uploads/"),
     filename: (req, file, cb) => {
@@ -14,7 +14,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// Add Menu Item
+// ✅ Add Menu Item
 router.post("/menu", upload.single("image"), (req, res) => {
     const { restaurant_id, category, name, description, price } = req.body;
     const image_url = req.file ? req.file.filename : null;
@@ -33,7 +33,7 @@ router.post("/menu", upload.single("image"), (req, res) => {
     });
 });
 
-// Fetch Menu Items for a Restaurant
+// ✅ Fetch Menu Items for a Restaurant
 router.get("/menu/:restaurant_id", (req, res) => {
     const { restaurant_id } = req.params;
 
@@ -50,9 +50,7 @@ router.get("/menu/:restaurant_id", (req, res) => {
         res.json(results);
     });
 });
-
-
-//  Update Menu Item
+// ✅ Update Menu Item
 router.put("/menu/:id", upload.single("image"), (req, res) => {
     const { category, name, description, price } = req.body;
     const { id } = req.params;
@@ -68,7 +66,85 @@ router.put("/menu/:id", upload.single("image"), (req, res) => {
     });
 });
 
-//  Delete Menu Item
+// ✅ Delete Menu Item
+router.delete("/menu/:id", (req, res) => {
+    const { id } = req.params;
+
+    const query = "DELETE FROM Menu WHERE id = ?";
+    db.query(query, [id], (err) => {
+        if (err) {
+            console.error("Database error:", err);
+            return res.status(500).json({ error: "Database error", details: err });
+        }
+        res.json({ message: "Menu item deleted successfully!" });
+    });
+});
+
+module.exports = router;*/
+const express = require("express");
+const db = require("../config/db");
+const multer = require("multer");
+const path = require("path");
+
+const router = express.Router();
+
+// Multer Setup for Image Upload
+const storage = multer.diskStorage({
+    destination: path.join(__dirname, "../uploads/"),
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname));
+    },
+});
+const upload = multer({ storage });
+
+// ✅ Add Menu Item
+router.post("/menu", upload.single("image"), (req, res) => {
+    const { restaurant_id, category, name, description, price } = req.body;
+    const image_url = req.file ? req.file.filename : null;
+
+    if (!restaurant_id || !category || !name || !price) {
+        return res.status(400).json({ error: "All fields are required" });
+    }
+
+    const query = "INSERT INTO Menu (restaurant_id, category, name, description, price, image_url) VALUES (?, ?, ?, ?, ?, ?)";
+    db.query(query, [restaurant_id, category, name, description, price, image_url], (err, result) => {
+        if (err) {
+            console.error("Database error:", err);
+            return res.status(500).json({ error: "Database error", details: err });
+        }
+        res.json({ message: "Menu item added successfully!", id: result.insertId });
+    });
+});
+
+// ✅ Fetch All Menu Items
+router.get("/menu", (req, res) => {
+    const query = "SELECT * FROM Menu";
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error("Database error:", err);
+            return res.status(500).json({ error: "Database error", details: err });
+        }
+        res.json(results);
+    });
+});
+
+// ✅ Update Menu Item
+router.put("/menu/:id", upload.single("image"), (req, res) => {
+    const { category, name, description, price } = req.body;
+    const { id } = req.params;
+    const image_url = req.file ? req.file.filename : req.body.image_url; // Keep old image if not changed
+
+    const query = "UPDATE menu SET category = ?, name = ?, description = ?, price = ?, image_url = ? WHERE id = ?";
+    db.query(query, [category, name, description, price, image_url, id], (err) => {
+        if (err) {
+            console.error("Database error:", err);
+            return res.status(500).json({ error: "Database error", details: err });
+        }
+        res.json({ message: "Menu item updated successfully!" });
+    });
+});
+
+// ✅ Delete Menu Item
 router.delete("/menu/:id", (req, res) => {
     const { id } = req.params;
 

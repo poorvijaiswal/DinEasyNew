@@ -20,7 +20,7 @@ import RestaurantRegister from './pages/RestaurantRegister';
 import StaffManagement from './pages/StaffManagement';
 import StaffListPage from './components/StaffListPage';
 import MenuPage from './pages/MenuPage';
-
+import MenuList from './pages/MenuList';
 function App() {
   return (
     
@@ -50,6 +50,7 @@ function App() {
           <Route path="/manage-staff" element={<StaffManagement />} />
           <Route path="/staff-list" element={<StaffListPage />} />
           <Route path="/menu" element={<MenuPage />} />
+          <Route path="/menu-list" element={<MenuList />} />
           
 
         </Routes>
