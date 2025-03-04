@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 
 const MenuPage = () => {
   const [restaurants, setRestaurants] = useState([]);
+  const [menuItems, setMenuItems] = useState([]);
   const [formData, setFormData] = useState({
     restaurant_id: "",
     category: "Starters",
@@ -12,11 +13,13 @@ const MenuPage = () => {
     price: "",
     image: null,
   });
+  const [editingItem, setEditingItem] = useState(null);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
   useEffect(() => {
     fetchRestaurants();
+    fetchMenuItems();
   }, []);
 
   const fetchRestaurants = async () => {
@@ -25,6 +28,15 @@ const MenuPage = () => {
       setRestaurants(response.data);
     } catch (error) {
       console.error("Error fetching restaurants:", error);
+    }
+  };
+
+  const fetchMenuItems = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/api/menu");
+      setMenuItems(response.data);
+    } catch (error) {
+      console.error("Error fetching menu items:", error);
     }
   };
 
@@ -48,13 +60,44 @@ const MenuPage = () => {
     Object.keys(formData).forEach((key) => form.append(key, formData[key]));
 
     try {
-      await axios.post("http://localhost:5000/api/menu", form, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      setMessage("Menu item added successfully!");
+      if (editingItem) {
+        await axios.put(`http://localhost:5000/api/menu/${editingItem.id}`, form, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        setMessage("Menu item updated successfully!");
+      } else {
+        await axios.post("http://localhost:5000/api/menu", form, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        setMessage("Menu item added successfully!");
+      }
       setFormData({ restaurant_id: "", category: "Starters", name: "", description: "", price: "", image: null });
+      setEditingItem(null);
+      fetchMenuItems();
     } catch (err) {
-      setError("Error adding menu item: " + err.message);
+      setError("Error saving menu item: " + err.message);
+    }
+  };
+
+  const handleEdit = (item) => {
+    setFormData({
+      restaurant_id: item.restaurant_id,
+      category: item.category,
+      name: item.name,
+      description: item.description,
+      price: item.price,
+      image: null, // Image will not be pre-filled
+    });
+    setEditingItem(item);
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/menu/${id}`);
+      setMessage("Menu item deleted successfully!");
+      fetchMenuItems();
+    } catch (error) {
+      setError("Error deleting menu item: " + error.message);
     }
   };
 
@@ -105,11 +148,11 @@ const MenuPage = () => {
 
         <div>
           <label className="block text-gray-700 font-semibold mb-1">Upload Image</label>
-          <input type="file" onChange={handleFileChange} className="w-full border p-2 rounded-lg" required />
+          <input type="file" onChange={handleFileChange} className="w-full border p-2 rounded-lg" required={!editingItem} />
         </div>
 
         <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">
-          Add Menu Item
+          {editingItem ? "Update Menu Item" : "Add Menu Item"}
         </button>
       </form>
 
@@ -117,6 +160,33 @@ const MenuPage = () => {
         <Link to="/menu-list" className="bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 transition">
           View Menu List
         </Link>
+      </div>
+
+      <div className="mt-10">
+        <h3 className="text-2xl font-bold text-center text-gray-800 mb-6">Menu Items</h3>
+        <table className="w-full border-collapse border border-gray-200">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="border p-2">Name</th>
+              <th className="border p-2">Category</th>
+              <th className="border p-2">Price</th>
+              <th className="border p-2">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {menuItems.map((item) => (
+              <tr key={item.id} className="border">
+                <td className="border p-2">{item.name}</td>
+                <td className="border p-2">{item.category}</td>
+                <td className="border p-2">{item.price}</td>
+                <td className="border p-2">
+                  <button onClick={() => handleEdit(item)} className="bg-yellow-500 text-white px-3 py-1 rounded mr-2">Edit</button>
+                  <button onClick={() => handleDelete(item.id)} className="bg-red-500 text-white px-3 py-1 rounded">Delete</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
