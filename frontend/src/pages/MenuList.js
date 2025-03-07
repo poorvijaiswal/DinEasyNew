@@ -10,13 +10,15 @@ const MenuList = () => {
 
   const fetchMenu = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/menu");
-      setMenu(response.data);
+        const restaurantId = 1; // Replace with dynamic restaurant ID
+        const response = await axios.get(`http://localhost:5000/api/menu/${restaurantId}`);
+        setMenu(response.data);
     } catch (error) {
-      setError("Error fetching menu data.");
-      console.error("Error fetching menu:", error);
+        setError("Error fetching menu data.");
+        console.error("Error fetching menu:", error);
     }
-  };
+};
+
 
   return (
     <div className="max-w-5xl mx-auto mt-20 bg-white shadow-lg rounded-2xl p-8 w-full">

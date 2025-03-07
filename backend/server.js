@@ -4,7 +4,6 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const path = require("path");
 const http = require("http");
-const { Server } = require("socket.io");
 const db = require("./config/db"); // Import database connection
 const verifyToken = require("./middleware/auth");
 
@@ -14,7 +13,6 @@ dotenv.config();
 // Initialize Express app
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: "*" } });
 
 // Middleware
 app.use(cors());
@@ -29,10 +27,6 @@ db.query("SELECT 1", (err) => {
     } else {
         console.log("Database is connected and working!");
     }
-});
-io.on("connection", (socket) => {
-    console.log("User connected");
-    socket.on("disconnect", () => console.log("User disconnected"));
 });
 // Define Routes
 app.get("/", (req, res) => {
@@ -50,7 +44,7 @@ const restaurantRoutes = require('./routes/restaurant');
 app.use('/api/restaurant', restaurantRoutes);
 
 const menuRoutes = require('./routes/menu');
-app.use('/api', menuRoutes);
+app.use('/api/menu', menuRoutes);
 
 const membershipRoutes = require('./routes/membership');
 app.use('/api/membership', membershipRoutes);

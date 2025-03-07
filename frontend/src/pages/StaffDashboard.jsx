@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
-import { io } from "socket.io-client";
 
-const socket = io("http://localhost:5000");
 
 const StaffDashboard = () => {
   const [orders, setOrders] = useState([]);
@@ -12,11 +10,6 @@ const StaffDashboard = () => {
     axios.get("http://localhost:5000/orders").then(res => setOrders(res.data));
   };
 
-  useEffect(() => {
-    fetchOrders();
-    socket.on("orderUpdate", fetchOrders);
-    return () => socket.off("orderUpdate");
-  }, []);
 
   // Update order status
   const updateStatus = (id, status) => {
