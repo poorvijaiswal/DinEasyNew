@@ -179,7 +179,7 @@ const MenuPage = () => {
               <tr key={item.id} className="border">
                 <td className="border p-2">{item.name}</td>
                 <td className="border p-2">{item.category}</td>
-                <td className="border p-2">{item.price}</td>
+                <td className="border p-2">{"\u20B9"}{item.price}</td>
                 <td className="border p-2">
                   <button onClick={() => handleEdit(item)} className="bg-yellow-500 text-white px-3 py-1 rounded mr-2">Edit</button>
                   <button onClick={() => handleDelete(item.id)} className="bg-red-500 text-white px-3 py-1 rounded">Delete</button>

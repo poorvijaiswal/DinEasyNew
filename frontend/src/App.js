@@ -22,6 +22,7 @@ import StaffListPage from './components/StaffListPage';
 import MenuPage from './pages/MenuPage';
 import MenuList from './pages/MenuList';
 import MenuDisplay from './pages/MenuDisplay';
+//import CartPage from './pages/CartPage';
 function App() {
   return (
     
@@ -53,6 +54,7 @@ function App() {
           <Route path="/menu" element={<MenuPage />} />
           <Route path="/menu-list" element={<MenuList />} />
           <Route path="/menu-display" element={<MenuDisplay />} />
+          
 
         </Routes>
         </div>

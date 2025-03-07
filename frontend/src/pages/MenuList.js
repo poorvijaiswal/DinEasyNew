@@ -19,7 +19,6 @@ const MenuList = () => {
     }
 };
 
-
   return (
     <div className="max-w-5xl mx-auto mt-20 bg-white shadow-lg rounded-2xl p-8 w-full">
       <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">Menu List</h2>
@@ -41,7 +40,7 @@ const MenuList = () => {
               <tr key={item.id} className="border">
                 <td className="border p-2">{item.name}</td>
                 <td className="border p-2">{item.category}</td>
-                <td className="border p-2">{item.price}</td>
+                <td className="border p-2 text-l font-bold text-green-600">{"\u20B9"}{item.price}</td>
                 <td className="border p-2">
                   <img src={`http://localhost:5000/uploads/${item.image_url}`} alt={item.name} className="w-20 h-20 rounded-lg" />
                 </td>
