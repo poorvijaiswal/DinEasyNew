@@ -36,6 +36,7 @@ const MenuDisplay = ({ addToCart }) => {
               <div className="p-4">
                 <h2 className="text-xl font-semibold">{item.name}</h2>
                 <p className="text-gray-500 text-sm">{item.category}</p>
+                <p className="text-gray-500 text-sm">{item.description}</p>
                 <p className="text-lg font-bold text-green-600">{"\u20B9"}{item.price}</p>
                 <button 
                   onClick={() => addToCart(item)}

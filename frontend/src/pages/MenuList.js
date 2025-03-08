@@ -30,6 +30,7 @@ const MenuList = () => {
           <tr className="bg-gray-100">
             <th className="border p-2">Name</th>
             <th className="border p-2">Category</th>
+            <th className="border p-2">Description</th>
             <th className="border p-2">Price</th>
             <th className="border p-2">Image</th>
           </tr>
@@ -40,8 +41,9 @@ const MenuList = () => {
               <tr key={item.id} className="border">
                 <td className="border p-2">{item.name}</td>
                 <td className="border p-2">{item.category}</td>
+                <td className="border p-2">{item.description}</td>
                 <td className="border p-2 text-l font-bold text-green-600">{"\u20B9"}{item.price}</td>
-                <td className="border p-2">
+                <td className="border p-2 w-50">
                   <img src={`http://localhost:5000/uploads/${item.image_url}`} alt={item.name} className="w-20 h-20 rounded-lg" />
                 </td>
               </tr>
