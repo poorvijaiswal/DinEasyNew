@@ -1,11 +1,11 @@
-/* 📌 Center align main QR container */
+/* Center align main QR container */
 .qr-display {
   text-align: center;
   padding: 30px;
   margin-top: 50px;
 }
 
-/* 📌 Responsive Grid Layout */
+/*  Responsive Grid Layout */
 .qr-list {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -16,7 +16,7 @@
   margin: auto;
 }
 
-/* 📌 Styling Each QR Code Item */
+/*  Styling Each QR Code Item */
 .qr-item {
   background: white;
   padding: 15px;
@@ -31,14 +31,14 @@
   transform: scale(1.05);
 }
 
-/* 📌 Checkbox Alignment */
+/*  Checkbox Alignment */
 .qr-item input {
   position: absolute;
   top: 10px;
   left: 10px;
 }
 
-/* 📌 QR Code Image */
+/*  QR Code Image */
 .qr-item img {
   width: 100%;
   max-width: 140px;
@@ -47,7 +47,7 @@
   margin-bottom: 10px;
 }
 
-/* 📌 Print Button */
+/*  Print Button */
 .print-button {
   padding: 12px 18px;
   background-color: #007bff;
@@ -64,7 +64,7 @@
   background-color: #0056b3;
 }
 
-/* 📌 Mobile View Adjustments */
+/*  Mobile View Adjustments */
 @media (max-width: 768px) {
   .qr-list {
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); /* Smaller cards */
