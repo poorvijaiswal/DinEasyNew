@@ -18,16 +18,16 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // Create User Route (Example)
-router.post("/create-user", (req, res) => {
-  const { email, password, phone, owner_name, membership_type, start_date, end_date } = req.body;
-  const defaultProfileImage = "default-profile.png"; // Default profile image
+// router.post("/create-user", (req, res) => {
+//   const { email, password, phone, owner_name, membership_type, start_date, end_date } = req.body;
+//   const defaultProfileImage = "default-profile.png"; // Default profile image
 
-  const query = "INSERT INTO users (email, password, phone, owner_name, membership_type, start_date, end_date, profile_image) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-  db.query(query, [email, password, phone, owner_name, membership_type, start_date, end_date, defaultProfileImage], (err, result) => {
-    if (err) return res.status(500).json({ error: err });
-    res.json({ message: "User created successfully", userId: result.insertId });
-  });
-});
+//   const query = "INSERT INTO users (email, password, phone, owner_name, membership_type, start_date, end_date, profile_image) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+//   db.query(query, [email, password, phone, owner_name, membership_type, start_date, end_date, defaultProfileImage], (err, result) => {
+//     if (err) return res.status(500).json({ error: err });
+//     res.json({ message: "User created successfully", userId: result.insertId });
+//   });
+// });
 
 //  Update Profile Route
 router.post("/update-profile/:membershipId", upload.single("profileImage"), (req, res) => {
