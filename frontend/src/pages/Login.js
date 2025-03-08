@@ -127,7 +127,7 @@ export default function Login() {
           </p>
         </div>
 
-        <div className="w-1/2 p-6">
+        <div className="w-1/2 p-3">
           <h2 className="text-3xl font-bold mb-4">Owner Login</h2>
           {message && <p className="text-green-600 text-center">{message}</p>}          
           {showForgotPassword ? (

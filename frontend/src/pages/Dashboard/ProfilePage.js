@@ -23,7 +23,7 @@ const ProfilePage = () => {
         });
 
         setUserData(response.data);
-        setProfileImage(response.data.profile_image);
+        setProfileImage(`http://localhost:5000/uploads/${response.data.profile_image}`);
       } catch (err) {
         console.error("Error fetching user data", err);
       }
@@ -67,8 +67,6 @@ const ProfilePage = () => {
     formData.append("profileImage", newImage);
 
     try {
-      console.log("Uploading image...");
-
       const response = await axios.post(
         `http://localhost:5000/api/user/update-profile/${membershipId}`,
         formData,
@@ -91,7 +89,7 @@ const ProfilePage = () => {
   return (
     <div className="profile-page">
       <div className="profile-header">
-        <h2>{userData.owner_name} Profile</h2>
+        <h2>{userData.owner_name} <b>Profile</b></h2>
       </div>
       <div className="profile-image-section">
         <img src={profileImage} alt="Profile" className="profile-image" />

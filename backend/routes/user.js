@@ -1,7 +1,7 @@
 const express = require("express");
 const multer = require("multer");
 const path = require("path");
-const db = require("../config/db"); // Ensure the correct database connection
+const db = require("../config/db.js");
 
 const router = express.Router();
 
@@ -33,12 +33,27 @@ const upload = multer({ storage });
 router.post("/update-profile/:membershipId", upload.single("profileImage"), (req, res) => {
   const membershipId = req.params.id;
 
-  if (!req.file) return res.status(400).json({ message: "No file uploaded" });
+  if (!req.file) {
+    console.log("No file uploaded");
+    return res.status(400).json({ message: "No file uploaded" });
+  }
 
   const imagePath = req.file.filename; // Save filename in DB
-  const query = "UPDATE users SET profile_image = ? WHERE membership_id = ?";
+
+console.log("File uploaded:", imagePath);
+const query = "UPDATE users SET profile_image = ? WHERE membership_id = ?";
+  
   db.query(query, [imagePath, membershipId], (err, result) => {
-    if (err) return res.status(500).json({ error: err });
+    if (err) {
+      console.error("Error updating profile image in DB:", err);
+      return res.status(500).json({ error: err });
+    }
+
+
+    console.log("Profile updated successfully in DB");
+    console.log("Query executed:", query);
+    console.log("Data passed:", [imagePath, userId]);
+
     res.json({ message: "Profile updated successfully", profile_image: imagePath });
   });
 });

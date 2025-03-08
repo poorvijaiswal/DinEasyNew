@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 import { QRCodeCanvas } from "qrcode.react";
 import "./QRCodeGenerator.css";
 import { FaBars, FaSignOutAlt, FaChartBar, FaClipboardList, FaUserCog, FaQrcode, FaHome } from "react-icons/fa";
