@@ -36,7 +36,7 @@ router.post("/menu", upload.single("image"), (req, res) => {
 // ✅ Fetch Menu Items for a Restaurant
 router.get("/menu/:restaurant_id", (req, res) => {
     const { restaurant_id } = req.params;
-
+    
     if (!restaurant_id) {
         return res.status(400).json({ error: "Restaurant ID is required" });
     }
@@ -50,6 +50,7 @@ router.get("/menu/:restaurant_id", (req, res) => {
         res.json(results);
     });
 });
+
 // ✅ Update Menu Item
 router.put("/menu/:id", upload.single("image"), (req, res) => {
     const { category, name, description, price } = req.body;

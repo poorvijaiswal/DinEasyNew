@@ -33,13 +33,14 @@ const MenuPage = () => {
 
   const fetchMenuItems = async () => {
     try {
-      const restaurantId = 1; // Replace with dynamic restaurant ID
-      const response = await axios.get(`http://localhost:5000/api/menu/${restaurantId}`);
-      setMenuItems(response.data);
+        const restaurantId = 1;  // Ensure this ID exists in your database
+        const response = await axios.get(`http://localhost:5000/api/menu/${restaurantId}`);
+        setMenuItems(response.data);
     } catch (error) {
-      console.error("Error fetching menu items:", error);
+        console.error("Error fetching menu items:", error);
+        setError("Error fetching menu items.");
     }
-  };
+};
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
