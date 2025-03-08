@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom"; // For navigation
+import DashboardLayout from "../components/DashboardLayout";
 
 const StaffListPage= () => {
   const [staff, setStaff] = useState([]);
@@ -33,7 +34,8 @@ const StaffListPage= () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto mt-20 bg-slate-100 shadow-lg rounded-lg p-8">
+    <DashboardLayout>
+    <div className="max-w-4xl mx-auto mt-8 bg-slate-100 shadow-lg rounded-lg p-6">
       <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Staff List</h2>
 
       {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
@@ -80,6 +82,7 @@ const StaffListPage= () => {
         </tbody>
       </table>
     </div>
+    </DashboardLayout>
   );
 };
 

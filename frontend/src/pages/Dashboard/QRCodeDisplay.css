@@ -1,28 +1,28 @@
 /* Center align main QR container */
 .qr-display {
   text-align: center;
-  padding: 30px;
-  margin-top: 50px;
+  padding: 20px;
+  margin-top: 30px;
 }
 
-/*  Responsive Grid Layout */
+/* Responsive Grid Layout */
 .qr-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 15px;
   justify-content: center;
-  padding: 20px;
-  max-width: 1200px;
+  padding: 15px;
+  max-width: 100%;
   margin: auto;
 }
 
-/*  Styling Each QR Code Item */
+/* Styling Each QR Code Item */
 .qr-item {
   background: white;
   padding: 15px;
-  border-radius: 8px;
+  border-radius: 10px;
   text-align: center;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   position: relative;
   transition: transform 0.2s ease-in-out;
 }
@@ -31,31 +31,32 @@
   transform: scale(1.05);
 }
 
-/*  Checkbox Alignment */
+/* Checkbox Alignment */
 .qr-item input {
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: 8px;
+  left: 8px;
+  transform: scale(1.2);
 }
 
-/*  QR Code Image */
+/* QR Code Image */
 .qr-item img {
   width: 100%;
-  max-width: 140px;
+  max-width: 130px;
   height: auto;
   object-fit: contain;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
-/*  Print Button */
+/* Print Button */
 .print-button {
   padding: 12px 18px;
   background-color: #007bff;
   color: white;
   border: none;
   cursor: pointer;
-  border-radius: 5px;
-  margin-bottom: 20px;
+  border-radius: 6px;
+  margin: 10px 0;
   font-size: 16px;
   transition: background 0.3s ease-in-out;
 }
@@ -64,34 +65,34 @@
   background-color: #0056b3;
 }
 
-/*  Mobile View Adjustments */
+/* Mobile View Adjustments */
 @media (max-width: 768px) {
   .qr-list {
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); /* Smaller cards */
-    gap: 10px;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
+    gap: 12px;
     padding: 10px;
   }
 
   .qr-item {
-    padding: 12px;
+    padding: 10px;
   }
 
   .qr-item img {
-    max-width: 120px;
+    max-width: 110px;
   }
 }
 
 @media (max-width: 480px) {
   .qr-list {
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .qr-item {
-    padding: 10px;
+    padding: 8px;
   }
 
   .qr-item img {
-    max-width: 100px;
+    max-width: 90px;
   }
 
   .print-button {

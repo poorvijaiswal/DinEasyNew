@@ -11,7 +11,6 @@ dotenv.config();
 
 // Initialize Express app
 const app = express();
-const server = http.createServer(app);
 
 // Middleware
 app.use(cors());
@@ -53,7 +52,6 @@ app.use((err, req, res, next) => {
   });
 
 //protected route
-app.use('/api/qr', verifyToken, qrRoutes);
 
 const restaurantRoutes = require('./routes/restaurant');
 app.use('/api/restaurant', restaurantRoutes);

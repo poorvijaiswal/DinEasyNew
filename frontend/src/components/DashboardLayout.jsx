@@ -17,7 +17,7 @@ export default function DashboardLayout({ children }) {
         </div>
 
         <nav className="mt-4 space-y-2">
-          <Link to="/dashboard" className="flex items-center px-4 py-2 hover:bg-blue-700 transition-all">
+          <Link to="/dashboard/owner" className="flex items-center px-4 py-2 hover:bg-blue-700 transition-all">
             <FaHome className="mr-2" /> {isNavOpen && "Dashboard"}
           </Link>
           <Link to="/sales" className="flex items-center px-4 py-2 hover:bg-blue-700 transition-all">

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import DashboardLayout from "../components/DashboardLayout";
 const MenuList = () => {
   const [menu, setMenu] = useState([]);
   const [error, setError] = useState("");
@@ -20,7 +21,8 @@ const MenuList = () => {
 };
 
   return (
-    <div className="max-w-5xl mx-auto mt-20 bg-white shadow-lg rounded-2xl p-8 w-full">
+    <DashboardLayout>
+    <div className="max-w-5xl mx-auto mt-8 bg-white shadow-lg rounded-2xl p-6 w-full">
       <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">Menu List</h2>
 
       {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
@@ -58,6 +60,7 @@ const MenuList = () => {
         </tbody>
       </table>
     </div>
+    </DashboardLayout>
   );
 };
 

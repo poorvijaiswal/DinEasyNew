@@ -14,7 +14,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// ✅ Add Menu Item
+//  Add Menu Item
 router.post("/menu", upload.single("image"), (req, res) => {
     const { restaurant_id, category, name, description, price } = req.body;
     const image_url = req.file ? req.file.filename : null;
@@ -33,7 +33,7 @@ router.post("/menu", upload.single("image"), (req, res) => {
     });
 });
 
-// ✅ Fetch Menu Items for a Restaurant
+//  Fetch Menu Items for a Restaurant
 router.get("/menu/:restaurant_id", (req, res) => {
     const { restaurant_id } = req.params;
     
@@ -51,7 +51,7 @@ router.get("/menu/:restaurant_id", (req, res) => {
     });
 });
 
-// ✅ Update Menu Item
+//  Update Menu Item
 router.put("/menu/:id", upload.single("image"), (req, res) => {
     const { category, name, description, price } = req.body;
     const { id } = req.params;
@@ -67,7 +67,7 @@ router.put("/menu/:id", upload.single("image"), (req, res) => {
     });
 });
 
-// ✅ Delete Menu Item
+//  Delete Menu Item
 router.delete("/menu/:id", (req, res) => {
     const { id } = req.params;
 

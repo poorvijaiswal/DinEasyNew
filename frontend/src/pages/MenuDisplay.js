@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import DashboardLayout from "../components/DashboardLayout";
 
 const MenuDisplay = ({ addToCart }) => {
   const [menu, setMenu] = useState([]);
@@ -21,8 +22,9 @@ const MenuDisplay = ({ addToCart }) => {
   };
 
   return (
-    <div className="container mx-auto p-8 mt-20">
-      <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">Our Menu</h1>
+    <DashboardLayout>
+    <div className="container mx-auto p-6 mt-8">
+      <h1 className="text-4xl font-bold text-center text-gray-800 mb-10">Our Menu</h1>
 
       {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
@@ -51,6 +53,7 @@ const MenuDisplay = ({ addToCart }) => {
         )}
       </div>
     </div>
+    </DashboardLayout>
   );
 };
 

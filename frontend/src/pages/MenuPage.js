@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import DashboardLayout from "../components/DashboardLayout";
 
 const MenuPage = () => {
   const [restaurants, setRestaurants] = useState([]);
@@ -104,7 +105,8 @@ const MenuPage = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto mt-20 p-8 bg-gray-50 rounded-lg shadow-md ">
+    <DashboardLayout>
+    <div className="max-w-4xl mx-auto mt-8 p-6 bg-gray-50 rounded-lg shadow-md ">
       <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">Manage Restaurant Menu</h2>
 
       {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
@@ -191,6 +193,7 @@ const MenuPage = () => {
         </table>
       </div>
     </div>
+    </DashboardLayout>
   );
 };
 

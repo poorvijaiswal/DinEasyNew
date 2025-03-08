@@ -100,7 +100,7 @@ const QRCodeDisplay = () => {
 
   return (
     <DashboardLayout>
-      <div className="qr-display">
+    <div className="qr-display">
       <h1>All Generated QR Codes</h1>
 
       {qrCodes.length > 0 && (
@@ -127,7 +127,7 @@ const QRCodeDisplay = () => {
         )}
       </div>
     </div>
-    </DashboardLayout>
+  </DashboardLayout>
   );
 };
 

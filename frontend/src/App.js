@@ -6,16 +6,11 @@ import Register from './pages/Register';
 import Header from './components/Header';
 import About from './pages/About';
 import PartnerRestaurant from './pages/PartnerRestaurant';
-
-
 import ProfilePage from './pages/Dashboard/ProfilePage';
 import QRCodeDisplay from "./pages/Dashboard/QRCodeDisplay";
 import QRCodeGenerator from "./pages/Dashboard/QRCodeGenerator";
-
-
 import OwnerDashboard from './pages/Dashboard/OwnerDashboard';
 import StaffDashboard from './pages/Dashboard/StaffDashboard';
-
 import VerifyEmail from './pages/VerifyEmail';
 import MembershipSelection from './pages/MembershipSelection';
 import Payment from './pages/Payment';
@@ -25,7 +20,7 @@ import PrivateRoute from './components/PrivateRoute';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import StaffManagement from './pages/StaffManagement';
-import StaffListPage from './components/StaffListPage';
+import StaffListPage from './pages/StaffListPage';
 import MenuPage from './pages/MenuPage';
 import MenuList from './pages/MenuList';
 import MenuDisplay from './pages/MenuDisplay';
@@ -44,9 +39,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/dashboard" element={<Dashboard />} />
             <Route path='/about' element={<About />} />
-
             <Route path="/partners" element={<PartnerRestaurant />} />
 
             <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -57,8 +50,6 @@ function App() {
             <Route path="/payment" element={<Payment />} />
             <Route path="/restaurant-register" element={<RestaurantRegister />} />
             <Route path="/staff-login" element={<StaffLogin />} />
-
-
             <Route element={<PrivateRoute />}>
               <Route path="/generate-qr" element={<QRCodeGenerator />} />
               <Route path="/display-qr" element={<QRCodeDisplay />} />

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom"; // For navigation
+import DashboardLayout from "../components/DashboardLayout";
 
 const StaffManagement = () => {
     const [restaurants, setRestaurants] = useState([]);
@@ -55,7 +56,8 @@ const StaffManagement = () => {
     };
 
     return (
-        <div className="mx-auto mt-20 bg-slate-100 p-8 rounded-2xl shadow-lg w-full max-w-4xl">
+        <DashboardLayout>
+        <div className="mx-auto mt-8 bg-slate-100 p-6 rounded-2xl shadow-lg w-full max-w-4xl">
             <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Staff Management</h2>
 
             {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
@@ -104,6 +106,7 @@ const StaffManagement = () => {
                 </Link>
             </div>
         </div>
+        </DashboardLayout>
     );
 };
 
