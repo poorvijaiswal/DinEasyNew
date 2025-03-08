@@ -1,17 +1,22 @@
+/* 📌 Center align main QR container */
 .qr-display {
   text-align: center;
   padding: 30px;
   margin-top: 50px;
 }
 
+/* 📌 Responsive Grid Layout */
 .qr-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 15px;
   justify-content: center;
   padding: 20px;
+  max-width: 1200px;
+  margin: auto;
 }
 
+/* 📌 Styling Each QR Code Item */
 .qr-item {
   background: white;
   padding: 15px;
@@ -19,24 +24,32 @@
   text-align: center;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   position: relative;
+  transition: transform 0.2s ease-in-out;
 }
 
+.qr-item:hover {
+  transform: scale(1.05);
+}
+
+/* 📌 Checkbox Alignment */
 .qr-item input {
   position: absolute;
   top: 10px;
   left: 10px;
-  
 }
 
+/* 📌 QR Code Image */
 .qr-item img {
-  width: 150px;
-  height: 150px;
+  width: 100%;
+  max-width: 140px;
+  height: auto;
   object-fit: contain;
   margin-bottom: 10px;
 }
 
+/* 📌 Print Button */
 .print-button {
-  padding: 10px 15px;
+  padding: 12px 18px;
   background-color: #007bff;
   color: white;
   border: none;
@@ -44,22 +57,45 @@
   border-radius: 5px;
   margin-bottom: 20px;
   font-size: 16px;
+  transition: background 0.3s ease-in-out;
 }
 
 .print-button:hover {
   background-color: #0056b3;
 }
 
-/* Mobile View: Ensure QR Codes Adjust */
+/* 📌 Mobile View Adjustments */
 @media (max-width: 768px) {
   .qr-list {
-    display: flex;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); /* Smaller cards */
     gap: 10px;
     padding: 10px;
-   
   }
 
   .qr-item {
-    width: 200px;
+    padding: 12px;
+  }
+
+  .qr-item img {
+    max-width: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .qr-list {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  }
+
+  .qr-item {
+    padding: 10px;
+  }
+
+  .qr-item img {
+    max-width: 100px;
+  }
+
+  .print-button {
+    font-size: 14px;
+    padding: 10px;
   }
 }
