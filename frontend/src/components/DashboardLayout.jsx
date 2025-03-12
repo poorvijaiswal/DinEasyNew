@@ -26,6 +26,9 @@ export default function DashboardLayout({ children }) {
           <Link to="/menu" className="flex items-center px-4 py-2 hover:bg-blue-700 transition-all">
             <FaClipboardList className="mr-2" /> {isNavOpen && "Create Menu"}
           </Link>
+          <Link to="/menu-display" className="flex items-center px-4 py-2 hover:bg-blue-700 transition-all">
+            <FaClipboardList className="mr-2" /> {isNavOpen && "Display MenuList"}
+          </Link>
           <Link to="/manage-staff" className="flex items-center px-4 py-2 hover:bg-blue-700 transition-all">
             <FaUserCog className="mr-2" /> {isNavOpen && "Manage Staff"}
           </Link>

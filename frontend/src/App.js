@@ -24,7 +24,8 @@ import StaffListPage from './pages/StaffListPage';
 import MenuPage from './pages/MenuPage';
 import MenuList from './pages/MenuList';
 import MenuDisplay from './pages/MenuDisplay';
-//import CartPage from './pages/CartPage';
+import CartPage from './pages/CartPage';
+import CheckoutPage from "./pages/CheckoutPage";
 
 function App() {
   return (
@@ -41,10 +42,8 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path='/about' element={<About />} />
             <Route path="/partners" element={<PartnerRestaurant />} />
-
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password/:token" element={<ResetPassword />} />
-
             <Route path="/verify-email" element={<VerifyEmail />} />
             <Route path="/select-membership" element={<MembershipSelection />} />
             <Route path="/payment" element={<Payment />} />
@@ -61,6 +60,8 @@ function App() {
               <Route path="/dashboard/staff" element={<StaffDashboard />} />
               <Route path="/manage-staff" element={<StaffManagement />} />
               <Route path="/staff-list" element={<StaffListPage />} />
+              <Route path="/cart" element={<CartPage />} />
+              <Route path="/checkout" element={<CheckoutPage />} />
             </Route>
           </Routes>
         </div>

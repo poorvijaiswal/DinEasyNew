@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import axios from "axios";
-
-
 const StaffDashboard = () => {
   const [orders, setOrders] = useState([]);
 
@@ -24,9 +22,9 @@ const StaffDashboard = () => {
   };
 
   return (
-    <div className="container mx-auto mt-20 bg-slate-100 p-8 rounded-2xl shadow-lg w-full max-w-4xl">
-      <h1 className="text-2xl font-bold">Staff Order Dashboard</h1>
-      <table className="min-w-full bg-white border">
+    <div className="max-w-5xl mx-auto mt-20 bg-slate-50 shadow-lg rounded-2xl p-10 w-full">
+      <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">Staff Order Dashboard</h1>
+      <table className="w-full border-collapse border border-gray-200">
         <thead>
           <tr>
             <th className="border p-2">Order ID</th>
