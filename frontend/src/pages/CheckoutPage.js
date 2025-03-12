@@ -31,15 +31,15 @@ const CheckoutPage = () => {
         ))}
       </div>
 
-      {/* Total Amount */}
+      { /*Total Amount*/ }
       <h2 className="checkout-total">Total: {"\u20B9"}{totalPrice.toFixed(2)}</h2>
 
-      {/* Confirm Order Button */}
+      { /*Confirm Order Button */}
       <button className="confirm-order" onClick={handleConfirmOrder}>
         Confirm Order
       </button>
 
-      {/* Back to Cart Button */}
+      { /*Back to Cart Button */}
       <button className="back-to-cart" onClick={() => navigate("/cart")}>
         Back to Cart
       </button>
