@@ -1,18 +1,61 @@
 const express = require("express");
-const db = require("../config/db");  // Import database connection
+const db = require("../config/db");  
 const router = express.Router();
 
-// 📌 Get all orders with items
-router.get("/", (req, res) => {
-    const sql = `
-        SELECT o.order_id, o.restaurant_id, o.table_id, o.order_date, o.status,
-               oi.order_item_id, oi.menu_id, oi.quantity, oi.price
-        FROM Orders o
-        LEFT JOIN OrderItems oi ON o.order_id = oi.order_id
-        ORDER BY o.order_date DESC
-    `;
-    db.query(sql, (err, results) => {
-        if (err) return res.status(500).send(err);
+//  Place an Order
+router.post("/", async (req, res) => {
+    console.log(" Order API called with data:", req.body);
+
+    const { cart, totalPrice, table_number, restaurant_id } = req.body;
+
+    if (!cart || cart.length === 0) {
+        console.log(" Error: Cart is empty");
+        return res.status(400).json({ message: "Cart is empty!" });
+    }
+
+    try {
+        const status = "Pending";
+        
+        // Insert order into database
+        const [orderResult] = await db.execute(
+            "INSERT INTO orders (restaurant_id, table_number, order_date, status) VALUES (?, ?, NOW(), ?)",
+            [restaurant_id, table_number, status]
+        );
+
+        if (!orderResult.insertId) {
+            throw new Error(" Failed to insert order.");
+        }
+
+        const order_id = orderResult.insertId;
+        console.log(" Order placed with ID:", order_id);
+
+        //  Insert order items
+        for (let item of cart) {
+            await db.execute(
+                "INSERT INTO orderitems (order_id, menu_id, quantity, price) VALUES (?, ?, ?, ?)",
+                [order_id, item.id, item.quantity, item.price]
+            );
+        }
+
+        res.status(201).json({ message: " Order placed successfully!", order_id });
+    } catch (error) {
+        console.error(" Order placement error:", error);
+        res.status(500).json({ message: "Internal server error", error: error.message });
+    }
+});
+
+//  Get all orders with items
+router.get("/", async (req, res) => {
+    try {
+        const sql = `
+            SELECT o.order_id, o.restaurant_id, o.table_number, o.order_date, o.status,
+                   oi.order_item_id, oi.menu_id, oi.quantity, oi.price
+            FROM orders o
+            LEFT JOIN orderitems oi ON o.order_id = oi.order_id
+            ORDER BY o.order_date DESC
+        `;
+
+        const [results] = await db.execute(sql);
 
         const orders = {};
         results.forEach(row => {
@@ -20,7 +63,7 @@ router.get("/", (req, res) => {
                 orders[row.order_id] = {
                     order_id: row.order_id,
                     restaurant_id: row.restaurant_id,
-                    table_id: row.table_id,
+                    table_number: row.table_number,
                     order_date: row.order_date,
                     status: row.status,
                     items: [],
@@ -37,48 +80,36 @@ router.get("/", (req, res) => {
         });
 
         res.json(Object.values(orders));
-    });
+    } catch (error) {
+        console.error(" Fetch orders error:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
 });
 
-// 📌 Add a new order with items
-router.post("/", (req, res) => {
-    const { restaurant_id, table_id, items } = req.body;
-
-    const orderSql = "INSERT INTO Orders (restaurant_id, table_id, order_date) VALUES (?, ?, NOW())";
-    db.query(orderSql, [restaurant_id, table_id], (err, result) => {
-        if (err) return res.status(500).send(err);
-
-        const orderId = result.insertId;
-        const itemValues = items.map(i => [orderId, i.menu_id, i.quantity, i.price]);
-
-        const itemsSql = "INSERT INTO OrderItems (order_id, menu_id, quantity, price) VALUES ?";
-        db.query(itemsSql, [itemValues], (err) => {
-            if (err) return res.status(500).send(err);
-
-            res.json({ success: true, message: "Order placed!", orderId });
-        });
-    });
-});
-
-// 📌 Update order status
-router.put("/:id", (req, res) => {
+//  Update Order Status
+router.put("/:id", async (req, res) => {
     const { status } = req.body;
-    db.query("UPDATE Orders SET status=? WHERE order_id=?", [status, req.params.id], (err) => {
-        if (err) return res.status(500).send(err);
-        res.json({ success: true, message: "Order status updated!" });
-    });
+
+    try {
+        await db.execute("UPDATE orders SET status=? WHERE order_id=?", [status, req.params.id]);
+        res.json({ success: true, message: " Order status updated!" });
+    } catch (error) {
+        console.error(" Order update error:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
 });
 
-// 📌 Delete an order
-router.delete("/:id", (req, res) => {
-    db.query("DELETE FROM OrderItems WHERE order_id=?", [req.params.id], (err) => {
-        if (err) return res.status(500).send(err);
+//  Delete an Order
+router.delete("/:id", async (req, res) => {
+    try {
+        await db.execute("DELETE FROM orderitems WHERE order_id=?", [req.params.id]);
+        await db.execute("DELETE FROM orders WHERE order_id=?", [req.params.id]);
 
-        db.query("DELETE FROM Orders WHERE order_id=?", [req.params.id], (err) => {
-            if (err) return res.status(500).send(err);
-            res.json({ success: true, message: "Order deleted!" });
-        });
-    });
+        res.json({ success: true, message: " Order deleted!" });
+    } catch (error) {
+        console.error(" Order deletion error:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
 });
 
 module.exports = router;

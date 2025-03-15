@@ -8,11 +8,33 @@ const CheckoutPage = () => {
   const { cart, totalPrice } = location.state || { cart: [], totalPrice: 0 };
 
   // Function to confirm order
-  const handleConfirmOrder = () => {
-    alert("Order placed successfully!");
-    localStorage.removeItem("cart"); // Clear cart after order
-    navigate("/dashboard/staff"); // Redirect back to menu
+  const handleConfirmOrder = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          cart,
+          totalPrice,
+          table_number: 1, // Replace this with dynamic table_id from table_qr
+          restaurant_id: 1, // Replace with actual restaurant_id
+        }),
+      });
+  
+      const data = await response.json();
+      if (response.ok) {
+        alert("Order placed successfully!");
+        localStorage.removeItem("cart"); // Clear cart after order
+        navigate("/dashboard/staff");
+      } else {
+        alert("Failed to place order: " + data.message);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Something went wrong!");
+    }
   };
+  
 
   return (
     <div className="checkout-container">
