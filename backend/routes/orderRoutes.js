@@ -2,6 +2,7 @@
 const express = require("express");
 const db = require("../config/db");
 const router = express.Router();
+const verifyToken = require("../middleware/auth"); 
 
 //  Fetch Restaurant ID for the authenticated owner
 router.get("/auth/getRestaurantId", (req, res) => {
@@ -78,7 +79,7 @@ router.post("/order", (req, res) => {
     });
 });
 
-// 📌 Get all orders with items
+//  Get all orders with items
 router.get("/order", (req, res) => {
     const sql = `
         SELECT o.order_id, o.table_number, o.status, 

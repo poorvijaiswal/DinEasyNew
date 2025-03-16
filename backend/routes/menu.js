@@ -14,6 +14,21 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
+router.get("/auth/getRestaurantId", (req, res) => {
+    const ownerEmail = req.user.email; // Assuming authentication middleware extracts email
+
+    if (!ownerEmail) {
+        return res.status(401).json({ message: "Unauthorized: No user email found" });
+    }
+
+    const query = "SELECT id FROM restaurants WHERE owner_email = ?";
+    db.query(query, [ownerEmail], (err, result) => {
+        if (err || result.length === 0) {
+            return res.status(404).json({ message: "Restaurant not found" });
+        }
+        res.json({ restaurant_id: result[0].id });
+    });
+});
 //  Add Menu Item
 router.post("/menu", upload.single("image"), (req, res) => {
     const { restaurant_id, category, name, description, price } = req.body;
