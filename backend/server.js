@@ -72,7 +72,7 @@ const staffRoutes = require('./routes/staff');
 app.use('/api', staffRoutes);
 
 const orderRoutes = require('./routes/orderRoutes');
-app.use("/api/orders", orderRoutes);
+app.use('/api', orderRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
