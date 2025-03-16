@@ -34,7 +34,7 @@ const MenuPage = () => {
 
   const fetchMenuItems = async () => {
     try {
-        const restaurantId = 1;  // Ensure this ID exists in your database
+        const restaurantId = 3;  // Ensure this ID exists in your database
         const response = await axios.get(`http://localhost:5000/api/menu/${restaurantId}`);
         setMenuItems(response.data);
     } catch (error) {

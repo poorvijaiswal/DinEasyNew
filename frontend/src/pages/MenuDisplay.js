@@ -22,7 +22,7 @@ const MenuDisplay = () => {
 
   const fetchMenu = async () => {
     try {
-      const restaurantId = 1; // Change to dynamic if needed
+      const restaurantId = 3; // Change to dynamic if needed
       const response = await axios.get(`http://localhost:5000/api/menu/${restaurantId}`);
       setMenu(response.data);
       

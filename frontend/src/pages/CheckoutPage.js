@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
 import "./CheckoutPage.css";
 
 const CheckoutPage = () => {
@@ -7,21 +8,51 @@ const CheckoutPage = () => {
   const navigate = useNavigate();
   const { cart, totalPrice } = location.state || { cart: [], totalPrice: 0 };
 
+  const [restaurantId, setRestaurantId] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  // ✅ Fetch restaurant_id dynamically from backend
+  useEffect(() => {
+    const fetchRestaurantId = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          throw new Error("No token found in local storage");
+        }
+        const response = await axios.get("http://localhost:5000/api/auth/getRestaurantId", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setRestaurantId(response.data.restaurant_id);
+      } catch (error) {
+        console.error("Error fetching restaurant ID:", error);
+        setErrorMessage("Error fetching restaurant ID");
+      }
+    };
+
+    fetchRestaurantId();
+  }, []);
+
+  // ✅ Function to confirm order
   const handleConfirmOrder = async () => {
     try {
       if (!Array.isArray(cart) || cart.length === 0) {
         alert("Cart is empty!");
         return;
       }
+      if (!restaurantId) {
+        alert("Restaurant ID is not available yet. Please try again.");
+        return;
+      }
 
-      const response = await fetch("http://localhost:5000/api/order", {  
+      const response = await fetch("http://localhost:5000/api/order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          items: cart,   //  Changed "cart" to "items" to match backend
-          totalPrice,
-          table_number: 1,  // Replace this with actual table number
-          restaurant_id: 1,  // Replace with actual restaurant_id
+          items: cart,
+          table_number: 1, // Static or user-selected table number
+          restaurant_id: restaurantId, // Dynamically fetched restaurant ID
         }),
       });
 
@@ -34,7 +65,6 @@ const CheckoutPage = () => {
         alert(" Failed to place order: " + data.message);
       }
     } catch (error) {
-      console.error(" Error:", error);
       alert(" Something went wrong!");
     }
   };
@@ -42,6 +72,8 @@ const CheckoutPage = () => {
   return (
     <div className="checkout-container">
       <h1 className="checkout-title">Checkout</h1>
+
+      {errorMessage && <p className="error-message">{errorMessage}</p>}
 
       <div className="cart-summary">
         {cart.map((item) => (
@@ -58,7 +90,7 @@ const CheckoutPage = () => {
 
       <h2 className="checkout-total">Total: {"\u20B9"}{totalPrice.toFixed(2)}</h2>
 
-      <button className="confirm-order" onClick={handleConfirmOrder}>
+      <button className="confirm-order" onClick={handleConfirmOrder} disabled={!restaurantId}>
         Confirm Order
       </button>
 
@@ -70,3 +102,4 @@ const CheckoutPage = () => {
 };
 
 export default CheckoutPage;
+

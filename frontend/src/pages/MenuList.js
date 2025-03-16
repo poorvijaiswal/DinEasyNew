@@ -11,7 +11,7 @@ const MenuList = () => {
 
   const fetchMenu = async () => {
     try {
-        const restaurantId = 1; // Replace with dynamic restaurant ID
+        const restaurantId = 3; // Replace with dynamic restaurant ID
         const response = await axios.get(`http://localhost:5000/api/menu/${restaurantId}`);
         setMenu(response.data);
     } catch (error) {
