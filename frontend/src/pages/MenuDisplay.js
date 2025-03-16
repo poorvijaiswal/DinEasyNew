@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom"; 
 import axios from "axios";
 import DashboardLayout from "../components/DashboardLayout";
-import "./MenuDisplay.css"; 
+
 
 const MenuDisplay = () => {
   const [menu, setMenu] = useState([]);
