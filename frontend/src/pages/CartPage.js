@@ -9,7 +9,7 @@ const CartPage = () => {
 
   //  Load cart items from localStorage when component mounts
   useEffect(() => {
-    const storedCart = JSON.parse(localStorage.getItem("cart")) ;
+    const storedCart = JSON.parse(localStorage.getItem("cart")) || [] ;
     setCart(storedCart);
   }, []);
 

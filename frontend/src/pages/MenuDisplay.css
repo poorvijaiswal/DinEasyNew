@@ -20,6 +20,7 @@
     text-align: center;
     margin-bottom: 15px;
 }
+
 .cart-message {
     text-align: center;
     background: #28a745;
@@ -161,8 +162,9 @@
 .add-to-cart:hover {
     background: #cc0000;
 }
+
 .view-cart {
-    background: #019b01; 
+    background: #019b01;
     margin-top: 15px;
     color: white;
     padding: 10px 16px;
@@ -176,7 +178,7 @@
 }
 
 .view-cart:hover {
-    background: #016c01; 
+    background: #016c01;
 }
 
 
@@ -187,24 +189,29 @@
     }
 
     .menu-item {
-        flex-direction: column; /*  Stack items on mobile */
-        width: 100%; /*  Take full width */
+        flex-direction: column;
+        /*  Stack items on mobile */
+        width: 100%;
+        /*  Take full width */
         padding: 10px;
     }
 
     .menu-image {
-        width: 100%; /*  Ensure full width for mobile */
+        width: 100%;
+        /*  Ensure full width for mobile */
         height: auto;
         border-radius: 10px;
     }
 
     .menu-content {
         padding: 10px;
-        text-align: center; /*  Center align content */
+        text-align: center;
+        /*  Center align content */
     }
 
     .menu-footer {
-        flex-direction: column; /*  Stack elements in mobile */
+        flex-direction: column;
+        /*  Stack elements in mobile */
         align-items: center;
         gap: 10px;
     }
@@ -212,6 +219,54 @@
     .quantity-selector {
         width: auto;
     }
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.search-input {
+    width: 40%;
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    outline: none;
+}
+.menu-container {
+    display: flex;
+  }
+.menu-icon {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.category-dropdown {
+    position: absolute;
+    top: 80px;
+    right: 6;
+    background: white;
+    border: 1px solid #ccc;
+    list-style: none;
+    padding: 10px;
+    width: 200px;
+    z-index: 100;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+  }
+.category-dropdown li {
+    padding: 10px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.category-dropdown li:hover {
+    background: #f0f0f0;
 }
 
 /*  Ensure Proper Visibility in Very Small Screens */
@@ -261,6 +316,7 @@
         width: 100%;
         text-align: center;
     }
+
     .view-cart {
         font-size: 14px;
         padding: 8px 12px;
