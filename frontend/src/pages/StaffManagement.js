@@ -20,18 +20,27 @@ const StaffManagement = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    fetchRestaurants();
+    fetchRestaurantId();
     if (editingStaff) {
       setFormData(editingStaff);
     }
   }, [editingStaff]);
 
-  const fetchRestaurants = async () => {
+  const fetchRestaurantId = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/restaurant");
-      setRestaurants(response.data);
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("No token found in local storage");
+      }
+      const response = await axios.get("http://localhost:5000/api/auth/getRestaurantId", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setFormData((prev) => ({ ...prev, restaurant_id: response.data.restaurant_id })); // Set default restaurant ID in form
     } catch (error) {
-      console.error("Error fetching restaurants:", error);
+      console.error("Error fetching restaurant ID:", error);
+      setError("Error fetching restaurant ID");
     }
   };
 
@@ -74,7 +83,7 @@ const StaffManagement = () => {
         {message && <p className="text-green-500 text-sm mb-4">{message}</p>}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
+          {/* <div>
             <label className="block text-gray-700 font-semibold mb-1">Select Restaurant</label>
             <select
               name="restaurant_id"
@@ -89,7 +98,7 @@ const StaffManagement = () => {
                 </option>
               ))}
             </select>
-          </div>
+          </div> */}
 
           <div>
             <label className="block text-gray-700 font-semibold mb-1">Staff Name</label>
