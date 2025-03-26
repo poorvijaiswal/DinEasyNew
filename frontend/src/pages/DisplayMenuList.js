@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import DashboardLayout from "../components/DashboardLayout";
 
-const MenuList = () => {
+const DisplayMenuList = () => {
   const [menu, setMenu] = useState([]);
   const [error, setError] = useState("");
 
@@ -84,4 +84,4 @@ const MenuList = () => {
   );
 };
 
-export default MenuList;
+export default DisplayMenuList;

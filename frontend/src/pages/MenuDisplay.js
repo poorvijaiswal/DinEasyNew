@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import DashboardLayout from "../components/DashboardLayout";
 import "./MenuDisplay.css";
+import UserDashboardLayout from "../components/UserDashboardLayout";
 
 const MenuDisplay = () => {
   const [menu, setMenu] = useState([]);
@@ -119,7 +119,7 @@ const MenuDisplay = () => {
   };
 
   return (
-    <DashboardLayout>
+    <UserDashboardLayout>
       <div className="container">
         <h1 className="title">Our Menu</h1>
 
@@ -134,7 +134,6 @@ const MenuDisplay = () => {
             onChange={handleSearch}
             className="search-input"
           />
-
           <div className="menu-container">
             <img
               src="https://cdn.iconscout.com/icon/premium/png-256-thumb/restaurant-menu-5-628087.png"
@@ -172,7 +171,7 @@ const MenuDisplay = () => {
                   <div className="menu-footer">
                     <p className="menu-price">{"\u20B9"}{item.price}</p>
 
-                    <div className="quantity-selector">
+                    <div className="quantity-selector ">
                       <button onClick={() => decreaseQuantity(item.id)}>-</button>
                       <span>{quantities[item.id]}</span>
                       <button onClick={() => increaseQuantity(item.id)}>+</button>
@@ -194,7 +193,7 @@ const MenuDisplay = () => {
           View Cart
         </button>
       </div>
-    </DashboardLayout>
+    </UserDashboardLayout>
   );
 };
 
