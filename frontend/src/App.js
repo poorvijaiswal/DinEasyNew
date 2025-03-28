@@ -26,6 +26,7 @@ import MenuList from './pages/MenuList';
 import MenuDisplay from './pages/MenuDisplay';
 import CartPage from './pages/CartPage';
 import CheckoutPage from "./pages/CheckoutPage";
+import PartnerMenuPage from './pages/PartnerMenu/PartnerMenuPage';
 
 function App() {
   return (
@@ -49,9 +50,13 @@ function App() {
             <Route path="/payment" element={<Payment />} />
             <Route path="/restaurant-register" element={<RestaurantRegister />} />
             <Route path="/staff-login" element={<StaffLogin />} />
+
+            <Route path="/menu/:restaurantId" element={<PartnerMenuPage />} />
+
             <Route element={<PrivateRoute />}>
               <Route path="/generate-qr" element={<QRCodeGenerator />} />
               <Route path="/display-qr" element={<QRCodeDisplay />} />
+
               <Route path="/menu" element={<MenuPage />} />
               <Route path="/menu-list" element={<MenuList />} />
               <Route path="/menu-display" element={<MenuDisplay />} />
