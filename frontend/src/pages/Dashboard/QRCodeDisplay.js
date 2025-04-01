@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import "./QRCodeDisplay.css"; 
+import "./QRCodeDisplay.css";
 import DashboardLayout from "../../components/DashboardLayout";
 
 const QRCodeDisplay = () => {
@@ -98,35 +98,58 @@ const QRCodeDisplay = () => {
     printWindow.document.close();
   };
 
+  // Delete QR Code
+  const handleDelete = async (qrId) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`http://localhost:5000/api/qr/deleteQRCode/${qrId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      setQRCodes(qrCodes.filter(qr => qr.id !== qrId));
+      setMessage("QR code deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting QR code", error);
+      setMessage("Error deleting QR code");
+    }
+  };
+
   return (
     <DashboardLayout>
       <div className="qr-display">
-      <h1>All Generated QR Codes</h1>
+        <h1>All Generated QR Codes</h1>
 
-      {qrCodes.length > 0 && (
-        <button className="print-button" onClick={handlePrint}>
-          Print Selected QR Codes
-        </button>
-      )}
+        {qrCodes.length > 0 && (
+          <div className="button-group">
+            <button className="print-button" onClick={handlePrint}>
+              Print Selected QR Codes
+            </button>
+            <button className="delete-button" onClick={handleDelete}>
+              Delete Selected QR Codes
+            </button>
+          </div>
 
-      <div className="qr-list">
-        {qrCodes.length === 0 ? (
-          <p>No QR codes generated yet.</p>
-        ) : (
-          qrCodes.map((qr, index) => (
-            <div key={index} className="qr-item">
-              <input
-                type="checkbox"
-                onChange={() => handleSelection(qr)}
-                checked={selectedQRCodes.includes(qr)}
-              />
-              <img src={qr.qr_code} alt={`QR Code for Table ${qr.table_number}`} />
-              <p><b>Table Number: {qr.table_number}</b></p>
-            </div>
-          ))
         )}
+
+        <div className="qr-list">
+          {qrCodes.length === 0 ? (
+            <p>No QR codes generated yet.</p>
+          ) : (
+            qrCodes.map((qr, index) => (
+              <div key={index} className="qr-item">
+                <input
+                  type="checkbox"
+                  onChange={() => handleSelection(qr)}
+                  checked={selectedQRCodes.includes(qr)}
+                />
+                <img src={qr.qr_code} alt={`QR Code for Table ${qr.table_number}`} />
+                <p><b>Table Number: {qr.table_number}</b></p>
+              </div>
+            ))
+          )}
+        </div>
       </div>
-    </div>
     </DashboardLayout>
   );
 };

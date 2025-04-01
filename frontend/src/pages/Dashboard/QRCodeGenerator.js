@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
 import { QRCodeCanvas } from "qrcode.react";
 import "./QRCodeGenerator.css";
-import { FaBars, FaSignOutAlt, FaChartBar, FaClipboardList, FaUserCog, FaQrcode, FaHome } from "react-icons/fa";
 import DashboardLayout from "../../components/DashboardLayout";
 
 const QRCodeGenerator = () => {
-  const [isNavOpen, setIsNavOpen] = useState(true);
   const [qrCode, setQRCode] = useState("");  // Ensure it's a string, not null
   const [tableNumber, setTableNumber] = useState("");
   const [size, setSize] = useState(300);

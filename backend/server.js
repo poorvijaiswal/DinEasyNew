@@ -5,13 +5,13 @@ const dotenv = require("dotenv");
 const path = require("path");
 const db = require("./config/db.js");// Import database connection
 const verifyToken = require("./middleware/auth");
+const socketIo = require("socket.io");
 
 // Load environment variables
 dotenv.config();
 
 // Initialize Express app
 const app = express();
-const server = http.createServer(app);
 
 // Middleware
 app.use(cors());
@@ -53,7 +53,6 @@ app.use((err, req, res, next) => {
   });
 
 //protected route
-app.use('/api/qr', verifyToken, qrRoutes);
 
 const restaurantRoutes = require('./routes/restaurant');
 app.use('/api/restaurant', restaurantRoutes);
@@ -74,7 +73,10 @@ const staffRoutes = require('./routes/staff');
 app.use('/api', staffRoutes);
 
 const orderRoutes = require('./routes/orderRoutes');
-app.use('/api/orders', orderRoutes);
+app.use('/api', orderRoutes);
+
+const preorderRoutes = require("./routes/preorderRoutes");
+app.use("/api/preorder", preorderRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

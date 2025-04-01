@@ -42,3 +42,37 @@ code {
 .card p {
   margin-bottom: 5px;
 }
+
+/* Tooltip CSS */
+.tooltip {
+  visibility: hidden;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 10px;
+  position: absolute;
+  z-index: 1;
+  left: 100%;
+  margin-left: 10px;
+  white-space: nowrap;
+}
+
+.group:hover .tooltip {
+  visibility: visible;
+}
+
+.delete-button {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 11px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.delete-button:hover {
+  background-color: #ff1a1a;
+}

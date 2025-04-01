@@ -2,7 +2,7 @@ const express = require("express");
 const db = require("../config/db");
 const router = express.Router();
 
-// ✅ Get all staff members (with restaurant name)
+//  Get all staff members (with restaurant name)
 router.get("/staff", (req, res) => {
     const query = `
         SELECT Staff.staff_id, Staff.name, Staff.role, Staff.email, 
@@ -20,8 +20,9 @@ router.get("/staff", (req, res) => {
     });
 });
 
-// ✅ Get all restaurants (for dropdown selection in frontend)
+//  Get all restaurants (for dropdown selection in frontend)
 router.get("/restaurants", (req, res) => {
+    res.set('Cache-Control', 'no-store');
     const query = "SELECT restaurant_id, name FROM Restaurant";
     db.query(query, (err, results) => {
         if (err) {
@@ -32,7 +33,7 @@ router.get("/restaurants", (req, res) => {
     });
 });
 
-// ✅ Add a new staff member
+//  Add a new staff member
 router.post("/staff", (req, res) => {
     const { restaurant_id, name, role, email } = req.body;
 
@@ -50,7 +51,7 @@ router.post("/staff", (req, res) => {
     });
 });
 
-// ✅ Update staff details
+//  Update staff details
 router.put("/staff/:staff_id", (req, res) => {
     const { staff_id } = req.params;
     const { name, role, email } = req.body;
@@ -65,7 +66,7 @@ router.put("/staff/:staff_id", (req, res) => {
     });
 });
 
-// ✅ Delete a staff member
+//  Delete a staff member
 router.delete("/staff/:staff_id", (req, res) => {
     const { staff_id } = req.params;
 
