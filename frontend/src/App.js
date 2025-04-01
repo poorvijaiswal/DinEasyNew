@@ -26,7 +26,6 @@ import MenuDisplay from './pages/MenuDisplay';
 import CartPage from './pages/CartPage';
 import CheckoutPage from "./pages/CheckoutPage";
 import DisplayMenuList from './pages/DisplayMenuList';
-import UserDashboardLayout from "./components/UserDashboardLayout";
 
 function App() {
   return (
@@ -59,7 +58,6 @@ function App() {
               <Route path='/profile' element={<ProfilePage />} />
               <Route path="/dashboard/owner" element={<OwnerDashboard />} />
               <Route path="/dashboard/staff" element={<StaffDashboard />} />
-              <Route path="/dashboard" element={<UserDashboardLayout />} />
               <Route path="/manage-staff" element={<StaffManagement />} />
               <Route path="/staff-list" element={<StaffListPage />} />
               <Route path="/cart" element={<CartPage />} />

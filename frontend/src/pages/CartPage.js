@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import UserDashboardLayout from "../components/UserDashboardLayout";
 import "./CartPage.css";
 
 const CartPage = () => {
@@ -39,7 +38,6 @@ const CartPage = () => {
   const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   return (
-    <UserDashboardLayout>
       <div className="container">
         <h1 className="title">Your Cart</h1>
 
@@ -90,7 +88,6 @@ const CartPage = () => {
           Back to Menu
         </button>
       </div>
-    </UserDashboardLayout>
   );
 };
 
