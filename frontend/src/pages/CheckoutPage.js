@@ -6,65 +6,98 @@ import "./CheckoutPage.css";
 const CheckoutPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { cart, totalPrice } = location.state || { cart: [], totalPrice: 0 };
+  
+  const { cart: initialCart, totalPrice: initialTotalPrice } = location.state || { cart: [], totalPrice: 0 };
 
+  const [cart, setCart] = useState(initialCart);
+  const [totalPrice, setTotalPrice] = useState(initialTotalPrice);
   const [restaurantId, setRestaurantId] = useState(null);
+  const [tableNumber, setTableNumber] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
 
+  //  Extract Table Number from URL or LocalStorage
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    let tableNum = queryParams.get("table") || localStorage.getItem("table_number");
+
+    if (tableNum) {
+      setTableNumber(tableNum);
+      localStorage.setItem("table_number", tableNum); //  Store for persistence
+    } else {
+      setErrorMessage(" Table number not found! Please rescan the QR code.");
+    }
+  }, [location.search]);
+
   // Fetch restaurant_id dynamically from backend
+
   useEffect(() => {
     const fetchRestaurantId = async () => {
       try {
         const token = localStorage.getItem("token");
         if (!token) {
-          throw new Error("No token found in local storage");
+          setErrorMessage(" No token found! Please login.");
+          navigate("/login");
+          return;
         }
+
         const response = await axios.get("http://localhost:5000/api/auth/getRestaurantId", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
+
         setRestaurantId(response.data.restaurant_id);
       } catch (error) {
         console.error("Error fetching restaurant ID:", error);
-        setErrorMessage("Error fetching restaurant ID");
+        setErrorMessage(" Failed to fetch restaurant ID. Try again later.");
       }
     };
 
     fetchRestaurantId();
-  }, []);
+  }, [navigate]);
 
-  // ✅ Function to confirm order
+  //  Load Cart from LocalStorage if Empty
+  useEffect(() => {
+    if (cart.length === 0) {
+      const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+      setCart(storedCart);
+    }
+
+    if (!totalPrice) {
+      const calculatedTotal = (cart || []).reduce((sum, item) => sum + item.price * item.quantity, 0);
+      setTotalPrice(calculatedTotal);
+    }
+  }, [cart, totalPrice]);
+
+  // Confirm Order
   const handleConfirmOrder = async () => {
-    try {
-      if (!Array.isArray(cart) || cart.length === 0) {
-        alert("Cart is empty!");
-        return;
-      }
-      if (!restaurantId) {
-        alert("Restaurant ID is not available yet. Please try again.");
-        return;
-      }
+    if (!Array.isArray(cart) || cart.length === 0) {
+      alert(" Cart is empty! Please add items before checkout.");
+      return;
+    }
+    if (!restaurantId) {
+      alert(" Restaurant ID not available. Please try again.");
+      return;
+    }
+    if (!tableNumber) {
+      alert(" Table number not found! Please rescan the QR code.");
+      return;
+    }
 
-      const response = await fetch("http://localhost:5000/api/order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          items: cart,
-          table_number: 1, // Static or user-selected table number
-          restaurant_id: restaurantId, // Dynamically fetched restaurant ID
-        }),
+    try {
+      const response = await axios.post("http://localhost:5000/api/order", {
+        items: cart,
+        table_number: tableNumber,
+        restaurant_id: restaurantId,
       });
 
-      const data = await response.json();
-      if (response.ok) {
+      if (response.status === 201) {
         alert(" Order placed successfully!");
-        localStorage.removeItem("cart");
-        navigate("/dashboard/staff");
+        localStorage.removeItem("cart"); //  Clear cart
+        navigate("/dashboard/staff"); //  Redirect to staff dashboard
       } else {
-        alert(" Failed to place order: " + data.message);
+        alert(" Failed to place order: " + response.data.message);
       }
     } catch (error) {
+      console.error("Order submission error:", error);
       alert(" Something went wrong!");
     }
   };
@@ -74,6 +107,8 @@ const CheckoutPage = () => {
       <h1 className="checkout-title">Checkout</h1>
 
       {errorMessage && <p className="error-message">{errorMessage}</p>}
+
+      <h2>Table Number: {tableNumber || "Not Found"}</h2>
 
       <div className="cart-summary">
         {cart.map((item) => (
@@ -88,7 +123,7 @@ const CheckoutPage = () => {
         ))}
       </div>
 
-      <h2 className="checkout-total">Total: {"\u20B9"}{totalPrice.toFixed(2)}</h2>
+      <h2 className="checkout-total">Total: {"\u20B9"}{(totalPrice || 0).toFixed(2)}</h2>
 
       <button className="confirm-order" onClick={handleConfirmOrder} disabled={!restaurantId}>
         Confirm Order
@@ -102,4 +137,3 @@ const CheckoutPage = () => {
 };
 
 export default CheckoutPage;
-

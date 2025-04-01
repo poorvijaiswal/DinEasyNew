@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-import DashboardLayout from "../components/DashboardLayout";
 import "./MenuDisplay.css";
 
 const MenuDisplay = () => {
+  const location = useLocation();
+  const [tableNumber, setTableNumber] = useState(null);
   const [menu, setMenu] = useState([]);
   const [filteredMenu, setFilteredMenu] = useState([]);
   const [cart, setCart] = useState([]);
@@ -13,10 +14,18 @@ const MenuDisplay = () => {
   const [quantities, setQuantities] = useState({});
   const [cartMessage, setCartMessage] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [categories, setCategories] = useState([]); // ✅ Store categories
-  const [selectedCategory, setSelectedCategory] = useState("All"); // ✅ Default category
-  const [showCategoryDropdown, setShowCategoryDropdown] = useState(false); // ✅ Toggle category dropdown
+  const [categories, setCategories] = useState([]); //  Store categories
+  const [selectedCategory, setSelectedCategory] = useState("All"); //  Default category
+  const [showCategoryDropdown, setShowCategoryDropdown] = useState(false); //  Toggle category dropdown
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const tableNum = queryParams.get("table");
+    // Get table number from URL
+    console.log("Extracted Table Number:", tableNum);
+    if (tableNum) setTableNumber(tableNum);
+  }, [location.search]);
 
   useEffect(() => {
     fetchRestaurantId();
@@ -52,7 +61,7 @@ const MenuDisplay = () => {
       setMenu(response.data);
       setFilteredMenu(response.data);
 
-      // ✅ Extract Unique Categories
+      // Extract Unique Categories
       const uniqueCategories = ["All", ...new Set(response.data.map(item => item.category))];
       setCategories(uniqueCategories);
 
@@ -67,14 +76,14 @@ const MenuDisplay = () => {
     }
   };
 
-  // ✅ Handle Search
+  // Handle Search
   const handleSearch = (e) => {
     const value = e.target.value.toLowerCase();
     setSearchTerm(value);
     filterMenu(selectedCategory, value);
   };
 
-  // ✅ Filter Menu Based on Category & Search
+  // Filter Menu Based on Category & Search
   const filterMenu = (category, term) => {
     let filtered = menu;
 
@@ -89,7 +98,7 @@ const MenuDisplay = () => {
     setFilteredMenu(filtered);
   };
 
-  // ✅ Handle Category Selection
+  //  Handle Category Selection
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
     setShowCategoryDropdown(false);
@@ -119,13 +128,13 @@ const MenuDisplay = () => {
   };
 
   return (
-    <DashboardLayout>
+
       <div className="container">
         <h1 className="title">Our Menu</h1>
-
+        <p>Table Number: {tableNumber || "Not Detected"}</p>
         {error && <p className="error-message">{error}</p>}
 
-        {/* ✅ Search Bar & Category Filter */}
+        {/*  Search Bar & Category Filter */}
         <div className="search-container">
           <input
             type="text"
@@ -134,7 +143,6 @@ const MenuDisplay = () => {
             onChange={handleSearch}
             className="search-input"
           />
-
           <div className="menu-container">
             <img
               src="https://cdn.iconscout.com/icon/premium/png-256-thumb/restaurant-menu-5-628087.png"
@@ -142,7 +150,7 @@ const MenuDisplay = () => {
               className="menu-icon"
               onClick={() => setShowCategoryDropdown(!showCategoryDropdown)}
             />
-            {/* ✅ Category Dropdown */}
+            {/*  Category Dropdown */}
             {showCategoryDropdown && (
               <ul className="category-dropdown">
                 {categories.map((category, index) => (
@@ -157,7 +165,7 @@ const MenuDisplay = () => {
 
         {cartMessage && <p className="cart-message">{cartMessage}</p>}
 
-        {/* ✅ Menu List */}
+        {/*  Menu List */}
         <div className="menu-list">
           {filteredMenu.length > 0 ? (
             filteredMenu.map(item => (
@@ -172,7 +180,7 @@ const MenuDisplay = () => {
                   <div className="menu-footer">
                     <p className="menu-price">{"\u20B9"}{item.price}</p>
 
-                    <div className="quantity-selector">
+                    <div className="quantity-selector ">
                       <button onClick={() => decreaseQuantity(item.id)}>-</button>
                       <span>{quantities[item.id]}</span>
                       <button onClick={() => increaseQuantity(item.id)}>+</button>
@@ -189,12 +197,11 @@ const MenuDisplay = () => {
             <p className="text-center text-gray-600 w-full">No menu items found.</p>
           )}
         </div>
-
-        <button onClick={() => navigate("/cart")} className="view-cart">
+        <button onClick={() => navigate(`/cart?table=${tableNumber}`)} className="view-cart">
           View Cart
         </button>
+
       </div>
-    </DashboardLayout>
   );
 };
 

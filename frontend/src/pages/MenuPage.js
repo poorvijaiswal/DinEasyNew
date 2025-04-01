@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -138,7 +139,6 @@ const MenuPage = () => {
               <option value="Beverages">Beverages</option>
             </select>
           </div>
-
           <div>
             <label className="block text-gray-700 font-semibold mb-1">Dish Name</label>
             <input type="text" name="name" placeholder="Enter dish name" value={formData.name} onChange={handleChange} className="w-full border p-2 rounded-lg" required />
