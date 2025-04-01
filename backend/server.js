@@ -52,25 +52,18 @@ app.use((err, req, res, next) => {
   });
 
 //protected route
-
 const restaurantRoutes = require('./routes/restaurant');
 app.use('/api/restaurant', restaurantRoutes);
-
 const menuRoutes = require('./routes/menu');
 app.use('/api', menuRoutes);
-
 const membershipRoutes = require('./routes/membership');
 app.use('/api/membership', membershipRoutes);
-
 const paymentRoutes = require('./routes/payment');
 app.use('/api/payment', paymentRoutes);
-
 const qrRoutes = require('./routes/qrRoutes');
 app.use('/api/qr', verifyToken, qrRoutes);
-
 const staffRoutes = require('./routes/staff');
 app.use('/api', staffRoutes);
-
 const orderRoutes = require('./routes/orderRoutes');
 app.use('/api', orderRoutes);
 
