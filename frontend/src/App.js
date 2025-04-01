@@ -23,13 +23,16 @@ import ResetPassword from './pages/ResetPassword';
 import StaffManagement from './pages/StaffManagement';
 import StaffListPage from './pages/StaffListPage';
 import MenuPage from './pages/MenuPage';
-import MenuList from './pages/MenuList';
 import MenuDisplay from './pages/MenuDisplay';
 import CartPage from './pages/CartPage';
 import CheckoutPage from "./pages/CheckoutPage";
+
+import DisplayMenuList from './pages/DisplayMenuList';
+
 import PartnerMenuPage from './pages/PartnerMenu/PartnerMenuPage';
 import PartnerMenuCheckout from './pages/PartnerMenu/PartnerMenuCheckout';
 import Bill from './pages/PartnerMenu/Bill';
+
 
 function App() {
   return (
@@ -63,7 +66,7 @@ function App() {
               <Route path="/display-qr" element={<QRCodeDisplay />} />
 
               <Route path="/menu" element={<MenuPage />} />
-              <Route path="/menu-list" element={<MenuList />} />
+              <Route path="/menu-list" element={<DisplayMenuList />} />
               <Route path="/menu-display" element={<MenuDisplay />} />
               <Route path='/profile' element={<ProfilePage />} />
               <Route path="/dashboard/owner" element={<OwnerDashboard />} />

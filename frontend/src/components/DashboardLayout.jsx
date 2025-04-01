@@ -29,7 +29,7 @@ export default function DashboardLayout({ children }) {
             <FaClipboardList className="mr-2" /> {isNavOpen && "Create Menu"}
             {!isNavOpen && <span className="tooltip">Create Menu</span>}
           </Link>
-          <Link to="/menu-display" className="flex items-center px-4 py-2 hover:bg-blue-700 transition-all relative group">
+          <Link to="/menu-list" className="flex items-center px-4 py-2 hover:bg-blue-700 transition-all relative group">
             <FaClipboardList className="mr-2" /> {isNavOpen && "Display MenuList"}
             {!isNavOpen && <span className="tooltip">Display MenuList</span>}
           </Link>
