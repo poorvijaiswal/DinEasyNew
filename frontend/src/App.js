@@ -31,6 +31,7 @@ import MenuList from './pages/MenuList';
 import MenuDisplay from './pages/MenuDisplay';
 //import CartPage from './pages/CartPage';
 
+
 function App() {
   return (
 
@@ -44,7 +45,6 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/dashboard" element={<Dashboard />} />
             <Route path='/about' element={<About />} />
 
             <Route path="/partners" element={<PartnerRestaurant />} />

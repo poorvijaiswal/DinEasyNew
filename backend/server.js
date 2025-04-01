@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 const path = require("path");
 const db = require("./config/db.js");// Import database connection
 const verifyToken = require("./middleware/auth");
+const http = require("http");
 
 // Load environment variables
 dotenv.config();
@@ -52,8 +53,6 @@ app.use((err, req, res, next) => {
     res.status(500).json({ message: 'Internal Server Error', error: err.message });
   });
 
-//protected route
-app.use('/api/qr', verifyToken, qrRoutes);
 
 const restaurantRoutes = require('./routes/restaurant');
 app.use('/api/restaurant', restaurantRoutes);
