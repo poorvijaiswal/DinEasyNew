@@ -4,7 +4,7 @@ const db = require('../config/db');
 const generateQRCode = async (req, res) => {
     const { tableNumber, size, restaurantId } = req.body;
     console.log(restaurantId);
-    const qrText = `http://localhost:3000/order?table=${tableNumber}`;
+    const qrText = `http://localhost:3000/menu-display?table=${tableNumber}`;
 
     try {
         console.log('Generating QR code for:', qrText, 'with size:', size);
@@ -51,18 +51,6 @@ const generateQRCode = async (req, res) => {
         res.status(500).json({ message: 'Error generating QR code', error });
     }
 };
-
-// const getAllQRCodes = (req, res) => {
-//     db.query('SELECT * FROM TableQR', (err, results) => {
-//         if (err) {
-//             console.error('Database error:', err);
-//             return res.status(500).json({ message: 'Database error', error: err });
-//         }
-//         res.json(results);
-//     });
-// };
-
-// module.exports = { generateQRCode, getAllQRCodes };
 
 const getAllQRCodesByRestaurantId = (req, res) => {
     const { restaurantId } = req.params;

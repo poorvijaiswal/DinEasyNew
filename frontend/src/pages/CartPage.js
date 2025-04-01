@@ -1,19 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; 
-import DashboardLayout from "../components/DashboardLayout";
-import "./CartPage.css"; 
+import { useNavigate, useLocation } from "react-router-dom";
+import UserDashboardLayout from "../components/UserDashboardLayout";
+import "./CartPage.css";
 
 const CartPage = () => {
   const [cart, setCart] = useState([]);
   const navigate = useNavigate();
+  const location = useLocation();
 
-  //  Load cart items from localStorage when component mounts
+  // Extract table number from URL
+  const queryParams = new URLSearchParams(location.search);
+  const tableNumber = queryParams.get("table") || "Unknown"; // Default to "Unknown" if missing
+
+  // Load cart items from localStorage when component mounts
   useEffect(() => {
-    const storedCart = JSON.parse(localStorage.getItem("cart")) || [] ;
+    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
     setCart(storedCart);
   }, []);
 
-  //  Update quantity in cart
+  // Update quantity in cart
   const updateQuantity = (id, change) => {
     const updatedCart = cart.map((item) =>
       item.id === id ? { ...item, quantity: Math.max(1, item.quantity + change) } : item
@@ -23,18 +28,18 @@ const CartPage = () => {
     localStorage.setItem("cart", JSON.stringify(updatedCart));
   };
 
-  //  Remove an item from the cart
+  // Remove an item from the cart
   const removeItem = (id) => {
     const updatedCart = cart.filter((item) => item.id !== id);
     setCart(updatedCart);
     localStorage.setItem("cart", JSON.stringify(updatedCart));
   };
 
-  //  Calculate total price
+  // Calculate total price
   const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   return (
-    <DashboardLayout>
+    <UserDashboardLayout>
       <div className="container">
         <h1 className="title">Your Cart</h1>
 
@@ -69,22 +74,23 @@ const CartPage = () => {
             <div className="cart-total">
               <h2>Total: {"\u20B9"}{totalPrice.toFixed(2)}</h2>
 
-              {/*  Navigate to Checkout Page with Cart Data */}
-              <button 
+              {/* Navigate to Checkout Page with Cart Data */}
+              <button
                 className="checkout-button"
-                onClick={() => navigate("/checkout", { state: { cart, totalPrice } })}>
+                onClick={() => navigate(`/checkout?table=${tableNumber}`, { state: { cart, totalPrice } })}
+              >
                 Proceed to Checkout
               </button>
             </div>
           </div>
         )}
 
-        {/*  Back to Menu Button */}
-        <button onClick={() => navigate("/menu-Display")} className="back-to-menu">
+        {/* Back to Menu Button */}
+        <button onClick={() => navigate(`/menu-display?table=${tableNumber}`)} className="back-to-menu">
           Back to Menu
         </button>
       </div>
-    </DashboardLayout>
+    </UserDashboardLayout>
   );
 };
 
