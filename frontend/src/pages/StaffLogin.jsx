@@ -70,6 +70,7 @@ export default function StaffLogin() {
         setTimeout(() => verificationRef.current?.focus(), 100); // Auto-focus verification input
         navigate('/verify-email', { state: { email: formData.email } });
       } else {
+        
         setMessage("Login successful");
         localStorage.setItem("staff_id", response.data.staff_id); // Store membership_id in local storage
         console.log(response.data.staff_id, "login successful") ;

@@ -11,7 +11,7 @@ const CheckoutPage = () => {
   const [restaurantId, setRestaurantId] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
 
-  // ✅ Fetch restaurant_id dynamically from backend
+  // Fetch restaurant_id dynamically from backend
   useEffect(() => {
     const fetchRestaurantId = async () => {
       try {

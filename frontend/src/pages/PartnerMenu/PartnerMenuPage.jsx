@@ -42,20 +42,20 @@ const PartnerMenuPage = () => {
     fetchMenu();
   }, [restaurantId]);
 
-    // Fetch queue length and estimated wait time
-    useEffect(() => {
-      const fetchQueueData = async () => {
-        try {
-          const response = await axios.get(`http://localhost:5000/api/preorder/queue/${restaurantId}`);
-          setQueueLength(response.data.queueLength);
-          setEstimatedWaitTime(response.data.estimatedWaitTime);
-        } catch (err) {
-          console.error("Error fetching queue data:", err);
-        }
-      };
-  
-      fetchQueueData();
-    }, [restaurantId]);
+  // Fetch queue length and estimated wait time
+  useEffect(() => {
+    const fetchQueueData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/api/preorder/queue/${restaurantId}`);
+        setQueueLength(response.data.queueLength);
+        setEstimatedWaitTime(response.data.estimatedWaitTime);
+      } catch (err) {
+        console.error("Error fetching queue data:", err);
+      }
+    };
+
+    fetchQueueData();
+  }, [restaurantId]);
 
   // Add item to cart
   const addToCart = (item) => {
@@ -85,12 +85,12 @@ const PartnerMenuPage = () => {
       ...prevQuantities,
       [id]: Math.max(1, (prevQuantities[id] || 1) + change),
     }));
-  
+
     // Update the cart state
     const updatedCart = cart.map((item) =>
       item.id === id ? { ...item, quantity: Math.max(1, item.quantity + change) } : item
     );
-  
+
     setCart(updatedCart);
     localStorage.setItem("cart", JSON.stringify(updatedCart));
   };
@@ -113,15 +113,15 @@ const PartnerMenuPage = () => {
         return;
       }
 
-      const response = await axios.post("http://localhost:5000/api/preorder", {
-        restaurant_id: restaurantId,
-        customer_id: 1, // Replace with actual customer ID
-        items: cart,
-      });
+      // const response = await axios.post("http://localhost:5000/api/preorder", {
+      //   restaurant_id: restaurantId,
+      //   customer_id: 1, // Replace with actual customer ID
+      //   items: cart,
+      // });
 
-      setEstimatedWaitTime(response.data.estimated_wait_time);
-      alert(`Preorder placed successfully! Estimated wait time: ${response.data.estimated_wait_time} minutes.`);
-      navigate("/checkout", {
+      // setEstimatedWaitTime(response.data.estimated_wait_time);
+      // alert(`Preorder placed successfully! Estimated wait time: ${response.data.estimated_wait_time} minutes.`);
+      navigate("/checkout-partner-res", {
         state: {
           cart,
           totalPrice,
@@ -135,9 +135,17 @@ const PartnerMenuPage = () => {
   };
 
   return (
-    <div className={styles.container}><br/><br/>
-      <p className="text-gray-700 mt-4 font-bold text-red-700">Queue Length: {queueLength} orders</p>
-      <p className="text-gray-700 mt-4 font-bold text-red-700">Estimated Wait Time: {estimatedWaitTime} minutes</p>
+    <div className={styles.container}><br /><br />
+      <div className="flex items-center justify-around  text-gray-700 mt-4 font-bold text-red-700 text-lg mb-4">
+        <p className="flex items-center justify-center  border-lime-600 border-2 rounded-lg p-4 text-gray-700 mt-4 font-bold text-red-700 text-lg">
+          <i className="fas fa-users text-blue-500 mr-2 animate-pulse"></i>
+          Queue Length: <span className="ml-1">{queueLength}</span> orders
+        </p>
+        <p className="flex items-center justify-center  border-lime-600 border-2 rounded-lg p-4 text-gray-700 mt-4 font-bold text-red-700 text-lg">
+          <i className="fas fa-clock text-green-500 mr-2 animate-spin-slow"></i>
+          Estimated Wait Time: <span className="ml-1">{estimatedWaitTime}</span> minutes
+        </p>
+      </div>
       <h1 className="text-3xl font-bold text-center mb-6">Menu</h1>
       {error && <p className="text-red-500 text-center">{error}</p>}
       {cartMessage && <p className="text-green-500 text-center">{cartMessage}</p>}
@@ -184,7 +192,7 @@ const PartnerMenuPage = () => {
             </div>
           ))}
           <h3 className="text-lg font-bold mt-4">Total: ₹{totalPrice.toFixed(2)}</h3>
-          
+
           <button
             onClick={handlePreorder}
             className="bg-green-500 text-white py-3 px-6 rounded-lg shadow-md hover:bg-green-600 transition"

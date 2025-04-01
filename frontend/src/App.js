@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Header from './components/Header';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 import About from './pages/About';
 import PartnerRestaurant from './pages/PartnerRestaurant';
 import ProfilePage from './pages/Dashboard/ProfilePage';
@@ -27,6 +28,8 @@ import MenuDisplay from './pages/MenuDisplay';
 import CartPage from './pages/CartPage';
 import CheckoutPage from "./pages/CheckoutPage";
 import PartnerMenuPage from './pages/PartnerMenu/PartnerMenuPage';
+import PartnerMenuCheckout from './pages/PartnerMenu/PartnerMenuCheckout';
+import Bill from './pages/PartnerMenu/Bill';
 
 function App() {
   return (
@@ -50,6 +53,8 @@ function App() {
             <Route path="/payment" element={<Payment />} />
             <Route path="/restaurant-register" element={<RestaurantRegister />} />
             <Route path="/staff-login" element={<StaffLogin />} />
+            <Route path="/checkout-partner-res" element={<PartnerMenuCheckout />} />
+            <Route path='/bill/:preorderId' element={<Bill />} />
 
             <Route path="/menu/:restaurantId" element={<PartnerMenuPage />} />
 
