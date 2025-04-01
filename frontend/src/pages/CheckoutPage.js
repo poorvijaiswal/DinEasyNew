@@ -28,7 +28,8 @@ const CheckoutPage = () => {
     }
   }, [location.search]);
 
-  //  Fetch Restaurant ID
+  // Fetch restaurant_id dynamically from backend
+
   useEffect(() => {
     const fetchRestaurantId = async () => {
       try {

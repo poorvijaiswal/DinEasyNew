@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 const path = require("path");
 const db = require("./config/db.js");// Import database connection
 const verifyToken = require("./middleware/auth");
+const socketIo = require("socket.io");
 
 // Load environment variables
 dotenv.config();
@@ -67,6 +68,8 @@ app.use('/api', staffRoutes);
 const orderRoutes = require('./routes/orderRoutes');
 app.use('/api', orderRoutes);
 
+const preorderRoutes = require("./routes/preorderRoutes");
+app.use("/api/preorder", preorderRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
