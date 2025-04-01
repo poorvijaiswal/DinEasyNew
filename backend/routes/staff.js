@@ -22,6 +22,7 @@ router.get("/staff", (req, res) => {
 
 //  Get all restaurants (for dropdown selection in frontend)
 router.get("/restaurants", (req, res) => {
+    res.set('Cache-Control', 'no-store');
     const query = "SELECT restaurant_id, name FROM Restaurant";
     db.query(query, (err, results) => {
         if (err) {
