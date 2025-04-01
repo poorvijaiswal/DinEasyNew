@@ -1,38 +1,30 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "./MenuDisplay.css";
-import UserDashboardLayout from "../components/UserDashboardLayout";
-
-const MenuDisplay = () => {
-  const location = useLocation();
-  const [tableNumber, setTableNumber] = useState(null);
-  const [menu, setMenu] = useState([]);
-  const [filteredMenu, setFilteredMenu] = useState([]);
-  const [cart, setCart] = useState([]);
-  const [error, setError] = useState("");
-  const [restaurantId, setRestaurantId] = useState(null);
-  const [quantities, setQuantities] = useState({});
-  const [cartMessage, setCartMessage] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [categories, setCategories] = useState([]); //  Store categories
-  const [selectedCategory, setSelectedCategory] = useState("All"); //  Default category
-  const [showCategoryDropdown, setShowCategoryDropdown] = useState(false); //  Toggle category dropdown
+import { useNavigate, useLocation } from "react-router-dom";
+import DashboardLayout from "../components/DashboardLayout";
+import { Link } from "react-router-dom";
+const StaffManagement = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const editingStaff = location.state?.staff || null;
 
-  useEffect(() => {
-    const queryParams = new URLSearchParams(location.search);
-    const tableNum = queryParams.get("table");
-    // Get table number from URL
-    console.log("Extracted Table Number:", tableNum);
-    if (tableNum) setTableNumber(tableNum);
-  }, [location.search]);
+  const [restaurants, setRestaurants] = useState([]);
+  const [formData, setFormData] = useState({
+    restaurant_id: "",
+    name: "",
+    role: "Waiter",
+    email: "",
+  });
+
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     fetchRestaurantId();
-    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
-    setCart(storedCart);
-  }, []);
+    if (editingStaff) {
+      setFormData(editingStaff);
+    }
+  }, [editingStaff]);
 
   const fetchRestaurantId = async () => {
     try {
@@ -40,171 +32,122 @@ const MenuDisplay = () => {
       if (!token) {
         throw new Error("No token found in local storage");
       }
-
       const response = await axios.get("http://localhost:5000/api/auth/getRestaurantId", {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
-
-      const fetchedRestaurantId = response.data.restaurant_id;
-      setRestaurantId(fetchedRestaurantId);
-      fetchMenu(fetchedRestaurantId);
+      setFormData((prev) => ({ ...prev, restaurant_id: response.data.restaurant_id })); // Set default restaurant ID in form
     } catch (error) {
       console.error("Error fetching restaurant ID:", error);
-      setError("Error fetching restaurant ID.");
+      setError("Error fetching restaurant ID");
     }
   };
 
-  const fetchMenu = async (id) => {
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setMessage("");
+
+    if (!formData.restaurant_id || !formData.name || !formData.role || !formData.email) {
+      setError("All fields are required.");
+      return;
+    }
+
     try {
-      if (!id) return;
-
-      const response = await axios.get(`http://localhost:5000/api/menu/${id}`);
-      setMenu(response.data);
-      setFilteredMenu(response.data);
-
-      // Extract Unique Categories
-      const uniqueCategories = ["All", ...new Set(response.data.map(item => item.category))];
-      setCategories(uniqueCategories);
-
-      const initialQuantities = response.data.reduce((acc, item) => {
-        acc[item.id] = 1;
-        return acc;
-      }, {});
-      setQuantities(initialQuantities);
-    } catch (error) {
-      console.error("Error fetching menu:", error);
-      setError("Error fetching menu data.");
+      if (editingStaff) {
+        await axios.put(`http://localhost:5000/api/staff/${editingStaff.staff_id}`, formData);
+        setMessage("Staff updated successfully!");
+      } else {
+        await axios.post("http://localhost:5000/api/staff", formData);
+        setMessage("Staff added successfully!");
+      }
+      navigate("/staff-list");
+    } catch (err) {
+      setError("Error saving staff: " + err.message);
     }
-  };
-
-  // Handle Search
-  const handleSearch = (e) => {
-    const value = e.target.value.toLowerCase();
-    setSearchTerm(value);
-    filterMenu(selectedCategory, value);
-  };
-
-  // Filter Menu Based on Category & Search
-  const filterMenu = (category, term) => {
-    let filtered = menu;
-
-    if (category !== "All") {
-      filtered = menu.filter(item => item.category === category);
-    }
-
-    if (term) {
-      filtered = filtered.filter(item => item.name.toLowerCase().includes(term));
-    }
-
-    setFilteredMenu(filtered);
-  };
-
-  //  Handle Category Selection
-  const handleCategorySelect = (category) => {
-    setSelectedCategory(category);
-    setShowCategoryDropdown(false);
-    filterMenu(category, searchTerm);
-  };
-
-  const increaseQuantity = (id) => setQuantities(prev => ({ ...prev, [id]: prev[id] + 1 }));
-  const decreaseQuantity = (id) => setQuantities(prev => ({ ...prev, [id]: prev[id] > 1 ? prev[id] - 1 : 1 }));
-
-  const addToCart = (item) => {
-    const existingItem = cart.find(cartItem => cartItem.id === item.id);
-    let updatedCart;
-
-    if (existingItem) {
-      updatedCart = cart.map(cartItem =>
-        cartItem.id === item.id ? { ...cartItem, quantity: cartItem.quantity + quantities[item.id] } : cartItem
-      );
-    } else {
-      updatedCart = [...cart, { ...item, quantity: quantities[item.id] }];
-    }
-
-    setCart(updatedCart);
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
-
-    setCartMessage(`${item.name} added to cart!`);
-    setTimeout(() => setCartMessage(""), 2000);
   };
 
   return (
-    <UserDashboardLayout>
-      <div className="container">
-        <h1 className="title">Our Menu</h1>
-        <p>Table Number: {tableNumber || "Not Detected"}</p>
-        {error && <p className="error-message">{error}</p>}
+    <DashboardLayout>
+      <div className="max-w-4xl mx-auto mt-8 bg-white shadow-lg rounded-lg p-6">
+        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
+          {editingStaff ? "Update Staff" : "Add Staff"}
+        </h2>
 
-        {/*  Search Bar & Category Filter */}
-        <div className="search-container">
-          <input
-            type="text"
-            placeholder="Search for items..."
-            value={searchTerm}
-            onChange={handleSearch}
-            className="search-input"
-          />
-          <div className="menu-container">
-            <img
-              src="https://cdn.iconscout.com/icon/premium/png-256-thumb/restaurant-menu-5-628087.png"
-              alt="Menu"
-              className="menu-icon"
-              onClick={() => setShowCategoryDropdown(!showCategoryDropdown)}
+        {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+        {message && <p className="text-green-500 text-sm mb-4">{message}</p>}
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* <div>
+            <label className="block text-gray-700 font-semibold mb-1">Select Restaurant</label>
+            <select
+              name="restaurant_id"
+              value={formData.restaurant_id}
+              onChange={handleChange}
+              className="w-full border p-2 rounded-lg"
+            >
+              <option value="">Choose a Restaurant</option>
+              {restaurants.map((restaurant) => (
+                <option key={restaurant.restaurant_id} value={restaurant.restaurant_id}>
+                  {restaurant.name}
+                </option>
+              ))}
+            </select>
+          </div> */}
+
+          <div>
+            <label className="block text-gray-700 font-semibold mb-1">Staff Name</label>
+            <input
+              type="text"
+              name="name"
+              placeholder="Enter staff name"
+              value={formData.name}
+              onChange={handleChange}
+              className="w-full border p-2 rounded-lg"
+              required
             />
-            {/*  Category Dropdown */}
-            {showCategoryDropdown && (
-              <ul className="category-dropdown">
-                {categories.map((category, index) => (
-                  <li key={index} onClick={() => handleCategorySelect(category)}>
-                    {category}
-                  </li>
-                ))}
-              </ul>
-            )}
           </div>
-        </div>
 
-        {cartMessage && <p className="cart-message">{cartMessage}</p>}
+          <div>
+            <label className="block text-gray-700 font-semibold mb-1">Role</label>
+            <select name="role" value={formData.role} onChange={handleChange} className="w-full border p-2 rounded-lg">
+              <option value="Manager">Manager</option>
+              <option value="Chef">Chef</option>
+              <option value="Waiter">Waiter</option>
+            </select>
+          </div>
 
-        {/*  Menu List */}
-        <div className="menu-list">
-          {filteredMenu.length > 0 ? (
-            filteredMenu.map(item => (
-              <div key={item.id} className="menu-item">
-                <img src={`http://localhost:5000/uploads/${item.image_url}`} alt={item.name} className="menu-image" />
+          <div>
+            <label className="block text-gray-700 font-semibold mb-1">Email</label>
+            <input
+              type="email"
+              name="email"
+              placeholder="Enter email"
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full border p-2 rounded-lg"
+              required
+            />
+          </div>
 
-                <div className="menu-content">
-                  <h2 className="menu-title">{item.name}</h2>
-                  <p className="menu-category">{item.category}</p>
-                  <p className="menu-description">{item.description}</p>
+          <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">
+            {editingStaff ? "Update Staff" : "Add Staff"}
+          </button>
+          <div className="mt-6 text-center">
+                <Link to="/staff-list" className="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition">
+                    View Staff List
+                </Link>
+            </div>
 
-                  <div className="menu-footer">
-                    <p className="menu-price">{"\u20B9"}{item.price}</p>
-
-                    <div className="quantity-selector ">
-                      <button onClick={() => decreaseQuantity(item.id)}>-</button>
-                      <span>{quantities[item.id]}</span>
-                      <button onClick={() => increaseQuantity(item.id)}>+</button>
-                    </div>
-
-                    <button onClick={() => addToCart(item)} className="add-to-cart">
-                      Add to Cart
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))
-          ) : (
-            <p className="text-center text-gray-600 w-full">No menu items found.</p>
-          )}
-        </div>
-        <button onClick={() => navigate(`/cart?table=${tableNumber}`)} className="view-cart">
-          View Cart
-        </button>
-
+        </form>
       </div>
-    </UserDashboardLayout>
+    </DashboardLayout>
   );
 };
 
-export default MenuDisplay;
+export default StaffManagement;

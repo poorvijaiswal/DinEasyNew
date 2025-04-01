@@ -1,12 +1,7 @@
 import React, { useState, useRef } from "react";
 import axios from "axios";
-
 import { FaEnvelope, FaLock } from "react-icons/fa";
-// import { auth, googleProvider } from "../firebases/firebaseConfig";
-// import { signInWithPopup } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-
-
 export default function StaffLogin() {
   const [formData, setFormData] = useState({
     email: "",
