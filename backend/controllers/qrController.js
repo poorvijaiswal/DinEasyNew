@@ -63,4 +63,15 @@ const getAllQRCodesByRestaurantId = (req, res) => {
     });
 };
 
-module.exports = { generateQRCode, getAllQRCodesByRestaurantId };
+// Delete QR Code
+const deleteQRCode = async (req, res) => {
+    try {
+      const { qrId } = req.params;
+      await QRCode.findByIdAndDelete(qrId);
+      res.status(200).json({ message: 'QR code deleted successfully' });
+    } catch (error) {
+      res.status(500).json({ message: 'Error deleting QR code', error });
+    }
+  };
+
+module.exports = { generateQRCode, getAllQRCodesByRestaurantId, deleteQRCode };

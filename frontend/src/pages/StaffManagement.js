@@ -14,18 +14,21 @@ const StaffManagement = () => {
     const [message, setMessage] = useState("");
     const [error, setError] = useState("");
 
-    useEffect(() => {
-        fetchRestaurants();
-    }, []);
+  useEffect(() => {
+    fetchRestaurants();
+    if (editingStaff) {
+      setFormData(editingStaff);
+    }
+  }, [editingStaff]);
 
-    const fetchRestaurants = async () => {
-        try {
-            const response = await axios.get("http://localhost:5000/api/restaurant");
-            setRestaurants(response.data);
-        } catch (error) {
-            console.error("Error fetching restaurants:", error);
-        }
-    };
+  const fetchRestaurants = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/api/restaurant");
+      setRestaurants(response.data);
+    } catch (error) {
+      console.error("Error fetching restaurants:", error);
+    }
+  };
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -61,18 +64,23 @@ const StaffManagement = () => {
             {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
             {message && <p className="text-green-500 text-sm mb-4">{message}</p>}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                    <label className="block text-gray-700 font-semibold mb-1">Select Restaurant</label>
-                    <select name="restaurant_id" value={formData.restaurant_id} onChange={handleChange} className="w-full border p-2 rounded-lg">
-                        <option value="">Choose a Restaurant</option>
-                        {restaurants.map((restaurant) => (
-                            <option key={restaurant.restaurant_id} value={restaurant.restaurant_id}>
-                                {restaurant.name}
-                            </option>
-                        ))}
-                    </select>
-                </div>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-gray-700 font-semibold mb-1">Select Restaurant</label>
+            <select
+              name="restaurant_id"
+              value={formData.restaurant_id}
+              onChange={handleChange}
+              className="w-full border p-2 rounded-lg"
+            >
+              <option value="">Choose a Restaurant</option>
+              {restaurants.map((restaurant) => (
+                <option key={restaurant.restaurant_id} value={restaurant.restaurant_id}>
+                  {restaurant.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
                 <div>
                     <label className="block text-gray-700 font-semibold mb-1">Staff Name</label>

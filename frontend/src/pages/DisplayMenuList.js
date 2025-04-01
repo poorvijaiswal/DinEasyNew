@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import DashboardLayout from "../components/DashboardLayout";
+import { Link } from "react-router-dom";
 
 const DisplayMenuList = () => {
   const [menu, setMenu] = useState([]);
@@ -42,7 +43,14 @@ const DisplayMenuList = () => {
   return (
     <DashboardLayout>
       <div className="max-w-5xl mx-auto mt-8 bg-white shadow-lg rounded-2xl p-6 w-full">
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">Menu List</h2>
+        <div className="flex justify-between items-center">
+        <h2 className="text-3xl font-bold text-center text-gray-800 mb-4">Menu List</h2>
+       
+       <Link to="/menu" className="bg-green-600 mb-3 text-white py-3 px-6 rounded-lg hover:bg-green-700 transition">
+         Edit Menu
+       </Link>
+        </div>
+
         {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
 
         <table className="w-full border-collapse border border-gray-200">

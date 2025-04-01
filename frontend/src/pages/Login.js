@@ -122,9 +122,10 @@ export default function Login() {
       <div className="bg-white p-10 rounded-2xl shadow-lg max-w-4xl w-full flex mx-6 mb-10">
         <div className="w-1/2 flex flex-col items-center justify-center p-6">
           <img src="https://img.freepik.com/premium-vector/restaurant-staff-team-director-chef-waiter-manager-sommelier_369750-595.jpg" alt="Staff Illustration" className="w-64 rounded-2xl h-auto mb-4" />
-          <p className="text-gray-600">
-            <a href="/Register" className="text-blue-500 hover:underline">Create an account</a>
-          </p>
+          <div className="text-gray-600 text-center">
+            <a href="/Register" className="text-blue-500 hover:underline">Create an account</a><br/>
+            <a href="/staff-login" className="text-blue-500 hover:underline">Staff Login</a>
+          </div>
         </div>
 
         <div className="w-1/2 p-3">
@@ -170,11 +171,6 @@ export default function Login() {
               <button type="submit" className="bg-red-500 text-white py-3 rounded-lg w-full hover:bg-red-600 transition" disabled={loading}>
                 {loading ? "Logging in..." : "Log In"}
               </button>
-              <div className="flex justify-center mt-4">
-                <button className="bg-blue-500 text-white py-3 rounded-lg w-full hover:bg-blue-600 transition">
-                  Continue with Google
-                </button>
-              </div>
             </form>
           ) : (
             <form className="flex flex-col gap-4">
