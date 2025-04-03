@@ -52,25 +52,45 @@ const StaffManagement = () => {
     e.preventDefault();
     setError("");
     setMessage("");
-
+  
     if (!formData.restaurant_id || !formData.name || !formData.role || !formData.email) {
       setError("All fields are required.");
       return;
     }
-
+  
     try {
+      const token = localStorage.getItem("token"); // Get token from local storage
+      if (!token) {
+        setError("Unauthorized: No token found.");
+        return;
+      }
+  
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Attach token
+        },
+      };
+  
       if (editingStaff) {
-        await axios.put(`http://localhost:5000/api/staff/${editingStaff.staff_id}`, formData);
+        await axios.put(
+          `http://localhost:5000/api/staff/${editingStaff.staff_id}`,
+          formData,
+          config // Pass headers
+        );
         setMessage("Staff updated successfully!");
       } else {
-        await axios.post("http://localhost:5000/api/staff", formData);
+        await axios.post("http://localhost:5000/api/staff", formData, config);
         setMessage("Staff added successfully!");
       }
+  
       navigate("/staff-list");
     } catch (err) {
-      setError("Error saving staff: " + err.message);
+      console.error("Error:", err);
+      setError("Error saving staff: " + (err.response?.data?.message || err.message));
     }
   };
+  
 
   return (
     <DashboardLayout>
@@ -83,23 +103,6 @@ const StaffManagement = () => {
         {message && <p className="text-green-500 text-sm mb-4">{message}</p>}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* <div>
-            <label className="block text-gray-700 font-semibold mb-1">Select Restaurant</label>
-            <select
-              name="restaurant_id"
-              value={formData.restaurant_id}
-              onChange={handleChange}
-              className="w-full border p-2 rounded-lg"
-            >
-              <option value="">Choose a Restaurant</option>
-              {restaurants.map((restaurant) => (
-                <option key={restaurant.restaurant_id} value={restaurant.restaurant_id}>
-                  {restaurant.name}
-                </option>
-              ))}
-            </select>
-          </div> */}
-
           <div>
             <label className="block text-gray-700 font-semibold mb-1">Staff Name</label>
             <input
