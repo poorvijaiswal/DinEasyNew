@@ -86,46 +86,48 @@ const StaffListPage = () => {
         </div>
 
         <table className="w-full border-collapse border border-gray-200">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="border p-2">Name</th>
-              <th className="border p-2">Role</th>
-              <th className="border p-2">Email</th>
-              <th className="border p-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {staff.length > 0 ? (
-              staff.map((staffMember) => (
-                <tr key={staffMember.staff_id} className="border">
-                  <td className="border p-2">{staffMember.name}</td>
-                  <td className="border p-2">{staffMember.role}</td>
-                  <td className="border p-2">{staffMember.email}</td>
-                  <td className="border p-2">
-                    <button
-                      onClick={() => handleEdit(staffMember)}
-                      className="bg-yellow-500 text-white px-3 py-1 rounded mr-2"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(staffMember.staff_id)}
-                      className="bg-red-500 text-white px-3 py-1 rounded"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="4" className="text-center p-4">
-                  No staff members found.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+  <thead>
+    <tr className="bg-gray-100">
+      <th className="border p-2">Name</th>
+      <th className="border p-2">Role</th>
+      <th className="border p-2">Email</th>
+      <th className="border p-2">Phone</th>
+      <th className="border p-2">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {staff.length > 0 ? (
+      staff.map((staffMember) => (
+        <tr key={staffMember.staff_id} className="border">
+          <td className="border p-2">{staffMember.name}</td>
+          <td className="border p-2">{staffMember.role}</td>
+          <td className="border p-2">{staffMember.email}</td>
+          <td className="border p-2">{staffMember.phone}</td>
+          <td className="border p-2">
+            <button
+              onClick={() => handleEdit(staffMember)}
+              className="bg-yellow-500 text-white px-3 py-1 rounded mr-2"
+            >
+              Edit
+            </button>
+            <button
+              onClick={() => handleDelete(staffMember.staff_id)}
+              className="bg-red-500 text-white px-3 py-1 rounded"
+            >
+              Delete
+            </button>
+          </td>
+        </tr>
+      ))
+    ) : (
+      <tr>
+        <td colSpan="5" className="text-center p-4">
+          No staff members found.
+        </td>
+      </tr>
+    )}
+  </tbody>
+</table>
       </div>
     </DashboardLayout>
   );

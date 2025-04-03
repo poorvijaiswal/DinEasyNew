@@ -14,6 +14,7 @@ const StaffManagement = () => {
     name: "",
     role: "Waiter",
     email: "",
+    phone: "",
   });
 
   const [message, setMessage] = useState("");
@@ -132,6 +133,18 @@ const StaffManagement = () => {
               name="email"
               placeholder="Enter email"
               value={formData.email}
+              onChange={handleChange}
+              className="w-full border p-2 rounded-lg"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-gray-700 font-semibold mb-1">Phone</label>
+            <input
+              type="text"
+              name="phone"
+              placeholder="Enter phone"
+              value={formData.phone}
               onChange={handleChange}
               className="w-full border p-2 rounded-lg"
               required
