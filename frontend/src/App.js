@@ -29,7 +29,8 @@ import DisplayMenuList from './pages/DisplayMenuList';
 import PartnerMenuPage from './pages/PartnerMenu/PartnerMenuPage';
 import PartnerMenuCheckout from './pages/PartnerMenu/PartnerMenuCheckout';
 import Bill from './pages/PartnerMenu/Bill';
-
+import FeedbackForm from './pages/FeedBackForm';
+import ThankYou from "./pages/ThankYou";
 function App() {
   return (
 
@@ -56,6 +57,8 @@ function App() {
             <Route path='/bill/:preorderId' element={<Bill />} />
             <Route path="/menu/:restaurantId" element={<PartnerMenuPage />} />
             <Route path="/menu-display" element={<MenuDisplay />} />
+            <Route path="/feedback" element={<FeedbackForm />} />
+            <Route path="/thankyou" element={<ThankYou />} />
             <Route element={<PrivateRoute />}>
               <Route path="/generate-qr" element={<QRCodeGenerator />} />
               <Route path="/display-qr" element={<QRCodeDisplay />} />

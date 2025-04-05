@@ -67,10 +67,10 @@ const staffRoutes = require('./routes/staff');
 app.use('/api', staffRoutes);
 const orderRoutes = require('./routes/orderRoutes');
 app.use('/api', orderRoutes);
-
 const preorderRoutes = require("./routes/preorderRoutes");
 app.use("/api/preorder", preorderRoutes);
-
+const feedbackRoutes = require("./routes/feedbackRoutes");
+app.use('/api', feedbackRoutes);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
