@@ -107,7 +107,7 @@ export default function StaffLogin() {
         <div className="w-1/2 flex flex-col items-center justify-center p-6">
           <img src="https://img.freepik.com/premium-vector/restaurant-staff-team-director-chef-waiter-manager-sommelier_369750-595.jpg" alt="Staff Illustration" className="w-64 rounded-2xl h-auto mb-4" />
           <p className="text-gray-600">
-            <a href="/dashboard/staff" className="text-blue-500 hover:underline">Owner Login</a>
+            <a href="/login" className="text-blue-500 hover:underline">Owner Login</a>
           </p>
         </div>
 

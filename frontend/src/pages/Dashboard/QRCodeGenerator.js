@@ -113,5 +113,4 @@ const QRCodeGenerator = () => {
     </DashboardLayout>
   );
 };
-
 export default QRCodeGenerator;

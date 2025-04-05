@@ -29,7 +29,6 @@ router.get('/', (req, res) => {
     });
 });
 
-
 // Get restaurant data by membership ID
 router.get('/:membershipId', (req, res) => {
     const { membershipId } = req.params;

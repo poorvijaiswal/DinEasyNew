@@ -177,7 +177,6 @@ router.post('/login', async (req, res) => { // Mark the function as async
 });
 
 // Staff Login
-// Staff Login
 router.post("/staff-login", (req, res) => {
   const { email, password } = req.body;
 

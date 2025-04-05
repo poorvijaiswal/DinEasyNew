@@ -55,13 +55,12 @@ function App() {
             <Route path="/checkout-partner-res" element={<PartnerMenuCheckout />} />
             <Route path='/bill/:preorderId' element={<Bill />} />
             <Route path="/menu/:restaurantId" element={<PartnerMenuPage />} />
+            <Route path="/menu-display" element={<MenuDisplay />} />
             <Route element={<PrivateRoute />}>
               <Route path="/generate-qr" element={<QRCodeGenerator />} />
               <Route path="/display-qr" element={<QRCodeDisplay />} />
-
               <Route path="/menu" element={<MenuPage />} />
               <Route path="/menu-list" element={<DisplayMenuList />} />
-              <Route path="/menu-display" element={<MenuDisplay />} />
               <Route path='/profile' element={<ProfilePage />} />
               <Route path="/dashboard/owner" element={<OwnerDashboard />} />
               <Route path="/dashboard/staff" element={<StaffDashboard />} />

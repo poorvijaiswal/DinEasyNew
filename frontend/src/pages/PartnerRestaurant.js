@@ -11,7 +11,7 @@ const PartnerRestaurant = () => {
   useEffect(() => {
     const fetchRestaurants = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/restaurants"); // Use your API endpoint
+        const response = await axios.get("http://localhost:5000/api/restaurant"); // Use your API endpoint
         setRestaurants(response.data);
         localStorage.setItem("restaurants", JSON.stringify(response.data));
       } catch (err) {
