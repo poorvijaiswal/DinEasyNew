@@ -177,7 +177,12 @@
 .add-to-cart:hover {
   background-color: #d73333;
 }
-
+.cart-message {
+  color: #4caf50;
+  font-size: 16px;
+  text-align: center;
+  margin-top: 20px;
+}
 .view-cart {
   margin: 2rem auto 0;
   display: block;
