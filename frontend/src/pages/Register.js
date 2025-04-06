@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { registerOwner } from "../services/api";
+import { FaUser, FaEnvelope, FaLock, FaPhone } from "react-icons/fa";
 
 export default function Register() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     owner_name: "",
     email: "",
-    password: "", 
+    password: "",
     confirmPassword: "",
     phone: "",
   });
@@ -17,10 +18,10 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
-    const { id, value, type, checked } = e.target;
+    const { id, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [id]: type === "checkbox" ? checked : value,
+      [id]: value,
     }));
   };
 
@@ -34,7 +35,6 @@ export default function Register() {
     setError("");
     setMessage("");
 
-    // Password validation
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match!");
       return;
@@ -47,17 +47,15 @@ export default function Register() {
 
     setLoading(true);
 
-    const ownerData = {
-      owner_name: formData.owner_name,
-      email: formData.email,
-      password: formData.password,
-      phone: formData.phone,
-    };
-    
     try {
-      const response = await registerOwner(ownerData);
+      const { status } = await registerOwner({
+        owner_name: formData.owner_name,
+        email: formData.email,
+        password: formData.password,
+        phone: formData.phone,
+      });
 
-      if (response.status === 201) {
+      if (status === 201) {
         setMessage("Registration successful!");
         setFormData({
           owner_name: "",
@@ -66,9 +64,7 @@ export default function Register() {
           confirmPassword: "",
           phone: "",
         });
-        navigate('/verify-email', { state: { email: formData.email } });
-      } else {
-        setError(response.data.message || "Registration failed. Try again.");
+        navigate("/verify-email", { state: { email: formData.email } });
       }
     } catch (error) {
       setError(error.response?.data?.message || "Error connecting to server. Please try again.");
@@ -77,93 +73,61 @@ export default function Register() {
     }
   };
 
-  return (
-    <div className="flex justify-center items-center min-h-screen bg-cover bg-center bg-gray-100 p-4" style={{ backgroundImage: "url('https://img.freepik.com/free-photo/wooden-planks-with-blurred-restaurant-background_1253-56.jpg?size=626&ext=jpg')" }}> 
-      <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-4xl flex flex-col md:flex-row"> 
+  const inputClass = "border border-gray-300 p-3 rounded-lg w-full pl-10 focus:outline-none focus:ring-2 focus:ring-red-300";
+  const iconClass = "absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-400";
 
-        {/* Left Section - Form */}
-        <div className="w-full md:w-1/2 p-6">
-          <h2 className="text-3xl font-bold mb-6 text-center md:text-left">
-            Sign up
-          </h2>
-          
-          {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-          {message && <p className="text-green-500 text-sm mb-4">{message}</p>}
+  return (
+    <div className="flex justify-center items-center min-h-screen bg-gray-100 bg-cover bg-center p-4" style={{ backgroundImage: "url('https://img.freepik.com/free-photo/wooden-planks-with-blurred-restaurant-background_1253-56.jpg?size=626&ext=jpg')" }}>
+      <div className="bg-white w-full max-w-4xl md:flex rounded-2xl shadow-2xl overflow-hidden">
+        
+        {/* Left: Form */}
+        <div className="w-full md:w-1/2 p-8">
+          <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Sign Up</h2>
+          {error && <p className="text-red-500 text-sm mb-4 text-center">{error}</p>}
+          {message && <p className="text-green-500 text-sm mb-4 text-center">{message}</p>}
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <input
-              type="text"
-              id="owner_name"
-              placeholder="Owner Name"
-              className="border p-3 rounded-lg w-full"
-              onChange={handleChange}
-              value={formData.owner_name}
-              required
-            />
-            <input
-              type="email"
-              id="email"
-              placeholder="Your Email"
-              className="border p-3 rounded-lg w-full"
-              onChange={handleChange}
-              value={formData.email}
-              required
-            />
-            <input
-              type="password"
-              id="password"
-              placeholder="Password"
-              className="border p-3 rounded-lg w-full"
-              onChange={handleChange}
-              value={formData.password}
-              required
-            />
-            <input
-              type="password"
-              id="confirmPassword"
-              placeholder="Repeat your password"
-              className="border p-3 rounded-lg w-full"
-              onChange={handleChange}
-              value={formData.confirmPassword}
-              required
-            />
-            <input
-              type="tel"
-              id="phone"
-              placeholder="Phone Number"
-              className="border p-3 rounded-lg w-full"
-              onChange={handleChange}
-              value={formData.phone}
-              required
-            />
-           
-            <button
-              type="submit"
-              className="bg-red-500 text-white py-3 rounded-lg w-full hover:bg-red-600 transition"
-              disabled={loading}
-            >
+            <div className="relative">
+              <FaUser className={iconClass} />
+              <input type="text" id="owner_name" placeholder="Owner Name" className={inputClass} value={formData.owner_name} onChange={handleChange} required />
+            </div>
+
+            <div className="relative">
+              <FaEnvelope className={iconClass} />
+              <input type="email" id="email" placeholder="Your Email" className={inputClass} value={formData.email} onChange={handleChange} required />
+            </div>
+
+            <div className="relative">
+              <FaLock className={iconClass} />
+              <input type="password" id="password" placeholder="Password" className={inputClass} value={formData.password} onChange={handleChange} required />
+            </div>
+
+            <div className="relative">
+              <FaLock className={iconClass} />
+              <input type="password" id="confirmPassword" placeholder="Repeat your password" className={inputClass} value={formData.confirmPassword} onChange={handleChange} required />
+            </div>
+
+            <div className="relative">
+              <FaPhone className={iconClass} />
+              <input type="tel" id="phone" placeholder="Phone Number" className={inputClass} value={formData.phone} onChange={handleChange} required />
+            </div>
+
+            <button type="submit" className="bg-red-500 text-white py-3 rounded-lg hover:bg-red-600 transition duration-300" disabled={loading}>
               {loading ? "Registering..." : "Register"}
             </button>
           </form>
         </div>
 
-        {/* Right Section - Illustration & Links */}
-        <div className="w-full md:w-1/2 flex flex-col items-center justify-center p-2">
-          <img
-            src="https://i0.wp.com/99v.in/wp-content/uploads/2023/06/images-7.jpeg?fit=700,400&ssl=1"
-            alt="Signup Illustration"
-            className="w-[500px] h-[360px] rounded-2xl"
-          />
-          <p className="mt-4 text-gray-600 text-center">
+        {/* Right: Image + Links */}
+        <div className="w-full md:w-1/2 bg-gray-50 flex flex-col items-center justify-center p-6">
+          <img src="https://i0.wp.com/99v.in/wp-content/uploads/2023/06/images-7.jpeg?fit=700,400&ssl=1" alt="Signup" className="w-full max-w-xs md:max-w-sm rounded-xl mb-6" />
+          <p className="text-gray-600 text-sm text-center">
             Already a member?{" "}
-            <Link to="/login" className="text-blue-600 hover:underline">
+            <Link to="/login" className="text-blue-600 hover:underline font-medium">
               Login here
             </Link>
           </p>
-          <Link
-            to="/membership"
-            className="text-sm text-blue-600 hover:underline mt-2"
-          >
+          <Link to="/membership" className="mt-2 text-sm text-blue-600 hover:underline">
             Take a Membership for your Restaurant
           </Link>
         </div>
