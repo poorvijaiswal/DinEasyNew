@@ -15,7 +15,7 @@ const slides = [
     description: "Get detailed insights into your restaurant's performance",
   },
   {
-    image: "https://img.freepik.com/free-photo/parmesan-pasta-recipe-with-piece-cheese-raw-pasta-other-ingredients_1220-583.jpg",
+    image: "https://img.freepik.com/free-photo/view-assortment-with-delicious-food-copy-space_23-2148308903.jpg?semt=ais_hybrid&w=740",
     title: "QR Code Ordering",
     description: "Contactless ordering system for a better dining experience",
   },
@@ -40,7 +40,7 @@ export default function HeroSlider() {
   }
 
   return (
-    <div className="relative w-full h-[700px] overflow-hidden mt-16">
+    <div className="fixed w-full h-[700px] overflow-hidden mt-16">
       {slides.map((slide, index) => (
         <div
           key={index}
@@ -50,8 +50,8 @@ export default function HeroSlider() {
           <div className="absolute inset-0 bg-black/50" />
           <img src={slide.image || "/placeholder.svg"} alt={slide.title} className="w-full h-full object-cover" />
           <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white p-4">
-            <h1 className="text-4xl md:text-6xl font-bold mb-4">{slide.title}</h1>
-            <p className="text-lg md:text-xl mb-8 max-w-2xl">{slide.description}</p>
+            <h1 className="text-4xl md:text-6xl font-bold mb-4 text-gray-200">{slide.title}</h1>
+            <p className="text-lg md:text-xl mb-8 max-w-2xl font-bold text-gray-900">{slide.description}</p>
             <button className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
               Get Started
             </button>
