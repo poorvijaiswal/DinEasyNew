@@ -68,7 +68,7 @@ const CheckoutPage = () => {
   }, [cart, totalPrice]);
 
   // Confirm Order
-  const handleConfirmOrder = async () => {
+  /*const handleConfirmOrder = async () => {
     if (!Array.isArray(cart) || cart.length === 0) {
       alert(" Cart is empty! Please add items before checkout.");
       return;
@@ -92,6 +92,7 @@ const CheckoutPage = () => {
       if (response.status === 201) {
         alert(" Order placed successfully!");
         localStorage.removeItem("cart"); //  Clear cart
+        
         navigate("/dashboard/staff"); //  Redirect to staff dashboard
       } else {
         alert(" Failed to place order: " + response.data.message);
@@ -100,7 +101,42 @@ const CheckoutPage = () => {
       console.error("Order submission error:", error);
       alert(" Something went wrong!");
     }
-  };
+  };*/
+  const handleConfirmOrder = async () => {
+    if (!Array.isArray(cart) || cart.length === 0) {
+      alert("Cart is empty! Please add items before checkout.");
+      return;
+    }
+    if (!restaurantId) {
+      alert("Restaurant ID not available. Please try again.");
+      return;
+    }
+    if (!tableNumber) {
+      alert("Table number not found! Please rescan the QR code.");
+      return;
+    }
+  
+    try {
+      const response = await axios.post("http://localhost:5000/api/order", {
+        items: cart,
+        table_number: tableNumber,
+        restaurant_id: restaurantId,
+      });
+  
+      if (response.status === 201) {
+        alert("Order placed successfully!");
+        localStorage.removeItem("cart"); // Clear cart
+  
+        const orderId = response.data.order_id; // 👈 assuming backend sends this
+        navigate("/feedback", { state: { order_id: orderId } }); // 👈 redirect to feedback
+      } else {
+        alert("Failed to place order: " + response.data.message);
+      }
+    } catch (error) {
+      console.error("Order submission error:", error);
+      alert("Something went wrong!");
+    }
+  };  
 
   return (
     <div className="checkout-container">
