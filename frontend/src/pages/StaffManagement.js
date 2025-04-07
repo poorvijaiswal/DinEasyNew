@@ -96,7 +96,7 @@ const StaffManagement = () => {
   return (
     <DashboardLayout>
       <div className="max-w-4xl mx-auto mt-8 bg-white shadow-lg rounded-lg p-6">
-        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
+        <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
           {editingStaff ? "Update Staff" : "Add Staff"}
         </h2>
 

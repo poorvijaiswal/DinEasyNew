@@ -43,8 +43,6 @@ router.get("/staff/:restaurantId", verifyToken, (req, res) => {
         res.json(results);
     });
 });
-
-
 //  Add a new staff member
 router.post("/staff", (req, res) => {
     const { restaurant_id, name, role, email, phone } = req.body;
