@@ -125,7 +125,7 @@ export default function Login() {
 
         {/* Right Side (Form) */}
         <div className="md:w-1/2 p-6 sm:p-10">
-          <h2 className="text-3xl font-extrabold text-gray-800 mb-6 text-center">Owner Login</h2>
+          <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">Owner Login</h2>
 
           {message && <p className="text-green-600 text-sm text-center mb-2">{message}</p>}
           {error && <p className="text-red-500 text-sm text-center mb-2">{error}</p>}

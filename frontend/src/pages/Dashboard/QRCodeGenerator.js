@@ -11,6 +11,8 @@ const QRCodeGenerator = () => {
   const [restaurantId, setRestaurantId] = useState(""); // Add restaurantId state
   const [message, setMessage] = useState("");
    
+  const MAX_QR_DATA_LENGTH = 2953; // Maximum capacity for QR Code version 40 (alphanumeric)
+
   useEffect(() => {
     // Fetch restaurant_id from the backend
     const fetchRestaurantId = async () => {
@@ -36,22 +38,35 @@ const QRCodeGenerator = () => {
 
   const generateQR = async (e) => {
     e.preventDefault();
+    setMessage("");
+    setQRCode(""); // Reset QR code before generating
+
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!token) {
         throw new Error("No token found in local storage");
       }
-      const response = await axios.post("http://localhost:5000/api/qr/generate", { tableNumber, size, restaurantId }, {
-        headers: {
-          Authorization: `Bearer ${token}` // Ensure no double quotes around the token
+
+      const response = await axios.post(
+        "http://localhost:5000/api/qr/generate",
+        { tableNumber, size, restaurantId },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      });
-      
-      console.log("QR Code Data:", response.data.qrCode); // Debugging step
-      
+      );
+
       if (response.data.qrCode) {
-        setQRCode(response.data.qrCode);
-        setMessage("QR Code successfully created!");
+        let qrData = response.data.qrCode;
+
+        if (qrData.length > MAX_QR_DATA_LENGTH) {
+          qrData = qrData.substring(0, MAX_QR_DATA_LENGTH);
+        } else {
+          setMessage("QR Code successfully created!");
+        }
+
+        setQRCode(qrData);
       } else {
         setMessage("Failed to generate QR Code.");
       }
@@ -94,7 +109,9 @@ const QRCodeGenerator = () => {
               <option value="600">600x600</option>
               <option value="700">700x700</option>
             </select>
-            <p className="msg" style={{ color: message.includes("successfully") ? "green" : "red" }}>{message}</p>
+            <p className="msg" style={{ color: message.toLowerCase().includes("successfully") ? "green" : "red" }}>
+              {message}
+            </p>
             <button type="submit">
               Generate QR Code
             </button>

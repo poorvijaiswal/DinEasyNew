@@ -204,14 +204,27 @@ router.post("/staff-login", (req, res) => {
       { expiresIn: "1d" }
     );
 
-    return res.status(200).json({
-      message: "Login successful",
-      token,
-      staff_id: staff.staff_id,
-      name: staff.name,
-      role: staff.role,
-      restaurant_id: staff.restaurant_id,
-    });
+    // Insert or update the login details in the StaffLogin table
+    db.query(
+      "INSERT INTO StaffLogin (staff_id, email, password, is_verified) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE email = VALUES(email), password = VALUES(password), is_verified = VALUES(is_verified)",
+      [staff.staff_id, staff.email, password, true], // Use email from the staff object
+      (insertErr) => {
+        if (insertErr) {
+          console.error("Error inserting/updating StaffLogin:", insertErr);
+          return res.status(500).json({ message: "Error storing login details", error: insertErr });
+        }
+
+        return res.status(200).json({
+          message: "Login successful",
+          token,
+          staff_id: staff.staff_id,
+          email: staff.email, // Include email in the response
+          name: staff.name,
+          role: staff.role,
+          restaurant_id: staff.restaurant_id,
+        });
+      }
+    );
   });
 });
 

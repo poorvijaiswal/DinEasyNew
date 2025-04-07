@@ -51,7 +51,7 @@ export default function HeroSlider() {
           <img src={slide.image || "/placeholder.svg"} alt={slide.title} className="w-full h-full object-cover" />
           <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white p-4">
             <h1 className="text-4xl md:text-6xl font-bold mb-4 text-gray-200">{slide.title}</h1>
-            <p className="text-lg md:text-xl mb-8 max-w-2xl font-bold text-gray-900">{slide.description}</p>
+            <p className="text-lg md:text-xl mb-8 max-w-2xl text-gray-900">{slide.description}</p>
             <button className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
               Get Started
             </button>

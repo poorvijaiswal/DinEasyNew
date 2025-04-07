@@ -31,6 +31,7 @@ import PartnerMenuCheckout from './pages/PartnerMenu/PartnerMenuCheckout';
 import Bill from './pages/PartnerMenu/Bill';
 import FeedbackForm from './pages/FeedBackForm';
 import ThankYou from "./pages/ThankYou";
+import UserDashboard from './pages/Dashboard/UserDashboard';
 function App() {
   return (
 
@@ -59,6 +60,7 @@ function App() {
             <Route path="/menu-display" element={<MenuDisplay />} />
             <Route path="/feedback" element={<FeedbackForm />} />
             <Route path="/thankyou" element={<ThankYou />} />
+            <Route path="/user" element={<UserDashboard />} />
             <Route element={<PrivateRoute />}>
               <Route path="/generate-qr" element={<QRCodeGenerator />} />
               <Route path="/display-qr" element={<QRCodeDisplay />} />

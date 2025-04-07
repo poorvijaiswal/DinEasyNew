@@ -1,102 +1,109 @@
-/* Center align main QR container */
+/* QRCodeDisplay.css */
+
 .qr-display {
-  text-align: center;
-  padding: 20px;
-  margin-top: 30px;
+  padding: 40px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: #f9f9f9;
+  min-height: 100vh;
+  font-weight: bold;
 }
 
-/* Responsive Grid Layout */
-.qr-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 15px;
+.qr-display h1 {
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #333;
+}
+
+.button-group {
+  display: flex;
   justify-content: center;
-  padding: 15px;
-  max-width: 100%;
-  margin: auto;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
 }
 
-/* Styling Each QR Code Item */
-.qr-item {
-  background: white;
-  padding: 15px;
-  border-radius: 10px;
-  text-align: center;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  position: relative;
-  transition: transform 0.2s ease-in-out;
-}
-
-.qr-item:hover {
-  transform: scale(1.05);
-}
-
-/* Checkbox Alignment */
-.qr-item input {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  transform: scale(1.2);
-}
-
-/* QR Code Image */
-.qr-item img {
-  width: 100%;
-  max-width: 130px;
-  height: auto;
-  object-fit: contain;
-  margin-bottom: 8px;
-}
-
-/* Print Button */
-.print-button {
-  padding: 12px 18px;
-  background-color: #007bff;
-  color: white;
+.print-button,
+.delete-button {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: bold;
   border: none;
+  border-radius: 8px;
   cursor: pointer;
-  border-radius: 6px;
-  margin: 10px 0;
-  font-size: 16px;
-  transition: background 0.3s ease-in-out;
+  transition: background 0.3s ease;
+}
+
+.print-button {
+  background-color: #4caf50;
+  color: white;
 }
 
 .print-button:hover {
-  background-color: #0056b3;
+  background-color: #3e8e41;
 }
 
-/* Mobile View Adjustments */
-@media (max-width: 768px) {
-  .qr-list {
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
-    gap: 12px;
-    padding: 10px;
+.delete-button {
+  background-color: #f44336;
+  color: white;
+}
+
+.delete-button:hover {
+  background-color: #d32f2f;
+}
+
+.qr-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+}
+
+.qr-item {
+  background-color: white;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.qr-item:hover {
+  transform: translateY(-5px);
+}
+
+.qr-item input[type="checkbox"] {
+  margin-bottom: 0.5rem;
+  transform: scale(1.3);
+  cursor: pointer;
+}
+
+.qr-item img {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+  margin: 1rem 0;
+}
+
+.qr-item p {
+  margin: 0;
+  font-size: 1rem;
+  color: #333;
+}
+
+@media screen and (max-width: 600px) {
+  .button-group {
+    flex-direction: column;
+    align-items: center;
   }
 
-  .qr-item {
-    padding: 10px;
+  .print-button,
+  .delete-button {
+    width: 100%;
   }
 
   .qr-item img {
-    max-width: 110px;
-  }
-}
-
-@media (max-width: 480px) {
-  .qr-list {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .qr-item {
-    padding: 8px;
-  }
-
-  .qr-item img {
-    max-width: 90px;
-  }
-
-  .print-button {
-    font-size: 14px;
-    padding: 10px;
+    width: 120px;
+    height: 120px;
   }
 }

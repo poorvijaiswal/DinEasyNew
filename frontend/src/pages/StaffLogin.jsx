@@ -112,7 +112,7 @@ export default function StaffLogin() {
 
         {/* Right Section */}
         <div className="md:w-1/2 p-8">
-          <h2 className="text-3xl font-semibold text-gray-800 mb-6 text-center">Staff Login</h2>
+          <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">Staff Login</h2>
           {message && <p className="text-green-600 text-sm text-center mb-4">{message}</p>}
           {error && <p className="text-red-600 text-sm text-center mb-4">{error}</p>}
 
