@@ -21,6 +21,8 @@ const transporter = nodemailer.createTransport({
     }
 });
 
+const STAFF_COMMON_PASSWORD = process.env.STAFF_COMMON_PASSWORD || 'staff@123'; // Add fallback value
+
 // Register User with Email Verification
 router.post('/register', async (req, res) => {
 
@@ -187,47 +189,28 @@ router.post("/staff-login", (req, res) => {
       });
     }
 
-    // Check the password
-    const isPasswordValid = await bcrypt.compare(password, staff.password);
-    if (!isPasswordValid) {
-      return res.status(400).json({ message: "Incorrect password!" });
+    // Directly compare the provided password with the common password
+    if (password !== STAFF_COMMON_PASSWORD) {
+      return res.status(401).json({ message: "Incorrect password." });
     }
 
-    db.query('SELECT * FROM StaffLogin WHERE staff_id = ?', [staff.staff_id], (err, loginResults) => {
-        if (err) return res.status(500).json({ message: 'Database error', error: err });
+    const token = jwt.sign(
+      {
+        staff_id: staff.staff_id,
+        role: staff.role,
+        restaurant_id: staff.restaurant_id,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    );
 
-        if (loginResults.length === 0) {
-            return res.status(403).json({ message: 'Login record not found for staff.' });
-        }
-
-        const login = loginResults[0];
-
-        if (!login.is_verified) {
-            return res.status(403).json({ message: 'Staff not verified. Please contact admin.' });
-        }
-
-        // Directly compare the provided password with the common password
-        if (password !== STAFF_COMMON_PASSWORD) {
-            return res.status(401).json({ message: 'Incorrect password.' });
-        }
-        const token = jwt.sign(
-            {
-                staff_id: staff.staff_id,
-                role: staff.role,
-                restaurant_id: staff.restaurant_id
-            },
-            process.env.JWT_SECRET,
-            { expiresIn: '1d' }
-        );
-
-        return res.status(200).json({
-            message: 'Login successful',
-            token,
-            staff_id: staff.staff_id,
-            name: staff.name,
-            role: staff.role,
-            restaurant_id: staff.restaurant_id
-        });
+    return res.status(200).json({
+      message: "Login successful",
+      token,
+      staff_id: staff.staff_id,
+      name: staff.name,
+      role: staff.role,
+      restaurant_id: staff.restaurant_id,
     });
   });
 });

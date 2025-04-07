@@ -38,6 +38,9 @@ const StaffManagement = () => {
           Authorization: `Bearer ${token}`,
         },
       });
+      if (!response.data.restaurant_id) {
+        throw new Error("Restaurant ID not found");
+      }
       setFormData((prev) => ({ ...prev, restaurant_id: response.data.restaurant_id })); // Set default restaurant ID in form
     } catch (error) {
       console.error("Error fetching restaurant ID:", error);

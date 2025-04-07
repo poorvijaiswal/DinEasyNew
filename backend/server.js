@@ -77,8 +77,6 @@ if (typeof orderRoutes === 'function') {
 } else {
     console.error("Invalid middleware for orderRoutes");
 }
-const staffAuthRoutes = require('./routes/staffAuth');
-app.use('/api', staffAuthRoutes);
 
 const preorderRoutes = require("./routes/preorderRoutes");
 app.use("/api/preorder", preorderRoutes);
