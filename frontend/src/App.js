@@ -31,7 +31,7 @@ import PartnerMenuCheckout from './pages/PartnerMenu/PartnerMenuCheckout';
 import Bill from './pages/PartnerMenu/Bill';
 import FeedbackForm from './pages/FeedBackForm';
 import ThankYou from "./pages/ThankYou";
-import UserDashboard from './pages/Dashboard/UserDashboard';
+import UserDashboard from './pages/UserDashboard';
 function App() {
   return (
 

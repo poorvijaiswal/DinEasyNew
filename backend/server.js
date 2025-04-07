@@ -41,6 +41,9 @@ app.get("/", (req, res) => {
 // Import and use routes
 const userRoutes = require("./routes/user");
 app.use('/api/user', userRoutes);
+const customerRoutes = require("./routes/customer");
+app.use("/api/customer", customerRoutes);
+
 
 const authRoutes = require("./routes/auth");
 app.use("/api/auth", authRoutes);

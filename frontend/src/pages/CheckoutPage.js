@@ -93,7 +93,7 @@ const CheckoutPage = () => {
         alert("Order placed successfully!");
         localStorage.removeItem("cart"); // Clear cart
         //navigate("/dashboard/staff"); 
-        const orderId = response.data.order_id; // 
+        const orderId = response.data.order_id; 
         navigate("/feedback", { state: { order_id: orderId } }); // 
       } else {
         alert("Failed to place order: " + response.data.message);
