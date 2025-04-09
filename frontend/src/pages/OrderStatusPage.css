@@ -60,3 +60,14 @@
   .feedback-button:hover {
     background-color: #287ba8;
   }
+
+  .order-status-container h3 {
+    margin: 10px 0;
+    color: #555;
+  }
+  
+  .order-status-container .order-status-title {
+    color: #3399cc;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }

@@ -268,7 +268,7 @@ const CheckoutPage = () => {
             });
             localStorage.removeItem("cart");
             alert("Payment successful! Redirecting to order status...");
-            navigate(`/order-status`);
+            navigate(`/order-status`, { state: { order_id } }); // Redirect to order status page
           },
           prefill: {
             name: "Your Name",

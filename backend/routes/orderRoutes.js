@@ -2,6 +2,7 @@ const express = require("express");
 const db = require("../config/db");
 const router = express.Router();
 const verifyToken = require("../middleware/auth");
+const { getOrderDetails } = require("../controllers/orderController");
 
 // ✅ Get Restaurant ID for the authenticated owner
 router.get("/auth/getRestaurantId", verifyToken, (req, res) => {
@@ -203,5 +204,8 @@ router.delete("/order/:id", async (req, res) => {
         res.status(500).json({ error: "Database error", details: error });
     }
 });
+
+//fetch order details by order_id
+router.get("/order/:order_id", getOrderDetails);
 
 module.exports = router;
