@@ -3,6 +3,8 @@ const Razorpay = require('razorpay');
 const crypto = require("crypto");
 const QRCode = require("qrcode");
 const db = require('../config/db');
+const { createPayment, updatePaymentStatus } = require("../controllers/paymentController");
+
 const router = express.Router();
 
 const razorpay = new Razorpay({
@@ -172,6 +174,13 @@ router.post("/mark-complete", (req, res) => {
     res.status(200).json({ message: "Order marked as complete successfully" });
   });
 });
+
+// Route to create a new offline order payment
+router.post("/create", createPayment);
+
+// Route to update offline order payment status
+router.put("/update-status", updatePaymentStatus);
+
 
 
 module.exports = router;

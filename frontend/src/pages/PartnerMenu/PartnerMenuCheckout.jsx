@@ -24,7 +24,7 @@ const handlePayment = async () => {
   
       // Step 2: Open Razorpay payment modal
       const options = {
-        key: process.env.RAZORPAY_KEY_ID,
+        key: "rzp_test_aR6MrtfKJOXT9l",
         amount: amount,
         currency: "INR",
         name: "DinEasy",
