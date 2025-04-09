@@ -62,8 +62,10 @@ const menuRoutes = require('./routes/menu');
 app.use('/api', menuRoutes);
 const membershipRoutes = require('./routes/membership');
 app.use('/api/membership', membershipRoutes);
+
 const paymentRoutes = require('./routes/payment');
 app.use('/api/payment', paymentRoutes);
+
 const qrRoutes = require('./routes/qrRoutes');
 app.use('/api/qr', verifyToken, qrRoutes);
 

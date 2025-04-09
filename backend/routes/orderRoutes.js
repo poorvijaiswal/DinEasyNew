@@ -2,6 +2,7 @@ const express = require("express");
 const db = require("../config/db");
 const router = express.Router();
 const verifyToken = require("../middleware/auth");
+const { getOrderDetails } = require("../controllers/orderController");
 
 // ✅ Get Restaurant ID for the authenticated owner
 router.get("/auth/getRestaurantId", verifyToken, (req, res) => {
@@ -21,62 +22,120 @@ router.get("/auth/getRestaurantId", verifyToken, (req, res) => {
 });
 
 // ✅ Place an Order (Optimized)
+// router.post("/order", async (req, res) => {
+//     console.log("Order API called with data:", req.body);
+//     const { items, table_number, restaurant_id } = req.body;
+
+//     if (!Array.isArray(items) || items.length === 0) {
+//         return res.status(400).json({ message: "No items in order!" });
+//     }
+
+//     const status = "Pending";
+
+//     try {
+//         // Insert into `orders` table
+//         const orderResult = await new Promise((resolve, reject) => {
+//             db.query(
+//                 "INSERT INTO orders (restaurant_id, table_number, order_date, status) VALUES (?, ?, NOW(), ?)",
+//                 [restaurant_id, table_number, status],
+//                 (err, result) => (err ? reject(err) : resolve(result))
+//             );
+//         });
+
+//         const order_id = orderResult.insertId;
+//         console.log(`Order placed successfully! Order ID: ${order_id}`);
+
+//         // Fetch prices and insert into `orderitems` table
+//         let orderItemsValues = [];
+//         for (const item of items) {
+//             const menuResult = await new Promise((resolve, reject) => {
+//                 db.query("SELECT price FROM menu WHERE id = ?", [item.id], (err, result) =>
+//                     err ? reject(err) : resolve(result)
+//                 );
+//             });
+
+//             if (!menuResult.length) {
+//                 return res.status(404).json({ message: `Menu item ${item.id} not found` });
+//             }
+
+//             orderItemsValues.push([order_id, item.id, item.quantity, menuResult[0].price]);
+//         }
+
+//         if (orderItemsValues.length) {
+//             await new Promise((resolve, reject) => {
+//                 db.query(
+//                     "INSERT INTO orderitems (order_id, menu_id, quantity, price) VALUES ?",
+//                     [orderItemsValues],
+//                     (err) => (err ? reject(err) : resolve())
+//                 );
+//             });
+//         }
+
+//         res.status(201).json({ message: "Order placed successfully!", order_id });
+//     } catch (error) {
+//         console.error("Order placement error:", error);
+//         res.status(500).json({ message: "Database error", details: error });
+//     }
+// });
+
 router.post("/order", async (req, res) => {
     console.log("Order API called with data:", req.body);
     const { items, table_number, restaurant_id } = req.body;
-
+  
     if (!Array.isArray(items) || items.length === 0) {
-        return res.status(400).json({ message: "No items in order!" });
+      return res.status(400).json({ message: "No items in order!" });
     }
-
-    const status = "Pending";
-
+  
+    if (!table_number || !restaurant_id) {
+      return res.status(400).json({ message: "Table number and restaurant ID are required!" });
+    }
+  
     try {
-        // Insert into `orders` table
-        const orderResult = await new Promise((resolve, reject) => {
-            db.query(
-                "INSERT INTO orders (restaurant_id, table_number, order_date, status) VALUES (?, ?, NOW(), ?)",
-                [restaurant_id, table_number, status],
-                (err, result) => (err ? reject(err) : resolve(result))
-            );
+      // Insert into `orders` table
+      const orderResult = await new Promise((resolve, reject) => {
+        db.query(
+          "INSERT INTO orders (restaurant_id, table_number, order_date, status) VALUES (?, ?, NOW(), 'Pending')",
+          [restaurant_id, table_number],
+          (err, result) => (err ? reject(err) : resolve(result))
+        );
+      });
+  
+      const order_id = orderResult.insertId;
+  
+      // Insert into `orderitems` table
+      let orderItemsValues = [];
+      for (const item of items) {
+        const menuResult = await new Promise((resolve, reject) => {
+          db.query("SELECT price FROM menu WHERE id = ?", [item.id], (err, result) =>
+            err ? reject(err) : resolve(result)
+          );
         });
-
-        const order_id = orderResult.insertId;
-        console.log(`Order placed successfully! Order ID: ${order_id}`);
-
-        // Fetch prices and insert into `orderitems` table
-        let orderItemsValues = [];
-        for (const item of items) {
-            const menuResult = await new Promise((resolve, reject) => {
-                db.query("SELECT price FROM menu WHERE id = ?", [item.id], (err, result) =>
-                    err ? reject(err) : resolve(result)
-                );
-            });
-
-            if (!menuResult.length) {
-                return res.status(404).json({ message: `Menu item ${item.id} not found` });
-            }
-
-            orderItemsValues.push([order_id, item.id, item.quantity, menuResult[0].price]);
+  
+        if (!menuResult.length) {
+          return res.status(404).json({ message: `Menu item ${item.id} not found` });
         }
-
-        if (orderItemsValues.length) {
-            await new Promise((resolve, reject) => {
-                db.query(
-                    "INSERT INTO orderitems (order_id, menu_id, quantity, price) VALUES ?",
-                    [orderItemsValues],
-                    (err) => (err ? reject(err) : resolve())
-                );
-            });
-        }
-
-        res.status(201).json({ message: "Order placed successfully!", order_id });
+  
+        orderItemsValues.push([order_id, item.id, item.quantity, menuResult[0].price]);
+      }
+  
+      if (orderItemsValues.length) {
+        await new Promise((resolve, reject) => {
+          db.query(
+            "INSERT INTO orderitems (order_id, menu_id, quantity, price) VALUES ?",
+            [orderItemsValues],
+            (err) => (err ? reject(err) : resolve())
+          );
+        });
+      }
+  
+      res.status(201).json({ message: "Order created successfully!", order_id });
     } catch (error) {
-        console.error("Order placement error:", error);
-        res.status(500).json({ message: "Database error", details: error });
+      console.error("Order creation error:", error);
+      res.status(500).json({ message: "Database error", details: error });
     }
-});
+  });
 
+  
 // ✅ Get all orders with items
 router.get("/order", (req, res) => {
     const sql = `
@@ -145,5 +204,8 @@ router.delete("/order/:id", async (req, res) => {
         res.status(500).json({ error: "Database error", details: error });
     }
 });
+
+//fetch order details by order_id
+router.get("/order/:order_id", getOrderDetails);
 
 module.exports = router;
