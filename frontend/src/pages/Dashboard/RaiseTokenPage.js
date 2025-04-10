@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./RaiseTokenPage.css"; // Import the CSS
 
@@ -11,7 +11,10 @@ const RaiseTokenPage = () => {
     expiryTime: "",
   });
 
+  const [restaurantId, setRestaurantId] = useState(1); // State to store restaurant ID
   const [error, setError] = useState("");
+
+ 
 
   const handleFormChange = (e) => {
     const { id, value } = e.target;
@@ -22,24 +25,30 @@ const RaiseTokenPage = () => {
   };
 
   const createToken = async () => {
-    const restaurantId = localStorage.getItem("restaurant_id");
-
     if (!restaurantId) {
-      setError("Restaurant ID is missing from localStorage.");
+      setError("Restaurant ID is not available.");
       return;
     }
 
     const { foodItem, quantity, unit, pickupLocation, expiryTime } = formData;
 
     try {
-      await axios.post("http://localhost:5000/api/token", {
-        restaurant_id: restaurantId,
-        food_item: foodItem,
-        quantity: parseInt(quantity),
-        unit,
-        pickup_location: pickupLocation,
-        expiry_time: expiryTime,
-      });
+      await axios.post(
+        "http://localhost:5000/api/token",
+        {
+          restaurant_id: restaurantId,
+          food_item: foodItem,
+          quantity: parseInt(quantity),
+          unit,
+          pickup_location: pickupLocation,
+          expiry_time: expiryTime,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // Pass the token in the Authorization header
+          },
+        }
+      );
 
       setFormData({
         foodItem: "",
