@@ -37,5 +37,19 @@ export const createRazorpayOrder = async (price, membershipId) => {
   });
   return response.data;
 };
+
+const API_BASE_URL = "http://localhost:5000/api/ngo";
+
+export const registerNgo = async (ngoData) => {
+  try {
+    console.log("NGO Data:", ngoData); // Log NGO data to the console
+    // Make a POST request to the backend API for NGO registration
+    const response = await axios.post(`${API_BASE_URL}/register`, ngoData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: "An error occurred" };
+  }
+};
+
 export default API;
 

@@ -86,7 +86,7 @@ const QRCodeGenerator = () => {
       <div className="main-content">
         <div className="form-container">
           <h1>QR Code Generator</h1>
-          <form id="generate-form" onSubmit={generateQR}>
+          <form id="generate-form" onSubmit={generateQR} className="qr-form">
             <input
               name="tno"
               type="text"

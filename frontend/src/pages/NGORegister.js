@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { registerOwner } from "../services/api";
+import { registerNgo } from "../services/api"; // Import the API service
 import {
   FaUser,
   FaEnvelope,
@@ -10,16 +10,16 @@ import {
   FaIdBadge,
 } from "react-icons/fa";
 
-export default function Register() {
+export default function NGORegister() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    ngo_name: "",
-    contact_person: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    phone: "",
-    address: "",
+    ngo_name: "", // Matches the backend field "name"
+    contact_person: "", // Matches the backend field "contact_person"
+    email: "", // Matches the backend field "email"
+    password: "", // Matches the backend field "password"
+    confirmPassword: "", // Used for validation only
+    contact_number: "", // Matches the backend field "phone"
+    address: "", // Matches the backend field "address"
   });
 
   const [error, setError] = useState("");
@@ -44,49 +44,61 @@ export default function Register() {
     e.preventDefault();
     setError("");
     setMessage("");
-
+  
+    // Check for empty fields
+    if (
+      !formData.ngo_name ||
+      !formData.contact_person ||
+      !formData.email ||
+      !formData.password ||
+      !formData.contact_number ||
+      !formData.address
+    ) {
+      setError("All fields are required.");
+      return;
+    }
+  
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match!");
       return;
     }
-
+  
     if (!validatePassword(formData.password)) {
       setError(
         "Password must be at least 8 characters long, contain a number, a letter, and a special character."
       );
       return;
     }
-
+  
     setLoading(true);
-
+  
     try {
-      const { status } = await registerOwner({
-        ngo_name: formData.ngo_name,
+      const response = await registerNgo({
+        name: formData.ngo_name,
         contact_person: formData.contact_person,
         email: formData.email,
         password: formData.password,
-        phone: formData.phone,
+        contact_number: formData.contact_number,
         address: formData.address,
       });
-
-      if (status === 201) {
-        setMessage("Registration successful!");
-        setFormData({
-          ngo_name: "",
-          contact_person: "",
-          email: "",
-          password: "",
-          confirmPassword: "",
-          phone: "",
-          address: "",
-        });
-        navigate("/verify-email", { state: { email: formData.email } });
-      }
+  
+      setMessage(response.message || "Registration successful!");
+      setFormData({
+        ngo_name: "",
+        contact_person: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        contact_number: "",
+        address: "",
+      });
+  
+      // Redirect to login page after successful registration
+      setTimeout(() => {
+        navigate("/ngo-login");
+      }, 2000);
     } catch (error) {
-      setError(
-        error.response?.data?.message ||
-          "Error connecting to server. Please try again."
-      );
+      setError(error.message || "Error connecting to server. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -94,13 +106,6 @@ export default function Register() {
 
   const inputClass =
     "border border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-red-400 bg-white shadow-sm";
-
-  const LabelWithIcon = ({ icon: Icon, label }) => (
-    <label className="flex items-center text-gray-700 font-medium mb-1">
-      <Icon className="mr-2 text-red-500" />
-      {label}
-    </label>
-  );
 
   return (
     <div
@@ -110,7 +115,7 @@ export default function Register() {
           "url('https://img.freepik.com/free-photo/wooden-planks-with-blurred-restaurant-background_1253-56.jpg?size=626&ext=jpg')",
       }}
     >
-      <div className="bg-white/90 w-full max-w-5xl md:flex rounded-2xl shadow-xl overflow-hidden backdrop-blur-md max-h-[95vh]">
+      <div className="bg-white/90 mt-16 w-full max-w-5xl md:flex rounded-2xl shadow-xl overflow-hidden backdrop-blur-md max-h-[95vh]">
         {/* Left: Form */}
         <div className="w-full md:w-1/2 p-6 md:p-10 overflow-y-auto max-h-[90vh]">
           <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
@@ -125,84 +130,91 @@ export default function Register() {
           )}
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <div>
-              <LabelWithIcon icon={FaUser} label="NGO Name" />
+            <div className="flex items-center border border-gray-300 rounded-lg p-3 bg-white">
+              <FaIdBadge className="text-gray-500 mr-3" />
               <input
                 type="text"
                 id="ngo_name"
-                className={inputClass}
+                className="w-full outline-none text-sm"
+                placeholder="NGO Name"
                 value={formData.ngo_name}
                 onChange={handleChange}
                 required
               />
             </div>
 
-            <div>
-              <LabelWithIcon icon={FaIdBadge} label="Contact Person Name" />
+            <div className="flex items-center border border-gray-300 rounded-lg p-3 bg-white">
+              <FaUser className="text-gray-500 mr-3" />
               <input
                 type="text"
                 id="contact_person"
-                className={inputClass}
+                className="w-full outline-none text-sm"
+                placeholder="Contact Person Name"
                 value={formData.contact_person}
                 onChange={handleChange}
                 required
               />
             </div>
 
-            <div>
-              <LabelWithIcon icon={FaEnvelope} label="Email" />
+            <div className="flex items-center border border-gray-300 rounded-lg p-3 bg-white">
+              <FaEnvelope className="text-gray-500 mr-3" />
               <input
                 type="email"
                 id="email"
-                className={inputClass}
+                className="w-full outline-none text-sm"
+                placeholder="Email"
                 value={formData.email}
                 onChange={handleChange}
                 required
               />
             </div>
 
-            <div>
-              <LabelWithIcon icon={FaLock} label="Password" />
+            <div className="flex items-center border border-gray-300 rounded-lg p-3 bg-white">
+              <FaLock className="text-gray-500 mr-3" />
               <input
                 type="password"
                 id="password"
-                className={inputClass}
+                className="w-full outline-none text-sm"
+                placeholder="Password"
                 value={formData.password}
                 onChange={handleChange}
                 required
               />
             </div>
 
-            <div>
-              <LabelWithIcon icon={FaLock} label="Confirm Password" />
+            <div className="flex items-center border border-gray-300 rounded-lg p-3 bg-white">
+              <FaLock className="text-gray-500 mr-3" />
               <input
                 type="password"
                 id="confirmPassword"
-                className={inputClass}
+                className="w-full outline-none text-sm"
+                placeholder="Confirm Password"
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 required
               />
             </div>
 
-            <div>
-              <LabelWithIcon icon={FaPhone} label="Phone Number" />
+            <div className="flex items-center border border-gray-300 rounded-lg p-3 bg-white">
+              <FaPhone className="text-gray-500 mr-3" />
               <input
                 type="tel"
-                id="phone"
-                className={inputClass}
-                value={formData.phone}
+                id="contact_number"
+                className="w-full outline-none text-sm"
+                placeholder="Phone Number"
+                value={formData.contact_number}
                 onChange={handleChange}
                 required
               />
             </div>
 
-            <div>
-              <LabelWithIcon icon={FaMapMarkerAlt} label="NGO Address" />
+            <div className="flex items-center border border-gray-300 rounded-lg p-3 bg-white">
+              <FaMapMarkerAlt className="text-gray-500 mr-3" />
               <input
                 type="text"
                 id="address"
-                className={inputClass}
+                className="w-full outline-none text-sm"
+                placeholder="NGO Address"
                 value={formData.address}
                 onChange={handleChange}
                 required
@@ -229,7 +241,7 @@ export default function Register() {
           <p className="text-gray-700 text-sm text-center">
             Already registered?{" "}
             <Link
-              to="/login"
+              to="/ngo-login"
               className="text-red-600 hover:underline font-semibold"
             >
               Login here

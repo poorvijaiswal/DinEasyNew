@@ -86,6 +86,12 @@ if (typeof orderRoutes === 'function') {
 const preorderRoutes = require("./routes/preorderRoutes");
 app.use("/api/preorder", preorderRoutes);
 
+
+const ngoRoutes = require("./routes/ngoRoutes");
+// Use the NGO routes
+app.use("/api/ngo", ngoRoutes);
+
+
 const feedbackRoutes = require("./routes/feedbackRoutes");
 if (typeof feedbackRoutes === 'function') {
     app.use('/api', feedbackRoutes);

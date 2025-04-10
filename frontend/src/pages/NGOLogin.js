@@ -39,7 +39,7 @@ export default function NGOLogin() {
     }
 
     try {
-      const response = await axios.post("http://localhost:5000/api/auth/ngo/login", formData);
+      const response = await axios.post("http://localhost:5000/api/ngo/login", formData);
       const { token } = response.data;
       localStorage.setItem("ngo_token", token);
       navigate("/ngo-dashboard");
@@ -55,9 +55,10 @@ export default function NGOLogin() {
     setMessage("");
     setError("");
     setLoading(true);
-
+  
     try {
-      const response = await axios.post("http://localhost:5000/api/auth/ngo/forgot-password", { email: resetEmail });
+      // Use the correct endpoint for NGO forgot password
+      const response = await axios.post("http://localhost:5000/api/ngo/forgot-password", { email: resetEmail });
       setMessage(response.data.message || "Password reset link sent.");
       setShowForgotPassword(false);
     } catch (err) {
