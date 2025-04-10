@@ -37,6 +37,7 @@ import NGOLogin from './pages/NGOLogin';
 import NGORegister from './pages/NGORegister';
 import NGODashboard from './pages/NGODashboard';
 import NGOResetPassword from './pages/NGO/NGOResetPassword';
+import RaiseTokenPage from './pages/Dashboard/RaiseTokenPage';
 
 function App() {
   return (
@@ -72,7 +73,7 @@ function App() {
             <Route path="/ngo-register" element={<NGORegister />} />
             <Route path="/ngo-dashboard" element={<NGODashboard />} />
             <Route path='/ngoreset-password' element={<NGOResetPassword />} />
-            
+            <Route path="/raise-token" element={<RaiseTokenPage />} />
             <Route element={<PrivateRoute />}>
               <Route path="/generate-qr" element={<QRCodeGenerator />} />
               <Route path="/display-qr" element={<QRCodeDisplay />} />
