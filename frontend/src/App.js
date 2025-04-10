@@ -35,6 +35,7 @@ import UserDashboard from './pages/UserDashboard';
 import OrderStatusPage from './pages/OrderStatusPage';
 import NGOLogin from './pages/NGOLogin';
 import NGORegister from './pages/NGORegister';
+import NGODashboard from './pages/NGODashboard';
 
 function App() {
   return (
@@ -68,6 +69,8 @@ function App() {
             <Route path="/order-status" element={<OrderStatusPage />} />
             <Route path="/ngo-login" element={<NGOLogin />} />
             <Route path="/ngo-register" element={<NGORegister />} />
+            <Route path="/ngo-dashboard" element={<NGODashboard />} />
+            
             <Route element={<PrivateRoute />}>
               <Route path="/generate-qr" element={<QRCodeGenerator />} />
               <Route path="/display-qr" element={<QRCodeDisplay />} />

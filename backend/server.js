@@ -92,7 +92,8 @@ if (typeof feedbackRoutes === 'function') {
 } else {
     console.error("Invalid middleware for feedbackRoutes");
 }
-
+const foodTokensRoutes = require('./routes/foodTokens');
+app.use('/api', foodTokensRoutes); 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
