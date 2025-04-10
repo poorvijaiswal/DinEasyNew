@@ -1,5 +1,4 @@
-// NGOLogin.jsx
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { FaEnvelope, FaLock } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -40,9 +39,13 @@ export default function NGOLogin() {
 
     try {
       const response = await axios.post("http://localhost:5000/api/ngo/login", formData);
-      const { token } = response.data;
+      const { token, ngoId } = response.data; // Ensure the backend returns ngoId
+
+      // Store token and ngoId in localStorage
       localStorage.setItem("ngo_token", token);
-      navigate("/ngo-dashboard");
+      localStorage.setItem("ngo_id", ngoId); // Store ngoId in localStorage
+
+      navigate("/ngo-dashboard"); // Navigate to the dashboard after successful login
     } catch (err) {
       setError(err.response?.data?.message || "Login failed");
     } finally {
@@ -57,7 +60,6 @@ export default function NGOLogin() {
     setLoading(true);
   
     try {
-      // Use the correct endpoint for NGO forgot password
       const response = await axios.post("http://localhost:5000/api/ngo/forgot-password", { email: resetEmail });
       setMessage(response.data.message || "Password reset link sent.");
       setShowForgotPassword(false);
