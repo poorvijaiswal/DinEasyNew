@@ -23,8 +23,8 @@ import StaffManagement from './pages/StaffManagement';
 import StaffListPage from './pages/StaffListPage';
 import MenuPage from './pages/MenuPage';
 import MenuDisplay from './pages/MenuDisplay';
-import CartPage from './pages/CartPage';
-import CheckoutPage from "./pages/CheckoutPage";
+import CartPage from './pages/User/CartPage';
+import CheckoutPage from "./pages/User/CheckoutPage";
 import DisplayMenuList from './pages/DisplayMenuList';
 import PartnerMenuPage from './pages/PartnerMenu/PartnerMenuPage';
 import PartnerMenuCheckout from './pages/PartnerMenu/PartnerMenuCheckout';
@@ -35,6 +35,7 @@ import UserDashboard from './pages/UserDashboard';
 import OrderStatusPage from './pages/OrderStatusPage';
 import NGOLogin from './pages/NGOLogin';
 import NGORegister from './pages/NGORegister';
+import NGOResetPassword from './pages/NGO/NGOResetPassword';
 
 function App() {
   return (
@@ -68,6 +69,8 @@ function App() {
             <Route path="/order-status" element={<OrderStatusPage />} />
             <Route path="/ngo-login" element={<NGOLogin />} />
             <Route path="/ngo-register" element={<NGORegister />} />
+            <Route path='/ngoreset-password' element={<NGOResetPassword />} />
+            
             <Route element={<PrivateRoute />}>
               <Route path="/generate-qr" element={<QRCodeGenerator />} />
               <Route path="/display-qr" element={<QRCodeDisplay />} />
