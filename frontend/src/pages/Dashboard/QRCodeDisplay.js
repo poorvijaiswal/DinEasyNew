@@ -69,7 +69,6 @@ const QRCodeDisplay = () => {
       alert("Please select at least one QR code to print.");
       return;
     }
-
     const printWindow = window.open("", "_blank");
     printWindow.document.write(`
       <html>

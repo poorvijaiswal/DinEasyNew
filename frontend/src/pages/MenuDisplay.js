@@ -97,7 +97,6 @@ const MenuDisplay = () => {
 
     setFilteredMenu(filtered);
   };
-
   //  Handle Category Selection
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
@@ -128,10 +127,8 @@ const MenuDisplay = () => {
   };
 
   return (
-
       <div className="container">
         <h1 className="title">Our Menu</h1>
-        <p>Table Number: {tableNumber || "Not Detected"}</p>
         {error && <p className="error-message">{error}</p>}
 
         {/*  Search Bar & Category Filter */}
@@ -162,7 +159,6 @@ const MenuDisplay = () => {
             )}
           </div>
         </div>
-
         {cartMessage && <p className="cart-message">{cartMessage}</p>}
 
         {/*  Menu List */}

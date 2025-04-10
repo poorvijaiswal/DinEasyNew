@@ -5,10 +5,8 @@ const generateQRCode = async (req, res) => {
     const { tableNumber, size, restaurantId } = req.body;
     console.log(restaurantId);
     const qrText = `http://localhost:3000/menu-display?table=${tableNumber}`;
-
-    try {
+    try {      
         console.log('Generating QR code for:', qrText, 'with size:', size);
-
         // Generate QR Code as a Base64 image
         const qrCodeUrl = await QRCode.toDataURL(qrText, { width: size, height: size });
         console.log('Generated QR code URL:', qrCodeUrl);

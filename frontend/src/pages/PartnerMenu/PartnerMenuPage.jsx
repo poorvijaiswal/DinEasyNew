@@ -136,12 +136,12 @@ const PartnerMenuPage = () => {
 
   return (
     <div className={styles.container}><br /><br />
-      <div className="flex items-center justify-around  text-gray-700 mt-4 font-bold text-red-700 text-lg mb-4">
-        <p className="flex items-center justify-center  border-lime-600 border-2 rounded-lg p-4 text-gray-700 mt-4 font-bold text-red-700 text-lg">
+      <div className="flex items-center justify-around  mt-4 font-bold text-red-700 text-lg mb-4">
+        <p className="flex items-center justify-center  border-lime-600 border-2 rounded-lg p-4 mt-4 font-bold text-red-700 text-lg">
           <i className="fas fa-users text-blue-500 mr-2 animate-pulse"></i>
           Queue Length: <span className="ml-1">{queueLength}</span> orders
         </p>
-        <p className="flex items-center justify-center  border-lime-600 border-2 rounded-lg p-4 text-gray-700 mt-4 font-bold text-red-700 text-lg">
+        <p className="flex items-center justify-center  border-lime-600 border-2 rounded-lg p-4  mt-4 font-bold text-red-700 text-lg">
           <i className="fas fa-clock text-green-500 mr-2 animate-spin-slow"></i>
           Estimated Wait Time: <span className="ml-1">{estimatedWaitTime}</span> minutes
         </p>

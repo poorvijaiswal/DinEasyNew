@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import axios from "axios";
 import { FaEnvelope, FaLock } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+
 export default function StaffLogin() {
   const [formData, setFormData] = useState({
     email: "",
@@ -15,7 +16,7 @@ export default function StaffLogin() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  
+
   const verificationRef = useRef(null);
   const navigate = useNavigate();
 
@@ -38,7 +39,6 @@ export default function StaffLogin() {
     setError("");
     setLoading(true);
 
-    // Validate email and password
     if (!formData.email || !formData.password) {
       setError("Email and password are required.");
       setLoading(false);
@@ -53,22 +53,17 @@ export default function StaffLogin() {
 
     try {
       const response = await axios.post("http://localhost:5000/api/auth/staff-login", formData);
-      const{ token, staff_id } = response.data;
+      const { token, staff_id } = response.data;
 
-      localStorage.setItem("token", token); // Store token in local storage
-      localStorage.setItem("staff_id", staff_id); // Store staffid in local storage
+      localStorage.setItem("token", token);
+      localStorage.setItem("staff_id", staff_id);
 
-      
       if (response.data.requiresVerification) {
         setShowVerification(true);
-
-        setTimeout(() => verificationRef.current?.focus(), 100); // Auto-focus verification input
+        setTimeout(() => verificationRef.current?.focus(), 100);
         navigate('/verify-email', { state: { email: formData.email } });
       } else {
-        
         setMessage("Login successful");
-        localStorage.setItem("staff_id", response.data.staff_id); // Store membership_id in local storage
-        console.log(response.data.staff_id, "login successful") ;
         navigate('/dashboard/staff');
       }
     } catch (err) {
@@ -101,64 +96,102 @@ export default function StaffLogin() {
   };
 
   return (
-
-    <div className="flex justify-center items-center min-h-screen bg-cover bg-center" style={{ backgroundImage: "url('https://img.freepik.com/free-photo/wooden-planks-with-blurred-restaurant-background_1253-56.jpg?size=626&ext=jpg')" }}>
-      <div className="bg-white p-10 rounded-2xl shadow-lg max-w-4xl w-full flex mx-6 mb-10">
-        <div className="w-1/2 flex flex-col items-center justify-center p-6">
-          <img src="https://img.freepik.com/premium-vector/restaurant-staff-team-director-chef-waiter-manager-sommelier_369750-595.jpg" alt="Staff Illustration" className="w-64 rounded-2xl h-auto mb-4" />
-          <p className="text-gray-600">
-            <a href="/dashboard/staff" className="text-blue-500 hover:underline">Owner Login</a>
+    <div className="flex justify-center items-center min-h-screen bg-gray-100 bg-cover bg-center p-4" style={{ backgroundImage: "url('https://img.freepik.com/free-photo/wooden-planks-with-blurred-restaurant-background_1253-56.jpg')" }}>
+      <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full md:flex overflow-hidden">
+        {/* Left Section */}
+        <div className="md:w-1/2 flex flex-col items-center justify-center p-6 bg-gray-50">
+          <img
+            src="https://img.freepik.com/premium-vector/restaurant-staff-team-director-chef-waiter-manager-sommelier_369750-595.jpg"
+            alt="Staff Illustration"
+            className="w-64 rounded-2xl h-auto mb-6"
+          />
+          <p className="text-sm text-gray-700">
+            <a href="/login" className="text-blue-600 hover:underline font-medium">Owner Login</a>
           </p>
         </div>
 
-        <div className="w-1/2 p-3">
-          <h2 className="text-3xl font-bold mb-4">Staff Login</h2>
-          {message && <p className="text-green-600 text-center">{message}</p>}          
+        {/* Right Section */}
+        <div className="md:w-1/2 p-8">
+          <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">Staff Login</h2>
+          {message && <p className="text-green-600 text-sm text-center mb-4">{message}</p>}
+          {error && <p className="text-red-600 text-sm text-center mb-4">{error}</p>}
+
           {showForgotPassword ? (
             <form onSubmit={handleForgotPassword} className="flex flex-col gap-4">
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="border p-3 rounded-lg w-full"
+                className="border p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
                 value={resetEmail}
                 onChange={(e) => setResetEmail(e.target.value)}
                 required
               />
-              <button type="submit" className="bg-blue-500 text-white py-3 rounded-lg w-full hover:bg-blue-600 transition" disabled={loading}>
+              <button type="submit" className="bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition" disabled={loading}>
                 {loading ? "Sending..." : "Send Reset Link"}
               </button>
-              <button type="button" onClick={() => setShowForgotPassword(false)} className="text-gray-500 text-center hover:underline text-xs">
+              <button type="button" onClick={() => setShowForgotPassword(false)} className="text-gray-500 text-center hover:underline text-sm">
                 Back to Login
               </button>
             </form>
           ) : !showVerification ? (
             <form onSubmit={handleLogin} className="flex flex-col gap-4">
-              <div className="flex items-center border p-3 rounded-lg w-full">
+              <div className="flex items-center border p-3 rounded-lg focus-within:ring-2 focus-within:ring-red-300">
                 <FaEnvelope className="text-gray-500 mr-3" />
-                <input type="email" id="email" placeholder="Your Email" className="w-full outline-none" value={formData.email} onChange={handleChange} required />
+                <input
+                  type="email"
+                  id="email"
+                  placeholder="Your Email"
+                  className="w-full outline-none"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                />
               </div>
-              <div className="flex items-center border p-3 rounded-lg w-full">
+              <div className="flex items-center border p-3 rounded-lg focus-within:ring-2 focus-within:ring-red-300">
                 <FaLock className="text-gray-500 mr-3" />
-                <input type="password" id="password" placeholder="Password" className="w-full outline-none" value={formData.password} onChange={handleChange} required />
+                <input
+                  type="password"
+                  id="password"
+                  placeholder="Password"
+                  className="w-full outline-none"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                />
               </div>
-              {error && <p className="text-red-600 text-center text-xs">{error}</p>}
-              <div className="flex items-center justify-between">
-                <label className="flex items-center text-gray-600 text-xs">
-                  <input type="checkbox" id="rememberMe" className="mr-2" checked={formData.rememberMe} onChange={handleChange} />
+
+              <div className="flex items-center justify-between text-sm">
+                <label className="flex items-center text-gray-600">
+                  <input
+                    type="checkbox"
+                    id="rememberMe"
+                    className="mr-2"
+                    checked={formData.rememberMe}
+                    onChange={handleChange}
+                  />
                   Remember me
                 </label>
-                <button type="button" className="text-blue-500 hover:underline text-xs font-bold" onClick={() => setShowForgotPassword(true)}>
+                <button type="button" className="text-blue-600 hover:underline font-medium" onClick={() => setShowForgotPassword(true)}>
                   Forgot Password?
                 </button>
               </div>
-              <button type="submit" className="bg-red-500 text-white py-3 rounded-lg w-full hover:bg-red-600 transition" disabled={loading}>
+
+              <button type="submit" className="bg-red-500 text-white py-3 rounded-lg hover:bg-red-600 transition" disabled={loading}>
                 {loading ? "Logging in..." : "Log In"}
               </button>
             </form>
           ) : (
             <form className="flex flex-col gap-4">
-              <input type="text" placeholder="Enter Verification Code" className="border p-3 rounded-lg w-full" value={verificationCode} onChange={(e) => setVerificationCode(e.target.value)} ref={verificationRef} required />
-              <button type="submit" className="bg-blue-500 text-white py-3 rounded-lg w-full hover:bg-blue-600 transition" disabled={loading}>
+              <input
+                type="text"
+                placeholder="Enter Verification Code"
+                className="border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300"
+                value={verificationCode}
+                onChange={(e) => setVerificationCode(e.target.value)}
+                ref={verificationRef}
+                required
+              />
+              <button type="submit" className="bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition" disabled={loading}>
                 {loading ? "Verifying..." : "Verify"}
               </button>
             </form>

@@ -60,10 +60,18 @@ export default function Header() {
               Partner Restaurants
             </Link>
             {isAuthenticated && userRole && (
-              <Link to={`/dashboard/${userRole}`} className="text-gray-700 hover:text-blue-600">
-                Dashboard
-              </Link>
+              <>
+                <Link to={`/dashboard/${userRole}`} className="text-gray-700 hover:text-blue-600">
+                  Dashboard
+                </Link>
+              </>
             )}
+            <Link
+                  to="/ngo-login"
+                  className="px-4 py-2 text-white border bg-blue-600 border-gray-700 rounded hover:bg-blue-800"
+                >
+                  NGO
+            </Link>
             {isAuthenticated ? (
               <button onClick={handleLogout} className="px-4 py-2 text-white border bg-blue-600 border-gray-700 rounded hover:bg-blue-800">
                 Logout
@@ -105,9 +113,17 @@ export default function Header() {
                 Partner Restaurants
               </Link>
               {isAuthenticated && userRole && (
-                <Link to={`/dashboard/${userRole}`} className="text-gray-700 hover:text-blue-600">
-                  Dashboard
-                </Link>
+                <>
+                  <Link to={`/dashboard/${userRole}`} className="text-gray-700 hover:text-blue-600">
+                    Dashboard
+                  </Link>
+                  <Link
+                    to="/ngo"
+                    className="px-4 py-2 text-white border bg-blue-600 border-gray-700 rounded hover:bg-blue-800 text-center"
+                  >
+                    NGO
+                  </Link>
+                </>
               )}
               {isAuthenticated ? (
                 <button onClick={handleLogout} className="px-4 py-2 text-white border bg-blue-600 border-gray-700 rounded hover:bg-blue-800">

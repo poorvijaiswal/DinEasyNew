@@ -1,17 +1,41 @@
 const express = require("express");
 const db = require("../config/db");
+const verifyToken = require("../middleware/auth");
 const router = express.Router();
 
-//  Get all staff members (with restaurant name)
-router.get("/staff", (req, res) => {
+// Get restaurant_id based on authenticated user
+router.get("/auth/getRestaurantId", verifyToken, (req, res) => {
+    const ownerEmail = req.user.email; // Extract email from token
+
+    if (!ownerEmail) {
+        return res.status(401).json({ message: "Unauthorized: No user email found" });
+    }
+    const query = "SELECT restaurant_id FROM Restaurant WHERE owner_email = ?";
+    db.query(query, [ownerEmail], (err, result) => {
+        if (err || result.length === 0) {
+            return res.status(404).json({ message: "Restaurant not found" });
+        }
+        res.json({ restaurant_id: result[0].restaurant_id });
+    });
+});
+
+// Get all staff members for a specific restaurant
+router.get("/staff/:restaurantId", verifyToken, (req, res) => {
+    const { restaurantId } = req.params;
+
+    if (!restaurantId) {
+        return res.status(400).json({ error: "Restaurant ID is required" });
+    }
+
     const query = `
-        SELECT Staff.staff_id, Staff.name, Staff.role, Staff.email, 
+        SELECT Staff.staff_id, Staff.name, Staff.role, Staff.email, Staff.phone,
                Restaurant.restaurant_id, Restaurant.name AS restaurant_name 
         FROM Staff 
         INNER JOIN Restaurant ON Staff.restaurant_id = Restaurant.restaurant_id
+        WHERE Staff.restaurant_id = ?;
     `;
 
-    db.query(query, (err, results) => {
+    db.query(query, [restaurantId], (err, results) => {
         if (err) {
             console.error("Database error:", err);
             return res.status(500).json({ message: "Database error", error: err });
@@ -19,30 +43,16 @@ router.get("/staff", (req, res) => {
         res.json(results);
     });
 });
-
-//  Get all restaurants (for dropdown selection in frontend)
-router.get("/restaurants", (req, res) => {
-    res.set('Cache-Control', 'no-store');
-    const query = "SELECT restaurant_id, name FROM Restaurant";
-    db.query(query, (err, results) => {
-        if (err) {
-            console.error("Database error:", err);
-            return res.status(500).json({ message: "Database error", error: err });
-        }
-        res.json(results);
-    });
-});
-
 //  Add a new staff member
 router.post("/staff", (req, res) => {
-    const { restaurant_id, name, role, email } = req.body;
+    const { restaurant_id, name, role, email, phone } = req.body;
 
-    if (!restaurant_id || !name || !role || !email) {
+    if (!restaurant_id || !name || !role || !email || !phone) {
         return res.status(400).json({ message: "All fields are required!" });
     }
 
-    const query = "INSERT INTO Staff (restaurant_id, name, role, email) VALUES (?, ?, ?, ?)";
-    db.query(query, [restaurant_id, name, role, email], (err, result) => {
+    const query = "INSERT INTO Staff (restaurant_id, name, role, email, phone) VALUES (?, ?, ?, ?, ?)";
+    db.query(query, [restaurant_id, name, role, email, phone], (err, result) => {
         if (err) {
             console.error("Database error:", err);
             return res.status(500).json({ message: "Database error", error: err });
@@ -51,13 +61,13 @@ router.post("/staff", (req, res) => {
     });
 });
 
-//  Update staff details
-router.put("/staff/:staff_id", (req, res) => {
+// Update staff details
+router.put("/staff/:staff_id", verifyToken, (req, res) => {
     const { staff_id } = req.params;
-    const { name, role, email } = req.body;
+    const { name, role, email, phone } = req.body;
 
-    const query = "UPDATE Staff SET name = ?, role = ?, email = ? WHERE staff_id = ?";
-    db.query(query, [name, role, email, staff_id], (err) => {
+    const query = "UPDATE Staff SET name = ?, role = ?, email = ?, phone = ? WHERE staff_id = ?";
+    db.query(query, [name, role, email, phone, staff_id], (err) => {
         if (err) {
             console.error("Database error:", err);
             return res.status(500).json({ message: "Database error", error: err });
@@ -66,8 +76,8 @@ router.put("/staff/:staff_id", (req, res) => {
     });
 });
 
-//  Delete a staff member
-router.delete("/staff/:staff_id", (req, res) => {
+// Delete a staff member
+router.delete("/staff/:staff_id", verifyToken, (req, res) => {
     const { staff_id } = req.params;
 
     const query = "DELETE FROM Staff WHERE staff_id = ?";

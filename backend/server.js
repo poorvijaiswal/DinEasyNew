@@ -41,6 +41,9 @@ app.get("/", (req, res) => {
 // Import and use routes
 const userRoutes = require("./routes/user");
 app.use('/api/user', userRoutes);
+const customerRoutes = require("./routes/customer");
+app.use("/api/customer", customerRoutes);
+
 
 const authRoutes = require("./routes/auth");
 app.use("/api/auth", authRoutes);
@@ -53,13 +56,10 @@ app.use((err, req, res, next) => {
   });
 
 //protected route
-
 const restaurantRoutes = require('./routes/restaurant');
 app.use('/api/restaurant', restaurantRoutes);
-
 const menuRoutes = require('./routes/menu');
 app.use('/api', menuRoutes);
-
 const membershipRoutes = require('./routes/membership');
 app.use('/api/membership', membershipRoutes);
 
@@ -70,13 +70,34 @@ const qrRoutes = require('./routes/qrRoutes');
 app.use('/api/qr', verifyToken, qrRoutes);
 
 const staffRoutes = require('./routes/staff');
-app.use('/api', staffRoutes);
+if (typeof staffRoutes === 'function') {
+    app.use('/api', staffRoutes);
+} else {
+    console.error("Invalid middleware for staffRoutes");
+}
 
 const orderRoutes = require('./routes/orderRoutes');
-app.use('/api', orderRoutes);
+if (typeof orderRoutes === 'function') {
+    app.use('/api', orderRoutes);
+} else {
+    console.error("Invalid middleware for orderRoutes");
+}
 
 const preorderRoutes = require("./routes/preorderRoutes");
 app.use("/api/preorder", preorderRoutes);
+
+
+const ngoRoutes = require("./routes/ngoRoutes");
+// Use the NGO routes
+app.use("/api/ngo", ngoRoutes);
+
+
+const feedbackRoutes = require("./routes/feedbackRoutes");
+if (typeof feedbackRoutes === 'function') {
+    app.use('/api', feedbackRoutes);
+} else {
+    console.error("Invalid middleware for feedbackRoutes");
+}
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
