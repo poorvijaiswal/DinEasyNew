@@ -22,7 +22,7 @@ const RaiseTokenPage = () => {
   };
 
   const createToken = async () => {
-    const restaurantId = 1; // Static value for now
+    const restaurantId = 3; // Static value for now
 
     const { foodItem, quantity, unit, pickupLocation, expiryTime } = formData;
 

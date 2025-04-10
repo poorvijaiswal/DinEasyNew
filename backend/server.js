@@ -100,8 +100,8 @@ if (typeof feedbackRoutes === 'function') {
 }
 const foodTokensRoutes = require('./routes/foodTokens');
 app.use('/api', foodTokensRoutes); 
-const tokenRoutes = require("./routes/token");
-app.use("/api/token", tokenRoutes);
+const tokenRoutes = require('./routes/tokenRoutes.js');
+app.use('/api', tokenRoutes);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
