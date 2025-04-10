@@ -93,7 +93,7 @@ export default function Register() {
   };
 
   const inputClass =
-    "border border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-red-400 bg-white";
+    "border border-gray-300 p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-red-400 bg-white shadow-sm";
 
   const LabelWithIcon = ({ icon: Icon, label }) => (
     <label className="flex items-center text-gray-700 font-medium mb-1">
@@ -104,15 +104,15 @@ export default function Register() {
 
   return (
     <div
-      className="flex justify-center items-center min-h-screen  max-h-screen bg-gray-100 bg-cover bg-center p-4"
+      className="flex justify-center items-center min-h-screen bg-gray-100 bg-cover bg-center py-6 px-4"
       style={{
         backgroundImage:
           "url('https://img.freepik.com/free-photo/wooden-planks-with-blurred-restaurant-background_1253-56.jpg?size=626&ext=jpg')",
       }}
     >
-      <div className="bg-white/90 w-full max-w-4xl md:flex rounded-2xl shadow-2xl overflow-hidden backdrop-blur-lg">
+      <div className="bg-white/90 w-full max-w-5xl md:flex rounded-2xl shadow-xl overflow-hidden backdrop-blur-md max-h-[95vh]">
         {/* Left: Form */}
-        <div className="w-full md:w-1/2 p-10">
+        <div className="w-full md:w-1/2 p-6 md:p-10 overflow-y-auto max-h-[90vh]">
           <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
             NGO Registration
           </h2>
@@ -211,7 +211,7 @@ export default function Register() {
 
             <button
               type="submit"
-              className="bg-red-500 text-white py-3 rounded-lg hover:bg-red-600 transition duration-300 mt-2 font-semibold shadow"
+              className="bg-red-500 text-white py-3 rounded-lg hover:bg-red-600 transition duration-300 mt-2 font-semibold shadow-md"
               disabled={loading}
             >
               {loading ? "Registering..." : "Register"}
@@ -224,7 +224,7 @@ export default function Register() {
           <img
             src="https://i0.wp.com/99v.in/wp-content/uploads/2023/06/images-7.jpeg?fit=700,400&ssl=1"
             alt="Signup"
-            className="w-full max-w-xs md:max-w-sm rounded-xl mb-6 shadow-md"
+            className="w-full max-w-xs md:max-w-sm rounded-xl mb-6 shadow-lg"
           />
           <p className="text-gray-700 text-sm text-center">
             Already registered?{" "}
