@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import axios from "axios";
-import "./RaiseTokenPage.css"; // Import the CSS
+import "./RaiseTokenPage.css"; // make sure this file exists
 
 const RaiseTokenPage = () => {
   const [formData, setFormData] = useState({
     foodItem: "",
     quantity: 1,
-    unit: "kg", // default unit
+    unit: "kg",
     pickupLocation: "",
     expiryTime: "",
   });
@@ -22,12 +22,7 @@ const RaiseTokenPage = () => {
   };
 
   const createToken = async () => {
-    const restaurantId = localStorage.getItem("restaurant_id");
-
-    if (!restaurantId) {
-      setError("Restaurant ID is missing from localStorage.");
-      return;
-    }
+    const restaurantId = 1; // Static value for now
 
     const { foodItem, quantity, unit, pickupLocation, expiryTime } = formData;
 
@@ -50,9 +45,9 @@ const RaiseTokenPage = () => {
       });
 
       setError("");
-      alert("Token successfully created!");
+      alert("✅ Token successfully created!");
     } catch (err) {
-      setError("Error creating token.");
+      setError("❌ Error creating token.");
       console.error("Error creating token:", err);
     }
   };
@@ -60,7 +55,6 @@ const RaiseTokenPage = () => {
   return (
     <div className="token-form-container">
       <h2>Create Token</h2>
-
       {error && <p className="error-message">{error}</p>}
 
       <div className="form-group">
@@ -82,14 +76,12 @@ const RaiseTokenPage = () => {
             id="quantity"
             value={formData.quantity}
             onChange={handleFormChange}
-            placeholder="Enter quantity"
             min="1"
           />
           <select
             id="unit"
             value={formData.unit}
             onChange={handleFormChange}
-            className="unit-select"
           >
             <option value="kg">kg</option>
             <option value="liters">liters</option>
@@ -106,7 +98,6 @@ const RaiseTokenPage = () => {
           id="pickupLocation"
           value={formData.pickupLocation}
           onChange={handleFormChange}
-          placeholder="Enter pickup location"
         />
       </div>
 

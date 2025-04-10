@@ -1,73 +1,72 @@
 .token-form-container {
     max-width: 500px;
-    margin: 50px auto;
-    padding: 30px;
-    background-color: #fefefe;
+    margin: 40px auto;
+    padding: 20px 30px;
     border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    font-family: "Segoe UI", sans-serif;
+    background-color: #f8f8f8;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   }
   
-  h2 {
+  .token-form-container h2 {
     text-align: center;
     margin-bottom: 20px;
     color: #333;
   }
   
   .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
   }
   
   label {
+    font-weight: bold;
     display: block;
-    font-weight: 600;
     margin-bottom: 6px;
-    color: #444;
   }
   
   input,
   select {
     width: 100%;
-    padding: 10px 12px;
-    font-size: 16px;
+    padding: 8px 10px;
     border: 1px solid #ccc;
-    border-radius: 8px;
-  }
-  
-  input[type="datetime-local"] {
-    padding-right: 6px;
+    border-radius: 6px;
   }
   
   .quantity-unit-wrapper {
     display: flex;
     gap: 10px;
-    align-items: center;
   }
   
   .unit-select {
-    flex: 1;
+    width: 120px;
   }
   
   .btn-submit {
+    display: block;
     width: 100%;
-    padding: 12px;
-    background-color: #28a745;
+    padding: 10px;
+    font-weight: bold;
+    background-color: #4caf50;
     color: white;
     border: none;
-    font-size: 16px;
-    font-weight: 600;
-    border-radius: 8px;
+    border-radius: 6px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    margin-top: 10px;
   }
   
   .btn-submit:hover {
-    background-color: #218838;
+    background-color: #45a049;
   }
   
   .error-message {
     color: red;
+    margin-bottom: 10px;
     text-align: center;
-    margin-bottom: 15px;
+  }
+  
+  .success-message {
+    color: green;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 10px;
   }
   
