@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const db = require("../db");
+const db = require("../config/db");
 
 // POST /api/token - Create a new food token
 router.post("/token", (req, res) => {

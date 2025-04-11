@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import "./RaiseTokenPage.css"; // make sure this file exists
+import { useNavigate } from "react-router-dom";
+import "./RaiseTokenPage.css"; // Ensure this CSS file exists
 
 const RaiseTokenPage = () => {
+  const [restaurantId, setRestaurantId] = useState(null);
+  const [error, setError] = useState("");
   const [formData, setFormData] = useState({
     foodItem: "",
     quantity: 1,
@@ -11,7 +14,30 @@ const RaiseTokenPage = () => {
     expiryTime: "",
   });
 
-  const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  // 🔁 Fetch restaurant_id from backend using token
+  useEffect(() => {
+    const fetchRestaurantId = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) throw new Error("No token found");
+
+        const response = await axios.get("http://localhost:5000/api/auth/getRestaurantId", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        setRestaurantId(response.data.restaurant_id);
+      } catch (err) {
+        console.error("Error fetching restaurant ID", err);
+        setError("❌ Failed to fetch restaurant ID");
+      }
+    };
+
+    fetchRestaurantId();
+  }, []);
 
   const handleFormChange = (e) => {
     const { id, value } = e.target;
@@ -22,7 +48,10 @@ const RaiseTokenPage = () => {
   };
 
   const createToken = async () => {
-    const restaurantId = 3; // Static value for now
+    if (!restaurantId) {
+      setError("Restaurant ID not loaded.");
+      return;
+    }
 
     const { foodItem, quantity, unit, pickupLocation, expiryTime } = formData;
 
@@ -45,10 +74,11 @@ const RaiseTokenPage = () => {
       });
 
       setError("");
-      alert("✅ Token successfully created!");
+      alert(" Token successfully created!");
+      navigate("/ngo-dashboard"); 
     } catch (err) {
-      setError("❌ Error creating token.");
       console.error("Error creating token:", err);
+      setError(" Error creating token.");
     }
   };
 
@@ -87,6 +117,7 @@ const RaiseTokenPage = () => {
             <option value="liters">liters</option>
             <option value="packs">packs</option>
             <option value="pieces">pieces</option>
+            <option value="other">other quantity</option>
           </select>
         </div>
       </div>
