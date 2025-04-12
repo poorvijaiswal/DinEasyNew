@@ -9,7 +9,7 @@ export default function NGODashboard() {
   const [selectedRestaurantId, setSelectedRestaurantId] = useState(null);
   const [messages, setMessages] = useState({}); // Store messages per token
 
-  const ngoId = 1; // Replace with dynamic NGO ID when auth is implemented
+  const ngoId = 1;// Replace with dynamic NGO ID when auth is implemented
 
   const fetchRestaurants = async () => {
     try {
@@ -34,7 +34,7 @@ export default function NGODashboard() {
   };
 
   const respondToToken = async (tokenId, status) => {
-    const token = tokens.find((t) => t.id === tokenId);
+    const token = tokens.find((t) => t.token_id === tokenId);
     const message = messages[tokenId] || "";
   
     const payload = {
@@ -165,22 +165,22 @@ export default function NGODashboard() {
                       rows={2}
                       placeholder="Enter your message to the restaurant..."
                       className="w-full mt-3 p-2 border rounded-md text-sm"
-                      value={messages[token.id] || ""}
+                      value={messages[token.token_id] || ""}
                       onChange={(e) =>
-                        setMessages((prev) => ({ ...prev, [token.id]: e.target.value }))
+                        setMessages((prev) => ({ ...prev, [token.token_id]: e.target.value }))
                       }
                     />
 
                     <div className="flex gap-4 mt-4">
                       <button
                         className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition"
-                        onClick={() => respondToToken(token.id, "accepted")}
+                        onClick={() => respondToToken(token.token_id, "accepted")}
                       >
                         Accept
                       </button>
                       <button
                         className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition"
-                        onClick={() => respondToToken(token.id, "declined")}
+                        onClick={() => respondToToken(token.token_id, "declined")}
                       >
                         Decline
                       </button>

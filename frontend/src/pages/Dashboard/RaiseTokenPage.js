@@ -32,7 +32,7 @@ const RaiseTokenPage = () => {
         setRestaurantId(response.data.restaurant_id);
       } catch (err) {
         console.error("Error fetching restaurant ID", err);
-        setError("❌ Failed to fetch restaurant ID");
+        setError(" Failed to fetch restaurant ID");
       }
     };
 
@@ -117,7 +117,8 @@ const RaiseTokenPage = () => {
             <option value="liters">liters</option>
             <option value="packs">packs</option>
             <option value="pieces">pieces</option>
-            <option value="other">other quantity</option>
+            <option value="grams">grams</option>
+            <option value="plates">plates</option>
           </select>
         </div>
       </div>
