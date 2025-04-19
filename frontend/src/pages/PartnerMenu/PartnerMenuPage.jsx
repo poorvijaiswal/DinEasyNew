@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import styles from "./PartnerMenuPage.module.css";
-import '../CartPage.css'
+import '../User/CheckoutPage.css'; // Adjust the path as necessary
 const PartnerMenuPage = () => {
   const { restaurantId } = useParams();
   const navigate = useNavigate();

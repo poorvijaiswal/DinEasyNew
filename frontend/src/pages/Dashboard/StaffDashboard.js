@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { FaCheck, FaSpinner, FaTrash } from "react-icons/fa";
+import { useNavigate } from "react-router-dom"; // Import useNavigate for page navigation
 import "./StaffDashboard.css"; // Import the CSS file
 
 const StaffDashboard = () => {
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState("");
+  const navigate = useNavigate(); // Hook for navigation
 
   useEffect(() => {
     fetchOrders();
@@ -50,6 +52,14 @@ const StaffDashboard = () => {
       <h1 className="dashboard-title">Staff Order Dashboard</h1>
 
       {error && <p className="error-message">{error}</p>}
+
+      {/* "Raise a Token" Button */}
+      <button
+        className="btn btn-raise-token"
+        onClick={() => navigate("/raise-token")} // Navigate to the new page
+      >
+        Raise a Token
+      </button>
 
       <div className="table-wrapper">
         <table className="orders-table">
