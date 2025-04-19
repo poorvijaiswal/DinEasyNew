@@ -1,0 +1,57 @@
+.sales-container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  }
+  
+  .sales-heading {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1f2937;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .sales-chart-container {
+    display: flex;
+    justify-content: space-around; /* This ensures the charts are spaced out */
+    flex-wrap: wrap;
+    margin-top: 20px;
+  }
+  
+  .chart-wrapper {
+    flex: 1;
+    max-width: 500px;
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .sales-chart {
+    width: 100%;
+    max-width: 500px;
+    height: 300px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .sales-chart:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  }
+  
+  @media (max-width: 768px) {
+    .sales-chart-container {
+      flex-direction: column;
+      align-items: center;
+    }
+    .chart-wrapper {
+      max-width: 80%;
+    }
+  }
+  
