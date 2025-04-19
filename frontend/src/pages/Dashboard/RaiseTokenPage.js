@@ -1,18 +1,44 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "./RaiseTokenPage.css"; // Import the CSS
+import { useNavigate } from "react-router-dom";
+import "./RaiseTokenPage.css"; // Ensure this CSS file exists
 
 const RaiseTokenPage = () => {
+  const [restaurantId, setRestaurantId] = useState(null);
+  const [error, setError] = useState("");
   const [formData, setFormData] = useState({
     foodItem: "",
     quantity: 1,
-    unit: "kg", // default unit
+    unit: "kg",
     pickupLocation: "",
     expiryTime: "",
   });
 
-  const [restaurantId, setRestaurantId] = useState(1); // State to store restaurant ID
-  const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  // 🔁 Fetch restaurant_id from backend using token
+  useEffect(() => {
+    const fetchRestaurantId = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) throw new Error("No token found");
+
+        const response = await axios.get("http://localhost:5000/api/auth/getRestaurantId", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        setRestaurantId(response.data.restaurant_id);
+      } catch (err) {
+        console.error("Error fetching restaurant ID", err);
+        setError(" Failed to fetch restaurant ID");
+      }
+    };
+
+    fetchRestaurantId();
+  }, []);
+
 
  
 
@@ -59,17 +85,17 @@ const RaiseTokenPage = () => {
       });
 
       setError("");
-      alert("Token successfully created!");
+      alert(" Token successfully created!");
+      navigate("/ngo-dashboard"); 
     } catch (err) {
-      setError("Error creating token.");
       console.error("Error creating token:", err);
+      setError(" Error creating token.");
     }
   };
 
   return (
     <div className="token-form-container">
       <h2>Create Token</h2>
-
       {error && <p className="error-message">{error}</p>}
 
       <div className="form-group">
@@ -91,19 +117,19 @@ const RaiseTokenPage = () => {
             id="quantity"
             value={formData.quantity}
             onChange={handleFormChange}
-            placeholder="Enter quantity"
             min="1"
           />
           <select
             id="unit"
             value={formData.unit}
             onChange={handleFormChange}
-            className="unit-select"
           >
             <option value="kg">kg</option>
             <option value="liters">liters</option>
             <option value="packs">packs</option>
             <option value="pieces">pieces</option>
+            <option value="grams">grams</option>
+            <option value="plates">plates</option>
           </select>
         </div>
       </div>
@@ -115,7 +141,6 @@ const RaiseTokenPage = () => {
           id="pickupLocation"
           value={formData.pickupLocation}
           onChange={handleFormChange}
-          placeholder="Enter pickup location"
         />
       </div>
 

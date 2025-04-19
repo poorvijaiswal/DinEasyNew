@@ -38,7 +38,7 @@ import NGORegister from './pages/NGORegister';
 import NGODashboard from './pages/NGODashboard';
 import NGOResetPassword from './pages/NGO/NGOResetPassword';
 import RaiseTokenPage from './pages/Dashboard/RaiseTokenPage';
-
+import Sales from './pages/Dashboard/Sales'
 function App() {
   return (
 
@@ -76,6 +76,7 @@ function App() {
             <Route path="/raise-token" element={<RaiseTokenPage />} />
             <Route element={<PrivateRoute />}>
               <Route path="/generate-qr" element={<QRCodeGenerator />} />
+              <Route path="/sales" element={<Sales />} />
               <Route path="/display-qr" element={<QRCodeDisplay />} />
               <Route path="/menu" element={<MenuPage />} />
               <Route path="/menu-list" element={<DisplayMenuList />} />
