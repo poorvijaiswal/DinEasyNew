@@ -43,10 +43,90 @@ exports.createPayment = async (req, res) => {
 };
 
 // Update payment status and add order to Orders table
-exports.updatePaymentStatus = async (req, res) => {
-  const { payment_id, status, order_id, items, table_number, restaurant_id } = req.body;
+// exports.updatePaymentStatus = async (req, res) => {
+//   const { payment_id, status, order_id, items, table_number, restaurant_id } = req.body;
 
-  if (!payment_id || !status || !order_id || !items || !table_number || !restaurant_id) {
+//   if (!payment_id || !status || !order_id || !items || !table_number || !restaurant_id) {
+//     return res.status(400).json({ message: "Missing required fields" });
+//   }
+
+//   try {
+//     // Update payment status
+//     const sql = `
+//       UPDATE Payment
+//       SET status = ?, payment_date = NOW()
+//       WHERE payment_id = ?
+//     `;
+//     const values = [status, payment_id];
+
+//     db.query(sql, values, async (err) => {
+//       if (err) {
+//         console.error("Error updating payment status:", err);
+//         return res.status(500).json({ message: "Error updating payment status" });
+//       }
+
+//       if (status === "Paid") {
+//         try {
+//           // Insert into `orders` table
+//           const orderResult = await new Promise((resolve, reject) => {
+//             db.query(
+//               "INSERT INTO orders (restaurant_id, table_number, order_date, status) VALUES (?, ?, NOW(), 'Pending')",
+//               [restaurant_id, table_number],
+//               (err, result) => (err ? reject(err) : resolve(result))
+//             );
+//           });
+
+
+//           const newOrderId = orderResult.insertId;
+
+//           // Insert into `orderitems` table
+//           let orderItemsValues = [];
+//           for (const item of items) {
+//             const menuResult = await new Promise((resolve, reject) => {
+//               db.query("SELECT price FROM menu WHERE id = ?", [item.id], (err, result) =>
+//                 err ? reject(err) : resolve(result)
+//               );
+//             });
+
+//             if (!menuResult.length) {
+//               return res.status(404).json({ message: `Menu item ${item.id} not found` });
+//             }
+
+//             orderItemsValues.push([newOrderId, item.id, item.quantity, menuResult[0].price]);
+//           }
+
+//           if (orderItemsValues.length) {
+//             await new Promise((resolve, reject) => {
+//               db.query(
+//                 "INSERT INTO orderitems (order_id, menu_id, quantity, price) VALUES ?",
+//                 [orderItemsValues],
+//                 (err) => (err ? reject(err) : resolve())
+//               );
+//             });
+//           }
+
+//           res.status(200).json({
+//             message: "Payment status updated, order placed successfully!",
+//             order_id: newOrderId,
+//           });
+//         } catch (error) {
+//           console.error("Error placing order:", error);
+//           res.status(500).json({ message: "Error placing order", details: error });
+//         }
+//       } else {
+//         res.status(200).json({ message: "Payment status updated successfully" });
+//       }
+//     });
+//   } catch (error) {
+//     console.error("Error updating payment status:", error);
+//     res.status(500).json({ message: "Internal server error" });
+//   }
+// };
+
+exports.updatePaymentStatus = async (req, res) => {
+  const { payment_id, status } = req.body;
+
+  if (!payment_id || !status) {
     return res.status(400).json({ message: "Missing required fields" });
   }
 
@@ -59,61 +139,16 @@ exports.updatePaymentStatus = async (req, res) => {
     `;
     const values = [status, payment_id];
 
-    db.query(sql, values, async (err) => {
+    db.query(sql, values, (err) => {
       if (err) {
         console.error("Error updating payment status:", err);
         return res.status(500).json({ message: "Error updating payment status" });
       }
 
       if (status === "Paid") {
-        try {
-          // Insert into `orders` table
-          const orderResult = await new Promise((resolve, reject) => {
-            db.query(
-              "INSERT INTO orders (restaurant_id, table_number, order_date, status) VALUES (?, ?, NOW(), 'Pending')",
-              [restaurant_id, table_number],
-              (err, result) => (err ? reject(err) : resolve(result))
-            );
-          });
-
-          const newOrderId = orderResult.insertId;
-
-          // Insert into `orderitems` table
-          let orderItemsValues = [];
-          for (const item of items) {
-            const menuResult = await new Promise((resolve, reject) => {
-              db.query("SELECT price FROM menu WHERE id = ?", [item.id], (err, result) =>
-                err ? reject(err) : resolve(result)
-              );
-            });
-
-            if (!menuResult.length) {
-              return res.status(404).json({ message: `Menu item ${item.id} not found` });
-            }
-
-            orderItemsValues.push([newOrderId, item.id, item.quantity, menuResult[0].price]);
-          }
-
-          if (orderItemsValues.length) {
-            await new Promise((resolve, reject) => {
-              db.query(
-                "INSERT INTO orderitems (order_id, menu_id, quantity, price) VALUES ?",
-                [orderItemsValues],
-                (err) => (err ? reject(err) : resolve())
-              );
-            });
-          }
-
-          res.status(200).json({
-            message: "Payment status updated, order placed successfully!",
-            order_id: newOrderId,
-          });
-        } catch (error) {
-          console.error("Error placing order:", error);
-          res.status(500).json({ message: "Error placing order", details: error });
-        }
+        res.status(200).json({ message: "Payment status updated successfully!" });
       } else {
-        res.status(200).json({ message: "Payment status updated successfully" });
+        res.status(200).json({ message: "Payment status updated successfully!" });
       }
     });
   } catch (error) {
