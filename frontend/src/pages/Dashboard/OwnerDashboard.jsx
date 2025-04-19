@@ -48,6 +48,7 @@ export default function OwnerDashboard() {
           <h3 className="text-lg font-bold">Pending Deliveries</h3>
           <p className="text-2xl font-semibold">{dashboardData.pendingDeliveries}</p>
         </div>
+
       </div>
     </DashboardLayout>
   );

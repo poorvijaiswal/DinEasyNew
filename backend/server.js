@@ -119,7 +119,7 @@ const tokenRoutes = require('./routes/tokenRoutes');
 app.use('/api', tokenRoutes);
 
 const dashboardRoutes = require("./routes/dashboard");
-app.use("/api/dashboard", dashboardRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 // Error handler
 app.use((err, req, res, next) => {
