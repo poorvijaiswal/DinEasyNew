@@ -17,7 +17,7 @@ router.get('/overview', (req, res) => {
 
     data.totalSales = results[0]?.total || 0;
 
-    db.query(`SELECT COUNT(*) AS count FROM orders WHERE status IN ('Pending', 'In Progress')`, (err, results) => {
+    db.query(`SELECT COUNT(*) AS count FROM orders WHERE status IN ('In Progress','Completed')`, (err, results) => {
       if (err) {
         console.error('Error fetching active orders:', err);
         return res.status(500).json({ error: 'Failed to fetch active orders' });
@@ -25,7 +25,7 @@ router.get('/overview', (req, res) => {
 
       data.activeOrders = results[0]?.count || 0;
 
-      db.query(`SELECT COUNT(*) AS count FROM food_tokens WHERE status = 'Pending'`, (err, results) => {
+      db.query(`SELECT COUNT(*) AS count FROM orders WHERE status = 'Pending'`, (err, results) => {
         if (err) {
           console.error('Error fetching pending deliveries:', err);
           return res.status(500).json({ error: 'Failed to fetch pending deliveries' });
@@ -58,6 +58,26 @@ router.get('/sales-by-item', (req, res) => {
     if (err) {
       console.error('Error fetching sales by item:', err);
       return res.status(500).json({ error: 'Failed to fetch sales by item' });
+    }
+    res.json(results); // Send the results back to the client
+  });
+});
+router.get('/top-sold-items', (req, res) => {
+  const query = `
+    SELECT 
+      m.name AS item_name, 
+      SUM(oi.quantity) AS total_sold
+    FROM orderitems oi
+    JOIN menu m ON oi.menu_id = m.id
+    GROUP BY m.name
+    ORDER BY total_sold DESC
+    LIMIT 5;
+  `;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching top sold items:', err);
+      return res.status(500).json({ error: 'Failed to fetch top sold items' });
     }
     res.json(results); // Send the results back to the client
   });

@@ -3,10 +3,10 @@ import axios from 'axios';
 import './Sales.css'; // Ensure this path is correct
 
 const Sales = () => {
-  const [chartData, setChartData] = useState(null); // For Total Sales, Active Orders, Pending Deliveries
-  const [salesByItemData, setSalesByItemData] = useState(null); // For Sales by Item (Daily)
+  const [chartData, setChartData] = useState(null);
+  const [salesByItemData, setSalesByItemData] = useState(null);
+  const [topSoldItemsData, setTopSoldItemsData] = useState(null);
 
-  // Fetch data for Total Sales, Active Orders, Pending Deliveries
   useEffect(() => {
     axios
       .get('http://localhost:5000/api/dashboard/overview')
@@ -23,7 +23,6 @@ const Sales = () => {
       });
   }, []);
 
-  // Fetch data for Sales by Item (Daily)
   useEffect(() => {
     axios
       .get('http://localhost:5000/api/dashboard/sales-by-item')
@@ -35,9 +34,46 @@ const Sales = () => {
       });
   }, []);
 
-  if (!chartData || !salesByItemData) return <p>Loading charts...</p>;
+  useEffect(() => {
+    axios
+      .get('http://localhost:5000/api/dashboard/top-sold-items')
+      .then((response) => {
+        const data = response.data;
+        const labels = data.map((item) => item.item_name);
+        const values = data.map((item) => item.total_sold);
 
-  // Transform Sales by Item data for the chart
+        setTopSoldItemsData({
+          labels,
+          datasets: [
+            {
+              label: 'Top 5 Sold Items',
+              data: values,
+              backgroundColor: [
+                'rgba(255, 99, 132, 0.6)',
+                'rgba(54, 162, 235, 0.6)',
+                'rgba(255, 206, 86, 0.6)',
+                'rgba(75, 192, 192, 0.6)',
+                'rgba(153, 102, 255, 0.6)',
+              ],
+              borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+              ],
+              borderWidth: 1,
+            },
+          ],
+        });
+      })
+      .catch((error) => {
+        console.error('Error fetching top sold items:', error);
+      });
+  }, []);
+
+  if (!chartData || !salesByItemData || !topSoldItemsData) return <p>Loading charts...</p>;
+
   const groupedData = salesByItemData.reduce((acc, item) => {
     const date = item.date;
     if (!acc[item.item_name]) acc[item.item_name] = {};
@@ -45,17 +81,26 @@ const Sales = () => {
     return acc;
   }, {});
 
-  const itemNames = Object.keys(groupedData); // All unique item names
-  const dates = [...new Set(salesByItemData.map((item) => item.date))]; // All unique dates
+  const itemNames = Object.keys(groupedData);
+  const dates = [...new Set(salesByItemData.map((item) => item.date))];
 
-  // Chart configuration for Sales by Item (Daily)
+  const axisLabelConfig = {
+    display: true,
+    color: '#000',
+    font: { size: 14, weight: 'bold' },
+  };
+
+  const tickStyle = {
+    color: '#000',
+  };
+
   const salesByItemChartConfig = {
     type: 'bar',
     data: {
-      labels: itemNames, // Item names on the x-axis
+      labels: itemNames,
       datasets: dates.map((date, index) => ({
-        label: date, // Each dataset represents a date
-        data: itemNames.map((item) => groupedData[item][date] || 0), // Sales data for each item on that date
+        label: date,
+        data: itemNames.map((item) => groupedData[item][date] || 0),
         backgroundColor: `rgba(${index * 50}, ${index * 100}, 200, 0.5)`,
       })),
     },
@@ -67,46 +112,33 @@ const Sales = () => {
           text: 'Total Sales by Item (Daily)',
           font: { size: 18 },
         },
-        tooltip: {
-          enabled: true,
-        },
-        datalabels: {
-          anchor: 'end',
-          align: 'top',
-          formatter: (value) => `₹${value.toLocaleString()}`, // Format the value as currency
-          font: {
-            size: 12,
-          },
-        },
+        tooltip: { enabled: true },
       },
       scales: {
         y: {
-          title: {
-            display: true,
-            text: 'Total Sales',
-          },
+          display: true,
           beginAtZero: true,
+          title: { ...axisLabelConfig, text: 'Total Sales (₹)' },
+          ticks: tickStyle,
         },
         x: {
-          title: {
-            display: true,
-            text: 'Item Names',
-          },
+          display: true,
+          title: { ...axisLabelConfig, text: 'Item Names' },
+          ticks: tickStyle,
         },
       },
     },
   };
 
-  // Chart configuration for Total Sales, Active Orders, Pending Deliveries
   const overviewChartConfig = {
     type: 'bar',
     data: {
-      labels: chartData.map((item) => item.label), // Labels for Total Sales, Active Orders, Pending Deliveries
+      labels: chartData.map((item) => item.label),
       datasets: [
         {
           label: 'Overview',
-          data: chartData.map((item) => item.value), // Values for each category
-          backgroundColor: ['#3b82f6', '#10b981', '#f59e0b'], // Colors for each bar
+          data: chartData.map((item) => item.value),
+          backgroundColor: ['#3b82f6', '#10b981', '#f59e0b'],
         },
       ],
     },
@@ -118,42 +150,60 @@ const Sales = () => {
           text: 'Overview: Total Sales, Active Orders, Pending Deliveries',
           font: { size: 18 },
         },
-        tooltip: {
-          enabled: true,
-        },
-        datalabels: {
-          anchor: 'end',
-          align: 'top',
-          formatter: (value) => `₹${value.toLocaleString()}`, // Format the value as currency
-          font: {
-            size: 10,
-          },
-        },
+        tooltip: { enabled: true },
       },
       scales: {
         y: {
-          title: {
-            display: true,
-            text: 'Count / Amount',
-          },
+          display: true,
           beginAtZero: true,
+          title: { ...axisLabelConfig, text: 'Count / Amount' },
+          ticks: tickStyle,
         },
         x: {
-          title: {
-            display: true,
-            text: 'Categories',
-          },
+          display: true,
+          title: { ...axisLabelConfig, text: 'Categories' },
+          ticks: tickStyle,
         },
       },
     },
   };
+
+  const topSoldItemsChartUrl = `https://quickchart.io/chart?width=500&height=300&c=${encodeURIComponent(
+    JSON.stringify({
+      type: 'bar',
+      data: topSoldItemsData,
+      options: {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Top 5 Sold Items',
+            font: { size: 18 },
+          },
+          tooltip: { enabled: true },
+        },
+        scales: {
+          y: {
+            display: true,
+            beginAtZero: true,
+            title: { ...axisLabelConfig, text: 'Quantity Sold' },
+            ticks: tickStyle,
+          },
+          x: {
+            display: true,
+            title: { ...axisLabelConfig, text: 'Items' },
+            ticks: tickStyle,
+          },
+        },
+      },
+    })
+  )}`;
 
   return (
     <div className="sales-container">
       <h2 className="sales-heading">Sales Overview</h2>
 
       <div className="sales-chart-container">
-        {/* Render the Sales by Item Chart */}
         <div className="chart-wrapper">
           <h3>Sales by Item (Daily)</h3>
           <img
@@ -165,7 +215,6 @@ const Sales = () => {
           />
         </div>
 
-        {/* Render the Overview Chart */}
         <div className="chart-wrapper">
           <h3>Overview: Total Sales, Active Orders, Pending Deliveries</h3>
           <img
@@ -173,6 +222,15 @@ const Sales = () => {
               JSON.stringify(overviewChartConfig)
             )}`}
             alt="Overview Chart"
+            className="sales-chart"
+          />
+        </div>
+
+        <div className="chart-wrapper">
+          <h3>Top 5 Sold Items</h3>
+          <img
+            src={topSoldItemsChartUrl}
+            alt="Top Sold Items Chart"
             className="sales-chart"
           />
         </div>

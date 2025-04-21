@@ -16,7 +16,7 @@ const RaiseTokenPage = () => {
 
   const navigate = useNavigate();
 
-  // 🔁 Fetch restaurant_id from backend using token
+  //  Fetch restaurant_id from backend using token
   useEffect(() => {
     const fetchRestaurantId = async () => {
       try {
@@ -38,9 +38,6 @@ const RaiseTokenPage = () => {
 
     fetchRestaurantId();
   }, []);
-
-
- 
 
   const handleFormChange = (e) => {
     const { id, value } = e.target;

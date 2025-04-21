@@ -47,7 +47,6 @@ exports.registerNgo = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
 // NGO Login
 exports.loginNgo = async (req, res) => {
   const { email, password } = req.body;
@@ -75,18 +74,21 @@ exports.loginNgo = async (req, res) => {
     }
 
     // Generate a JWT token
-    const token = jwt.sign({ ngo_id: ngo.ngo_id, email: ngo.email }, "your_jwt_secret", {
+    const token = jwt.sign({ ngo_id: ngo.ngo_id, email: ngo.email }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
 
-    res.status(200).json({ message: "Login successful", token });
+    // Return the token and ngo_id
+    res.status(200).json({
+      message: "Login successful",
+      token,
+      ngoId: ngo.ngo_id, // Include ngo_id in the response
+    });
   } catch (error) {
     console.error("Error logging in NGO:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
-
 // Nodemailer setup for email functionality
 const transporter = nodemailer.createTransport({
     service: "gmail",
