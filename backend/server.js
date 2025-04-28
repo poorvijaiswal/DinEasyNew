@@ -120,12 +120,14 @@ app.use('/api', tokenRoutes);
 
 const dashboardRoutes = require("./routes/dashboard");
 app.use('/api/dashboard', dashboardRoutes);
-
 // Error handler
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({ message: 'Internal Server Error', error: err.message });
 });
+
+
+// Other routes and middleware...
 
 // Start the server
 const PORT = process.env.PORT || 5000;

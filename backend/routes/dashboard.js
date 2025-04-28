@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/db'); // your MySQL config
 
-router.get('/overview', (req, res) => {
+/*router.get('/overview', (req, res) => {
   const data = {
     totalSales: 0,
     activeOrders: 0,
@@ -38,6 +38,80 @@ router.get('/overview', (req, res) => {
       });
     });
   });
+});*/
+
+
+
+router.get('/overview', (req, res) => {
+  const { restaurant_id } = req.query; // Get restaurant_id from query params
+
+  if (!restaurant_id) {
+    return res.status(400).json({ error: 'Restaurant ID is required' });
+  }
+
+  const data = {
+    totalSales: 0,
+    activeOrders: 0,
+    pendingDeliveries: 0,
+  };
+
+  // Fetch total sales (sum of paid payments for the restaurant)
+  db.query(
+    `
+    SELECT COALESCE(SUM(p.amount), 0) AS total
+    FROM payment p
+    JOIN orders o ON p.order_id = o.order_id
+    WHERE p.status = 'Paid' AND o.restaurant_id = ?
+    `,
+    [restaurant_id],
+    (err, results) => {
+      if (err) {
+        console.error('Error fetching total sales:', err);
+        return res.status(500).json({ error: 'Failed to fetch total sales' });
+      }
+
+      data.totalSales = results[0]?.total || 0;
+
+      // Fetch count of active orders (In Progress or Completed)
+      db.query(
+        `
+        SELECT COALESCE(COUNT(*), 0) AS count
+        FROM orders
+        WHERE status IN ('In Progress', 'Completed') AND restaurant_id = ?
+        `,
+        [restaurant_id],
+        (err, results) => {
+          if (err) {
+            console.error('Error fetching active orders:', err);
+            return res.status(500).json({ error: 'Failed to fetch active orders' });
+          }
+
+          data.activeOrders = results[0]?.count || 0;
+
+          // Fetch count of pending deliveries
+          db.query(
+            `
+            SELECT COALESCE(COUNT(*), 0) AS count
+            FROM orders
+            WHERE status = 'Pending' AND restaurant_id = ?
+            `,
+            [restaurant_id],
+            (err, results) => {
+              if (err) {
+                console.error('Error fetching pending deliveries:', err);
+                return res.status(500).json({ error: 'Failed to fetch pending deliveries' });
+              }
+
+              data.pendingDeliveries = results[0]?.count || 0;
+
+              // Send the final response
+              res.json(data);
+            }
+          );
+        }
+      );
+    }
+  );
 });
 // Route to fetch sales by item (daily)
 router.get('/sales-by-item', (req, res) => {
