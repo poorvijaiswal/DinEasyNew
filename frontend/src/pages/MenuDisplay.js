@@ -9,11 +9,11 @@ const MenuDisplay = () => {
   const [menu, setMenu] = useState([]);
   const [filteredMenu, setFilteredMenu] = useState([]);
   const [ratings, setRatings] = useState({});
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState([]); // State for cart
   const [error, setError] = useState("");
   const [restaurantId, setRestaurantId] = useState(null);
-  const [quantities, setQuantities] = useState({});
-  const [cartMessage, setCartMessage] = useState("");
+  const [quantities, setQuantities] = useState({}); // State for item quantities
+  const [cartMessage, setCartMessage] = useState(""); // State for cart messages
   const [searchTerm, setSearchTerm] = useState("");
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -109,11 +109,32 @@ const MenuDisplay = () => {
     setFilteredMenu(filtered);
   };
 
-  // Handle Category Selection
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
-    setShowCategoryDropdown(false); // Close the dropdown
-    filterMenu(category, searchTerm); // Filter the menu based on the selected category
+    setShowCategoryDropdown(false);
+    filterMenu(category, searchTerm);
+  };
+
+  const increaseQuantity = (id) => setQuantities(prev => ({ ...prev, [id]: prev[id] + 1 }));
+  const decreaseQuantity = (id) => setQuantities(prev => ({ ...prev, [id]: prev[id] > 1 ? prev[id] - 1 : 1 }));
+
+  const addToCart = (item) => {
+    const existingItem = cart.find(cartItem => cartItem.id === item.id);
+    let updatedCart;
+
+    if (existingItem) {
+      updatedCart = cart.map(cartItem =>
+        cartItem.id === item.id ? { ...cartItem, quantity: cartItem.quantity + quantities[item.id] } : cartItem
+      );
+    } else {
+      updatedCart = [...cart, { ...item, quantity: quantities[item.id] }];
+    }
+
+    setCart(updatedCart);
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
+
+    setCartMessage(`${item.name} added to cart!`);
+    setTimeout(() => setCartMessage(""), 2000);
   };
 
   const renderStars = (rating) => {
@@ -159,6 +180,7 @@ const MenuDisplay = () => {
           )}
         </div>
       </div>
+      {cartMessage && <p className="cart-message">{cartMessage}</p>}
 
       <div className="menu-list">
         {filteredMenu.length > 0 ? (
@@ -172,6 +194,16 @@ const MenuDisplay = () => {
                 <div className="menu-rating">{renderStars(Math.round(ratings[item.id] || 0))}</div>
                 <div className="menu-footer">
                   <p className="menu-price">{"\u20B9"}{item.price}</p>
+
+                  <div className="quantity-selector">
+                    <button onClick={() => decreaseQuantity(item.id)}>-</button>
+                    <span>{quantities[item.id]}</span>
+                    <button onClick={() => increaseQuantity(item.id)}>+</button>
+                  </div>
+
+                  <button onClick={() => addToCart(item)} className="add-to-cart">
+                    Add to Cart
+                  </button>
                 </div>
               </div>
             </div>
@@ -180,6 +212,9 @@ const MenuDisplay = () => {
           <p className="text-center text-gray-600 w-full">No menu items found.</p>
         )}
       </div>
+      <button onClick={() => navigate(`/cart?table=${tableNumber}`)} className="view-cart">
+        View Cart
+      </button>
     </div>
   );
 };
