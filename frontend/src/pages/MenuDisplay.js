@@ -8,22 +8,21 @@ const MenuDisplay = () => {
   const [tableNumber, setTableNumber] = useState(null);
   const [menu, setMenu] = useState([]);
   const [filteredMenu, setFilteredMenu] = useState([]);
+  const [ratings, setRatings] = useState({});
   const [cart, setCart] = useState([]);
   const [error, setError] = useState("");
   const [restaurantId, setRestaurantId] = useState(null);
   const [quantities, setQuantities] = useState({});
   const [cartMessage, setCartMessage] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [categories, setCategories] = useState([]); //  Store categories
-  const [selectedCategory, setSelectedCategory] = useState("All"); //  Default category
-  const [showCategoryDropdown, setShowCategoryDropdown] = useState(false); //  Toggle category dropdown
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const tableNum = queryParams.get("table");
-    // Get table number from URL
-    console.log("Extracted Table Number:", tableNum);
     if (tableNum) setTableNumber(tableNum);
   }, [location.search]);
 
@@ -47,6 +46,7 @@ const MenuDisplay = () => {
       const fetchedRestaurantId = response.data.restaurant_id;
       setRestaurantId(fetchedRestaurantId);
       fetchMenu(fetchedRestaurantId);
+      fetchRatings(fetchedRestaurantId);
     } catch (error) {
       console.error("Error fetching restaurant ID:", error);
       setError("Error fetching restaurant ID.");
@@ -61,7 +61,6 @@ const MenuDisplay = () => {
       setMenu(response.data);
       setFilteredMenu(response.data);
 
-      // Extract Unique Categories
       const uniqueCategories = ["All", ...new Set(response.data.map(item => item.category))];
       setCategories(uniqueCategories);
 
@@ -76,14 +75,26 @@ const MenuDisplay = () => {
     }
   };
 
-  // Handle Search
+  const fetchRatings = async (id) => {
+    try {
+      const response = await axios.get(`http://localhost:5000/api/menu/ratings/${id}`);
+      const ratingsData = response.data.reduce((acc, item) => {
+        acc[item.menu_id] = item.average_rating;
+        return acc;
+      }, {});
+      setRatings(ratingsData);
+    } catch (error) {
+      console.error("Error fetching ratings:", error);
+      setError("Error fetching ratings.");
+    }
+  };
+
   const handleSearch = (e) => {
     const value = e.target.value.toLowerCase();
     setSearchTerm(value);
     filterMenu(selectedCategory, value);
   };
 
-  // Filter Menu Based on Category & Search
   const filterMenu = (category, term) => {
     let filtered = menu;
 
@@ -97,107 +108,79 @@ const MenuDisplay = () => {
 
     setFilteredMenu(filtered);
   };
-  //  Handle Category Selection
+
+  // Handle Category Selection
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
-    setShowCategoryDropdown(false);
-    filterMenu(category, searchTerm);
+    setShowCategoryDropdown(false); // Close the dropdown
+    filterMenu(category, searchTerm); // Filter the menu based on the selected category
   };
 
-  const increaseQuantity = (id) => setQuantities(prev => ({ ...prev, [id]: prev[id] + 1 }));
-  const decreaseQuantity = (id) => setQuantities(prev => ({ ...prev, [id]: prev[id] > 1 ? prev[id] - 1 : 1 }));
-
-  const addToCart = (item) => {
-    const existingItem = cart.find(cartItem => cartItem.id === item.id);
-    let updatedCart;
-
-    if (existingItem) {
-      updatedCart = cart.map(cartItem =>
-        cartItem.id === item.id ? { ...cartItem, quantity: cartItem.quantity + quantities[item.id] } : cartItem
+  const renderStars = (rating) => {
+    const stars = [];
+    for (let i = 1; i <= 5; i++) {
+      stars.push(
+        <span key={i} className={i <= rating ? "star filled" : "star"}>
+          ★
+        </span>
       );
-    } else {
-      updatedCart = [...cart, { ...item, quantity: quantities[item.id] }];
     }
-
-    setCart(updatedCart);
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
-
-    setCartMessage(`${item.name} added to cart!`);
-    setTimeout(() => setCartMessage(""), 2000);
+    return stars;
   };
 
   return (
-      <div className="container">
-        <h1 className="title">Our Menu</h1>
-        {error && <p className="error-message">{error}</p>}
+    <div className="container">
+      <h1 className="title">Our Menu</h1>
+      {error && <p className="error-message">{error}</p>}
 
-        {/*  Search Bar & Category Filter */}
-        <div className="search-container">
-          <input
-            type="text"
-            placeholder="Search for items..."
-            value={searchTerm}
-            onChange={handleSearch}
-            className="search-input"
+      <div className="search-container">
+        <input
+          type="text"
+          placeholder="Search for items..."
+          value={searchTerm}
+          onChange={handleSearch}
+          className="search-input"
+        />
+        <div className="menu-container">
+          <img
+            src="https://cdn.iconscout.com/icon/premium/png-256-thumb/restaurant-menu-5-628087.png"
+            alt="Menu"
+            className="menu-icon"
+            onClick={() => setShowCategoryDropdown(!showCategoryDropdown)}
           />
-          <div className="menu-container">
-            <img
-              src="https://cdn.iconscout.com/icon/premium/png-256-thumb/restaurant-menu-5-628087.png"
-              alt="Menu"
-              className="menu-icon"
-              onClick={() => setShowCategoryDropdown(!showCategoryDropdown)}
-            />
-            {/*  Category Dropdown */}
-            {showCategoryDropdown && (
-              <ul className="category-dropdown">
-                {categories.map((category, index) => (
-                  <li key={index} onClick={() => handleCategorySelect(category)}>
-                    {category}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </div>
-        {cartMessage && <p className="cart-message">{cartMessage}</p>}
-
-        {/*  Menu List */}
-        <div className="menu-list">
-          {filteredMenu.length > 0 ? (
-            filteredMenu.map(item => (
-              <div key={item.id} className="menu-item">
-                <img src={`http://localhost:5000/uploads/${item.image_url}`} alt={item.name} className="menu-image" />
-
-                <div className="menu-content">
-                  <h2 className="menu-title">{item.name}</h2>
-                  <p className="menu-category">{item.category}</p>
-                  <p className="menu-description">{item.description}</p>
-
-                  <div className="menu-footer">
-                    <p className="menu-price">{"\u20B9"}{item.price}</p>
-
-                    <div className="quantity-selector ">
-                      <button onClick={() => decreaseQuantity(item.id)}>-</button>
-                      <span>{quantities[item.id]}</span>
-                      <button onClick={() => increaseQuantity(item.id)}>+</button>
-                    </div>
-
-                    <button onClick={() => addToCart(item)} className="add-to-cart">
-                      Add to Cart
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))
-          ) : (
-            <p className="text-center text-gray-600 w-full">No menu items found.</p>
+          {showCategoryDropdown && (
+            <ul className="category-dropdown">
+              {categories.map((category, index) => (
+                <li key={index} onClick={() => handleCategorySelect(category)}>
+                  {category}
+                </li>
+              ))}
+            </ul>
           )}
         </div>
-        <button onClick={() => navigate(`/cart?table=${tableNumber}`)} className="view-cart">
-          View Cart
-        </button>
-
       </div>
+
+      <div className="menu-list">
+        {filteredMenu.length > 0 ? (
+          filteredMenu.map(item => (
+            <div key={item.id} className="menu-item">
+              <img src={`http://localhost:5000/uploads/${item.image_url}`} alt={item.name} className="menu-image" />
+              <div className="menu-content">
+                <h2 className="menu-title">{item.name}</h2>
+                <p className="menu-category">{item.category}</p>
+                <p className="menu-description">{item.description}</p>
+                <div className="menu-rating">{renderStars(Math.round(ratings[item.id] || 0))}</div>
+                <div className="menu-footer">
+                  <p className="menu-price">{"\u20B9"}{item.price}</p>
+                </div>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p className="text-center text-gray-600 w-full">No menu items found.</p>
+        )}
+      </div>
+    </div>
   );
 };
 

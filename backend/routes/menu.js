@@ -66,6 +66,29 @@ router.get("/menu/:restaurant_id", (req, res) => {
         res.json(results);
     });
 });
+router.get('/menu/ratings/:restaurant_id', async (req, res) => {
+    const { restaurant_id } = req.params;
+  
+    const query = `
+      SELECT 
+        m.id AS menu_id,
+        COALESCE(AVG(f.rating), 0) AS average_rating
+      FROM menu m
+      LEFT JOIN orderitems oi ON m.id = oi.menu_id
+      LEFT JOIN orders o ON oi.order_id = o.order_id
+      LEFT JOIN feedback f ON o.order_id = f.order_id
+      WHERE m.restaurant_id = ?
+      GROUP BY m.id
+    `;
+  
+    db.query(query, [restaurant_id], (err, results) => {
+      if (err) {
+        console.error('Error fetching ratings:', err);
+        return res.status(500).json({ error: 'Failed to fetch ratings' });
+      }
+      res.json(results);
+    });
+  });
 
 //  Update Menu Item
 router.put("/menu/:id", upload.single("image"), (req, res) => {

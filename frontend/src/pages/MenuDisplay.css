@@ -200,3 +200,12 @@
 .view-cart:hover {
   background-color: #3e8e41;
 }
+.star {
+  font-size: 20px;
+  color: #ccc;
+  margin-right: 2px;
+}
+
+.star.filled {
+  color: #f5c518;
+}
