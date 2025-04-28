@@ -3,13 +3,42 @@ import axios from 'axios';
 import './Sales.css'; // Ensure this path is correct
 
 const Sales = () => {
+  const [restaurantId, setRestaurantId] = useState(null); // State to store restaurant_id
   const [chartData, setChartData] = useState(null);
   const [salesByItemData, setSalesByItemData] = useState(null);
   const [topSoldItemsData, setTopSoldItemsData] = useState(null);
 
   useEffect(() => {
+    // Fetch restaurant_id
+    const fetchRestaurantId = async () => {
+      try {
+        const token = localStorage.getItem('token'); // Assuming token is stored in localStorage
+        if (!token) {
+          throw new Error('No token found in localStorage');
+        }
+
+        const response = await axios.get('http://localhost:5000/api/auth/getRestaurantId', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const fetchedRestaurantId = response.data.restaurant_id;
+        setRestaurantId(fetchedRestaurantId); // Set the restaurant_id
+      } catch (error) {
+        console.error('Error fetching restaurant ID:', error);
+      }
+    };
+
+    fetchRestaurantId();
+  }, []);
+
+  useEffect(() => {
+    if (!restaurantId) return; // Wait until restaurant_id is fetched
+
+    // Fetch overview data
     axios
-      .get('http://localhost:5000/api/dashboard/overview')
+      .get('http://localhost:5000/api/dashboard/overview', {
+        params: { restaurant_id: restaurantId }, // Pass restaurant_id as a query parameter
+      })
       .then((response) => {
         const data = response.data;
         setChartData([
@@ -21,22 +50,24 @@ const Sales = () => {
       .catch((error) => {
         console.error('Error fetching chart data:', error);
       });
-  }, []);
 
-  useEffect(() => {
+    // Fetch sales by item data
     axios
-      .get('http://localhost:5000/api/dashboard/sales-by-item')
+      .get('http://localhost:5000/api/dashboard/sales-by-item', {
+        params: { restaurant_id: restaurantId }, // Pass restaurant_id as a query parameter
+      })
       .then((response) => {
         setSalesByItemData(response.data);
       })
       .catch((error) => {
         console.error('Error fetching sales by item data:', error);
       });
-  }, []);
 
-  useEffect(() => {
+    // Fetch top sold items data
     axios
-      .get('http://localhost:5000/api/dashboard/top-sold-items')
+      .get('http://localhost:5000/api/dashboard/top-sold-items', {
+        params: { restaurant_id: restaurantId }, // Pass restaurant_id as a query parameter
+      })
       .then((response) => {
         const data = response.data;
         const labels = data.map((item) => item.item_name);
@@ -70,9 +101,11 @@ const Sales = () => {
       .catch((error) => {
         console.error('Error fetching top sold items:', error);
       });
-  }, []);
+  }, [restaurantId]); // Dependency on restaurantId
 
-  if (!chartData || !salesByItemData || !topSoldItemsData) return <p>Loading charts...</p>;
+  if (!restaurantId || !chartData || !salesByItemData || !topSoldItemsData) {
+    return <p>Loading charts...</p>;
+  }
 
   const groupedData = salesByItemData.reduce((acc, item) => {
     const date = item.date;
