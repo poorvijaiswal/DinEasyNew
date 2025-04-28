@@ -16,7 +16,29 @@ router.post('/register', (req, res) => {
         res.status(201).json({ message: "Restaurant registered successfully" });
     });
 });
-
+router.get('/getRestaurantDetails', async (req, res) => {
+  try {
+    const { restaurant_id } = req.query;
+    const query = `
+      SELECT address
+      FROM restaurant
+      WHERE restaurant_id = ?
+    `;
+    db.query(query, [restaurant_id], (err, rows) => {
+      if (err) {
+        console.error("Error fetching restaurant details:", err);
+        return res.status(500).json({ error: "Database error" });
+      }
+      if (rows.length === 0) {
+        return res.status(404).json({ error: `Restaurant with ID ${restaurant_id} not found` });
+      }
+      res.json(rows[0]);
+    });
+  } catch (err) {
+    console.error("Error fetching restaurant details:", err);
+    res.status(500).json({ error: "Failed to fetch restaurant details" });
+  }
+});
 // Get All Restaurants
 router.get('/', (req, res) => {
     const sql = "SELECT * FROM Restaurant";
