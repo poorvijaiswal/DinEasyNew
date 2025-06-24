@@ -1,12 +1,44 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import './Sales.css';  // Ensure this path is correct
+import './Sales.css'; // Ensure this path is correct
 
 const Sales = () => {
+  const [restaurantId, setRestaurantId] = useState(null); // State to store restaurant_id
   const [chartData, setChartData] = useState(null);
+  const [salesByItemData, setSalesByItemData] = useState(null);
+  const [topSoldItemsData, setTopSoldItemsData] = useState(null);
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/dashboard/overview')
+    // Fetch restaurant_id
+    const fetchRestaurantId = async () => {
+      try {
+        const token = localStorage.getItem('token'); // Assuming token is stored in localStorage
+        if (!token) {
+          throw new Error('No token found in localStorage');
+        }
+
+        const response = await axios.get('http://localhost:5000/api/auth/getRestaurantId', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const fetchedRestaurantId = response.data.restaurant_id;
+        setRestaurantId(fetchedRestaurantId); // Set the restaurant_id
+      } catch (error) {
+        console.error('Error fetching restaurant ID:', error);
+      }
+    };
+
+    fetchRestaurantId();
+  }, []);
+
+  useEffect(() => {
+    if (!restaurantId) return; // Wait until restaurant_id is fetched
+
+    // Fetch overview data
+    axios
+      .get('http://localhost:5000/api/dashboard/overview', {
+        params: { restaurant_id: restaurantId }, // Pass restaurant_id as a query parameter
+      })
       .then((response) => {
         const data = response.data;
         setChartData([
@@ -18,74 +50,128 @@ const Sales = () => {
       .catch((error) => {
         console.error('Error fetching chart data:', error);
       });
-  }, []);
 
-  if (!chartData) return <p>Loading chart...</p>;
+    // Fetch sales by item data
+    axios
+      .get('http://localhost:5000/api/dashboard/sales-by-item', {
+        params: { restaurant_id: restaurantId }, // Pass restaurant_id as a query parameter
+      })
+      .then((response) => {
+        setSalesByItemData(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching sales by item data:', error);
+      });
 
-  // Bar chart configuration
-  const barChartConfig = {
+    // Fetch top sold items data
+    axios
+      .get('http://localhost:5000/api/dashboard/top-sold-items', {
+        params: { restaurant_id: restaurantId }, // Pass restaurant_id as a query parameter
+      })
+      .then((response) => {
+        const data = response.data;
+        const labels = data.map((item) => item.item_name);
+        const values = data.map((item) => item.total_sold);
+
+        setTopSoldItemsData({
+          labels,
+          datasets: [
+            {
+              label: 'Top 5 Sold Items',
+              data: values,
+              backgroundColor: [
+                'rgba(255, 99, 132, 0.6)',
+                'rgba(54, 162, 235, 0.6)',
+                'rgba(255, 206, 86, 0.6)',
+                'rgba(75, 192, 192, 0.6)',
+                'rgba(153, 102, 255, 0.6)',
+              ],
+              borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+              ],
+              borderWidth: 1,
+            },
+          ],
+        });
+      })
+      .catch((error) => {
+        console.error('Error fetching top sold items:', error);
+      });
+  }, [restaurantId]); // Dependency on restaurantId
+
+  if (!restaurantId || !chartData || !salesByItemData || !topSoldItemsData) {
+    return <p>Loading charts...</p>;
+  }
+
+  const groupedData = salesByItemData.reduce((acc, item) => {
+    const date = item.date;
+    if (!acc[item.item_name]) acc[item.item_name] = {};
+    acc[item.item_name][date] = item.total_sales;
+    return acc;
+  }, {});
+
+  const itemNames = Object.keys(groupedData);
+  const dates = [...new Set(salesByItemData.map((item) => item.date))];
+
+  const axisLabelConfig = {
+    display: true,
+    color: '#000',
+    font: { size: 14, weight: 'bold' },
+  };
+
+  const tickStyle = {
+    color: '#000',
+  };
+
+  const salesByItemChartConfig = {
     type: 'bar',
     data: {
-      labels: chartData.map(item => item.label),
-      datasets: [
-        {
-          label: 'Count / Amount',
-          data: chartData.map(item => item.value),
-          backgroundColor: ['#3b82f6', '#10b981', '#f59e0b'],
-        },
-      ],
+      labels: itemNames,
+      datasets: dates.map((date, index) => ({
+        label: date,
+        data: itemNames.map((item) => groupedData[item][date] || 0),
+        backgroundColor: `rgba(${index * 50}, ${index * 100}, 200, 0.5)`,
+      })),
     },
     options: {
       responsive: true,
       plugins: {
         title: {
           display: true,
-          text: 'Dashboard Overview',
+          text: 'Total Sales by Item (Daily)',
           font: { size: 18 },
         },
-        legend: {
-          display: false,
-        },
-        tooltip: {
-          enabled: true,
-        },
-        datalabels: {
-          anchor: 'end',
-          align: 'top',
-        },
+        tooltip: { enabled: true },
       },
       scales: {
         y: {
-          title: {
-            display: true,
-            text: 'Count / Amount',
-          },
+          display: true,
           beginAtZero: true,
-          grid: {
-            display: true,
-            color: '#ddd',
-          },
+          title: { ...axisLabelConfig, text: 'Total Sales (₹)' },
+          ticks: tickStyle,
         },
         x: {
-          title: {
-            display: true,
-            text: 'Categories',
-          },
+          display: true,
+          title: { ...axisLabelConfig, text: 'Item Names' },
+          ticks: tickStyle,
         },
       },
     },
   };
 
-  // Pie chart configuration
-  const pieChartConfig = {
-    type: 'pie',
+  const overviewChartConfig = {
+    type: 'bar',
     data: {
-      labels: chartData.map(item => item.label),
+      labels: chartData.map((item) => item.label),
       datasets: [
         {
-          data: chartData.map(item => item.value),
+          label: 'Overview',
+          data: chartData.map((item) => item.value),
           backgroundColor: ['#3b82f6', '#10b981', '#f59e0b'],
-          borderWidth: 1,
         },
       ],
     },
@@ -94,42 +180,92 @@ const Sales = () => {
       plugins: {
         title: {
           display: true,
-          text: 'Sales Distribution',
+          text: 'Overview: Total Sales, Active Orders, Pending Deliveries',
           font: { size: 18 },
         },
-        tooltip: {
-          enabled: true,
+        tooltip: { enabled: true },
+      },
+      scales: {
+        y: {
+          display: true,
+          beginAtZero: true,
+          title: { ...axisLabelConfig, text: 'Count / Amount' },
+          ticks: tickStyle,
         },
-        datalabels: {
-          formatter: (value) => `${value}%`, // Optional: show percentage on the pie chart
+        x: {
+          display: true,
+          title: { ...axisLabelConfig, text: 'Categories' },
+          ticks: tickStyle,
         },
       },
     },
   };
 
-  const chartUrlBar = `https://quickchart.io/chart?width=500&height=300&c=${encodeURIComponent(
-    JSON.stringify(barChartConfig)
-  )}`;
-
-  const chartUrlPie = `https://quickchart.io/chart?width=500&height=300&c=${encodeURIComponent(
-    JSON.stringify(pieChartConfig)
+  const topSoldItemsChartUrl = `https://quickchart.io/chart?width=500&height=300&c=${encodeURIComponent(
+    JSON.stringify({
+      type: 'bar',
+      data: topSoldItemsData,
+      options: {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Top 5 Sold Items',
+            font: { size: 18 },
+          },
+          tooltip: { enabled: true },
+        },
+        scales: {
+          y: {
+            display: true,
+            beginAtZero: true,
+            title: { ...axisLabelConfig, text: 'Quantity Sold' },
+            ticks: tickStyle,
+          },
+          x: {
+            display: true,
+            title: { ...axisLabelConfig, text: 'Items' },
+            ticks: tickStyle,
+          },
+        },
+      },
+    })
   )}`;
 
   return (
     <div className="sales-container">
       <h2 className="sales-heading">Sales Overview</h2>
-      
+
       <div className="sales-chart-container">
-        {/* Render the Bar Chart */}
         <div className="chart-wrapper">
-          <h3>Sales Bar Chart</h3>
-          <img src={chartUrlBar} alt="Sales Bar Chart" className="sales-chart" />
+          <h3>Sales by Item (Daily)</h3>
+          <img
+            src={`https://quickchart.io/chart?width=500&height=300&c=${encodeURIComponent(
+              JSON.stringify(salesByItemChartConfig)
+            )}`}
+            alt="Sales by Item Chart"
+            className="sales-chart"
+          />
         </div>
 
-        {/* Render the Pie Chart */}
         <div className="chart-wrapper">
-          <h3>Sales Pie Chart</h3>
-          <img src={chartUrlPie} alt="Sales Pie Chart" className="sales-chart" />
+          <h3>Overview: Total Sales, Active Orders, Pending Deliveries</h3>
+          <img
+            src={`https://quickchart.io/chart?width=500&height=300&c=${encodeURIComponent(
+              JSON.stringify(overviewChartConfig)
+            )}`}
+            alt="Overview Chart"
+            className="sales-chart"
+          />
+        </div>
+
+        <div className="chart-wrapper">
+          <h3>Top 5 Sold Items</h3>
+          <img
+            src={topSoldItemsChartUrl}
+            alt="Top Sold Items Chart"
+            className="sales-chart"
+          />
         </div>
       </div>
     </div>

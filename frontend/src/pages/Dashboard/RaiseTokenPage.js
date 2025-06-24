@@ -5,6 +5,7 @@ import "./RaiseTokenPage.css"; // Ensure this CSS file exists
 
 const RaiseTokenPage = () => {
   const [restaurantId, setRestaurantId] = useState(null);
+  const [restaurantAddress, setRestaurantAddress] = useState(""); // State for restaurant address
   const [error, setError] = useState("");
   const [formData, setFormData] = useState({
     foodItem: "",
@@ -16,31 +17,47 @@ const RaiseTokenPage = () => {
 
   const navigate = useNavigate();
 
-  // 🔁 Fetch restaurant_id from backend using token
+  // Fetch restaurant_id and address from backend using token
   useEffect(() => {
-    const fetchRestaurantId = async () => {
+    const fetchRestaurantDetails = async () => {
       try {
         const token = localStorage.getItem("token");
         if (!token) throw new Error("No token found");
 
-        const response = await axios.get("http://localhost:5000/api/auth/getRestaurantId", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        // Fetch restaurant_id
+        const restaurantIdResponse = await axios.get(
+          "http://localhost:5000/api/auth/getRestaurantId",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-        setRestaurantId(response.data.restaurant_id);
+        const restaurantId = restaurantIdResponse.data.restaurant_id;
+        setRestaurantId(restaurantId);
+
+        // Fetch restaurant address
+        const restaurantDetailsResponse = await axios.get(
+          `http://localhost:5000/api/restaurant/getRestaurantDetails?restaurant_id=${restaurantId}`
+        );
+
+        const { address } = restaurantDetailsResponse.data;
+        setRestaurantAddress(address);
+
+        // Pre-fill the pickup location with the restaurant address
+        setFormData((prev) => ({
+          ...prev,
+          pickupLocation: address,
+        }));
       } catch (err) {
-        console.error("Error fetching restaurant ID", err);
-        setError(" Failed to fetch restaurant ID");
+        console.error("Error fetching restaurant details:", err);
+        setError("Failed to fetch restaurant details.");
       }
     };
 
-    fetchRestaurantId();
+    fetchRestaurantDetails();
   }, []);
-
-
- 
 
   const handleFormChange = (e) => {
     const { id, value } = e.target;
@@ -80,16 +97,16 @@ const RaiseTokenPage = () => {
         foodItem: "",
         quantity: 1,
         unit: "kg",
-        pickupLocation: "",
+        pickupLocation: restaurantAddress, // Reset to restaurant address
         expiryTime: "",
       });
 
       setError("");
-      alert(" Token successfully created!");
-      navigate("/ngo-dashboard"); 
+      alert("Token successfully created!");
+      navigate("/ngo-dashboard");
     } catch (err) {
       console.error("Error creating token:", err);
-      setError(" Error creating token.");
+      setError("Error creating token.");
     }
   };
 
@@ -119,11 +136,7 @@ const RaiseTokenPage = () => {
             onChange={handleFormChange}
             min="1"
           />
-          <select
-            id="unit"
-            value={formData.unit}
-            onChange={handleFormChange}
-          >
+          <select id="unit" value={formData.unit} onChange={handleFormChange}>
             <option value="kg">kg</option>
             <option value="liters">liters</option>
             <option value="packs">packs</option>
@@ -141,6 +154,7 @@ const RaiseTokenPage = () => {
           id="pickupLocation"
           value={formData.pickupLocation}
           onChange={handleFormChange}
+          placeholder="Enter pickup location"
         />
       </div>
 

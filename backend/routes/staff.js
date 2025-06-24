@@ -89,5 +89,23 @@ router.delete("/staff/:staff_id", verifyToken, (req, res) => {
         res.json({ message: "Staff deleted successfully!" });
     });
 });
-
+router.get("/getRestaurantDetails", async (req, res) => {
+    try {
+      const { restaurant_id } = req.query; // Get restaurant_id from query params
+      const query = `
+        SELECT name, address
+        FROM restaurant
+        WHERE restaurant_id = ?
+      `;
+      const [rows] = await db.execute(query, [restaurant_id]);
+      if (rows.length === 0) {
+        return res.status(404).json({ error: "Restaurant not found" });
+      }
+      res.json(rows[0]); // Send restaurant details
+    } catch (err) {
+      console.error("Error fetching restaurant details:", err);
+      res.status(500).json({ error: "Failed to fetch restaurant details" });
+    }
+  });
+  
 module.exports = router;

@@ -40,7 +40,10 @@ export default function NGOLogin() {
     try {
       const response = await axios.post("http://localhost:5000/api/ngo/login", formData);
       const { token, ngoId } = response.data; // Ensure the backend returns ngoId
-
+      if (!ngoId) {
+        throw new Error("NGO ID is undefined in the response.");
+      }
+  
       // Store token and ngoId in localStorage
       localStorage.setItem("ngo_token", token);
       localStorage.setItem("ngo_id", ngoId); // Store ngoId in localStorage
