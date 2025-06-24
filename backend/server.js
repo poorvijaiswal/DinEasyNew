@@ -6,7 +6,7 @@ const path = require("path");
 const db = require("./config/db.js"); // Import database connection
 const verifyToken = require("./middleware/auth");
 const http = require("http");
-
+const socketIo = require("socket.io");
 
 // Load environment variables
 dotenv.config();
