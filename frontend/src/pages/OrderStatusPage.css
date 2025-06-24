@@ -1,0 +1,143 @@
+/* Main container */
+.order-status-container {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 30px 40px;
+  background: linear-gradient(to right, #fdfdfd, #f3f4f6);
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+  border: 1px solid #ddd;
+  position: relative;
+}
+
+/* Header title */
+.order-status-title {
+  text-align: center;
+  font-size: 30px;
+  font-weight: 700;
+  margin-bottom: 30px;
+  color: #2c3e50;
+  position: relative;
+}
+
+.order-status-title::after {
+  content: "";
+  display: block;
+  width: 80px;
+  height: 3px;
+  background: #3498db;
+  margin: 12px auto 0;
+  border-radius: 4px;
+}
+
+/* Order Info */
+.order-details h2,
+.order-details h3 {
+  margin: 10px 0;
+  font-size: 18px;
+  color: #444;
+}
+
+/* Highlight status */
+.order-details h3:nth-child(3) {
+  font-weight: bold;
+  color: #16a34a; /* green for status */
+}
+
+/* Items section */
+.order-items {
+  margin-top: 25px;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+}
+
+/* Items header */
+.order-items h3 {
+  font-size: 20px;
+  margin-bottom: 16px;
+  color: #2c3e50;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 8px;
+}
+
+/* Each item row */
+.order-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px dashed #ccc;
+}
+
+.order-item:last-child {
+  border-bottom: none;
+}
+
+/* Item text */
+.order-item p {
+  margin: 0;
+  font-size: 16px;
+  color: #333;
+}
+
+/* Price text */
+.order-item p:last-child {
+  font-weight: 600;
+  color: #374151;
+}
+
+/* Total */
+.order-details h3:last-of-type {
+  margin-top: 25px;
+  font-size: 22px;
+  font-weight: 700;
+  text-align: right;
+  color: #111827;
+  border-top: 1px solid #ccc;
+  padding-top: 10px;
+}
+
+/* Feedback button */
+.feedback-button {
+  display: block;
+  margin: 40px auto 0;
+  padding: 12px 24px;
+  background: linear-gradient(to right, #4ade80, #22c55e);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.feedback-button:hover {
+  background: linear-gradient(to right, #22c55e, #16a34a);
+  transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .order-status-container {
+    padding: 20px;
+  }
+
+  .order-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .order-details h2,
+  .order-details h3 {
+    font-size: 16px;
+  }
+
+  .order-details h3:last-of-type {
+    text-align: left;
+  }
+}

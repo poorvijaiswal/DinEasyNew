@@ -4,11 +4,9 @@ const db = require('../config/db');
 const generateQRCode = async (req, res) => {
     const { tableNumber, size, restaurantId } = req.body;
     console.log(restaurantId);
-    const qrText = `http://localhost:3000/order?table=${tableNumber}`;
-
-    try {
+    const qrText = `http://localhost:3000/menu-display?table=${tableNumber}`;
+    try {      
         console.log('Generating QR code for:', qrText, 'with size:', size);
-
         // Generate QR Code as a Base64 image
         const qrCodeUrl = await QRCode.toDataURL(qrText, { width: size, height: size });
         console.log('Generated QR code URL:', qrCodeUrl);
@@ -52,18 +50,6 @@ const generateQRCode = async (req, res) => {
     }
 };
 
-// const getAllQRCodes = (req, res) => {
-//     db.query('SELECT * FROM TableQR', (err, results) => {
-//         if (err) {
-//             console.error('Database error:', err);
-//             return res.status(500).json({ message: 'Database error', error: err });
-//         }
-//         res.json(results);
-//     });
-// };
-
-// module.exports = { generateQRCode, getAllQRCodes };
-
 const getAllQRCodesByRestaurantId = (req, res) => {
     const { restaurantId } = req.params;
     db.query('SELECT * FROM TableQR WHERE restaurant_id = ?', [restaurantId], (err, results) => {
@@ -75,4 +61,15 @@ const getAllQRCodesByRestaurantId = (req, res) => {
     });
 };
 
-module.exports = { generateQRCode, getAllQRCodesByRestaurantId };
+// Delete QR Code
+const deleteQRCode = async (req, res) => {
+    try {
+      const { qrId } = req.params;
+      await QRCode.findByIdAndDelete(qrId);
+      res.status(200).json({ message: 'QR code deleted successfully' });
+    } catch (error) {
+      res.status(500).json({ message: 'Error deleting QR code', error });
+    }
+  };
+
+module.exports = { generateQRCode, getAllQRCodesByRestaurantId, deleteQRCode };

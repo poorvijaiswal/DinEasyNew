@@ -7,7 +7,7 @@ const db = mysql.createConnection({
     host: process.env.DB_HOST || 'localhost',
     user: process.env.DB_USER || 'root',
     password: process.env.DB_PASS || 'Tiger',
-    database: process.env.DB_NAME || 'restaurantmanagementsystem'
+    database: process.env.DB_NAME || 'restaurantmanagementsystem',
 });
 
 // Connect to MySQL

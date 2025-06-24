@@ -21,6 +21,8 @@ const transporter = nodemailer.createTransport({
     }
 });
 
+const STAFF_COMMON_PASSWORD = process.env.STAFF_COMMON_PASSWORD || 'staff@123'; // Add fallback value
+
 // Register User with Email Verification
 router.post('/register', async (req, res) => {
 
@@ -126,32 +128,19 @@ router.post('/login', async (req, res) => { // Mark the function as async
         }
 
         const owner = results[0];
+        const hashedPassword = owner.password; // Ensure this is the correct field name
 
-        if (owner.verified === 0) {
-            const newVerificationCode = crypto.randomBytes(3).toString('hex').toUpperCase();
-            db.query('UPDATE Membership SET verification_code = ? WHERE email = ?', [newVerificationCode, email], (err, result) => {
-                if (err) return res.status(500).json({ message: 'Database error', error: err });
+        if (!hashedPassword) {
+            return res.status(500).json({ message: "No hashed password found for the user" });
+        }
 
-                // Send the new verification email
-                const mailOptions = {
-                    from: process.env.EMAIL_USER,
-                    to: email,
-                    subject: 'Verify Your Email',
-                    html: `<p>Your new verification code is: <strong>${newVerificationCode}</strong></p>`
-                };
+        bcrypt.compare(password, hashedPassword, async (err, isMatch) => {
+            if (err) {
+                return res.status(500).json({ message: "Error comparing passwords", error: err.message });
+            }
 
-                transporter.sendMail(mailOptions, (error, info) => {
-                    if (error) {
-                        console.error('Error sending verification email:', error);
-                        return res.status(500).json({ message: 'Error sending verification email', error });
-                    }
-                    console.log('Verification email sent:', info.response);
-                    return res.status(403).json({ message: 'Please verify your email. A new verification code has been sent to your email.' });
-                });
-            });
-        } else {
-            if (!(await bcrypt.compare(password, owner.password))) {
-                return res.status(400).json({ message: 'Incorrect password!' });
+            if (!isMatch) {
+                return res.status(401).json({ message: "Invalid credentials" });
             }
 
             // Check if the membership is expired
@@ -172,55 +161,70 @@ router.post('/login', async (req, res) => { // Mark the function as async
                     return res.json({ message: 'Login successful', token, membership_id: owner.membership_id });
                 }
             });
-        }
+        });
     });
 });
 
 // Staff Login
-router.post('/staff-login', (req, res) => {
+router.post("/staff-login", (req, res) => {
   const { email, password } = req.body;
 
-  db.query('SELECT * FROM Staff WHERE email = ?', [email], async (err, results) => {
-      if (results.length === 0) return res.status(400).json({ message: 'Invalid email!' });
+  db.query("SELECT * FROM Staff WHERE email = ?", [email], async (err, results) => {
+    if (err) {
+      console.error("Database error:", err);
+      return res.status(500).json({ message: "Database error", error: err });
+    }
 
-      const staff = results[0];
+    if (results.length === 0) {
+      return res.status(400).json({ message: "Invalid email!" });
+    }
 
-      // CHECK IF USER IS VERIFIED BEFORE ALLOWING LOGIN
-      if (staff.verified === 0) {
-          // Generate a new verification code
-          const newVerificationCode = crypto.randomBytes(3).toString('hex').toUpperCase();
+    const staff = results[0];
 
-          // Update the verification code in the database
-          db.query('UPDATE Staff SET verification_code = ? WHERE email = ?', [newVerificationCode, email], (err, result) => {
-              if (err) return res.status(500).json({ message: 'Database error', error: err });
+    // Check if the staff member is verified
+    if (staff.verified === 0) {
+      return res.status(403).json({
+        message: "Please verify your email. A verification code has been sent to your email.",
+        requiresVerification: true,
+      });
+    }
 
-              // Send the new verification email
-              const mailOptions = {
-                  from: process.env.EMAIL_USER,
-                  to: email,
-                  subject: 'Verify Your Email',
-                  html: `<p>Your new verification code is: <strong>${newVerificationCode}</strong></p>`
-              };
+    // Directly compare the provided password with the common password
+    if (password !== STAFF_COMMON_PASSWORD) {
+      return res.status(401).json({ message: "Incorrect password." });
+    }
 
-              transporter.sendMail(mailOptions, (error, info) => {
-                  if (error) {
-                      console.error('Error sending verification email:', error);
-                      return res.status(500).json({ message: 'Error sending verification email', error });
-                  }
-                  console.log('Verification email sent:', info.response);
-                  return res.status(403).json({ message: 'Please verify your email. A new verification code has been sent to your email.' });
-              });
-          });
-      } else {
-          if (!(await bcrypt.compare(password, staff.password))) {
-              return res.status(400).json({ message: 'Incorrect password!' });
-          }
+    const token = jwt.sign(
+      {
+        staff_id: staff.staff_id,
+        role: staff.role,
+        restaurant_id: staff.restaurant_id,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    );
 
-          // Generate token
-          const token = jwt.sign({ id: staff.staff_id, role: staff.role }, process.env.JWT_SECRET, { expiresIn: '1d' });
+    // Insert or update the login details in the StaffLogin table
+    db.query(
+      "INSERT INTO StaffLogin (staff_id, email, password, is_verified) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE email = VALUES(email), password = VALUES(password), is_verified = VALUES(is_verified)",
+      [staff.staff_id, staff.email, password, true], // Use email from the staff object
+      (insertErr) => {
+        if (insertErr) {
+          console.error("Error inserting/updating StaffLogin:", insertErr);
+          return res.status(500).json({ message: "Error storing login details", error: insertErr });
+        }
 
-          res.json({ message: 'Login successful', token });
+        return res.status(200).json({
+          message: "Login successful",
+          token,
+          staff_id: staff.staff_id,
+          email: staff.email, // Include email in the response
+          name: staff.name,
+          role: staff.role,
+          restaurant_id: staff.restaurant_id,
+        });
       }
+    );
   });
 });
 

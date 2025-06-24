@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
@@ -23,7 +24,9 @@
     "nodemailer": "^6.10.0",
     "nodemon": "^3.1.9",
     "qrcode": "^1.5.4",
-    "razorpay": "^2.9.5"
+    "razorpay": "^2.9.5",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1"
   },
   "description": ""
 }
